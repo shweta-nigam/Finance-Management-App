@@ -1,0 +1,62 @@
+import mongoose, { Schema, Model, Document } from "mongoose"
+
+export interface ICategory extends Document {
+    title:string,
+    description: string,
+    note?:string,
+    type:"Income" | "Expense";
+    icon?:string,
+    color?:string,                      
+    isDeleted:boolean,
+    isDefault:boolean,                      //Mark if it's an app-provided default category
+    user:Schema.Types.ObjectId,
+    budget:Schema.Types.ObjectId,
+}
+
+const categorySchema :Schema<ICategory> = new Schema({
+     title: {
+        type: String,
+        trim: true,
+        required: true
+    },
+    description: {
+        type: String,
+        trim: true
+    },
+    note:{
+       type: String,
+        trim: true 
+    },
+    icon:{
+       type: String,
+        trim: true 
+    },
+    color:{
+       type: String,
+        trim: true 
+    },
+    type:{
+        type:String,
+        enum:["Income","Expense"]
+    },
+    isDefault:{
+        type:Boolean,
+        default:false
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
+    },
+    user:{
+        type:Schema.Types.ObjectId,
+        ref:"User"
+    },
+    budget:{
+        type:Schema.Types.ObjectId,
+        ref:"Budget"
+    }
+},{
+    timestamps:true
+})
+
+export const Category :Model<ICategory> = mongoose.model<ICategory>("Category",categorySchema)

@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import { db } from "./db"
 import { errorHandler } from "./middlewares/errorHandler"
 import cookieParser from "cookie-parser"
+import authRoutes from "./routes/auth.route"
 
 dotenv.config()
 
@@ -12,10 +13,14 @@ const port = process.env.PORT  ?? 3000
 // db function
 db()
 
-app.use("api/v1")
-
 //middlewares
 app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+
+app.use("/api/v1",authRoutes)
+
+
 // Register the error middleware LAST
 app.use(errorHandler)
 

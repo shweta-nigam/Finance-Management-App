@@ -9,7 +9,7 @@ export const errorHandler = (
     res: Response,
     next: NextFunction
 ) => {
-
+console.error("Error caught by errorHandler:", err);
     //if it is our custom ApiError ,use its details
 if(err instanceof ApiError){
     return res.status(err.statusCode).json({

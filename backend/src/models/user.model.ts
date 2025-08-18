@@ -55,8 +55,8 @@ const userSchema: Schema<IUser> = new Schema({
         enum: ["User", "Admin"],
         default: "User"
     },
-    avatar:{
-        type:String
+    avatar: {
+        type: String
     },
     verificationToken: String,
     verificationTokenExpiry: Date,
@@ -71,21 +71,21 @@ const userSchema: Schema<IUser> = new Schema({
 )
 
 
-userSchema.pre("save", async function(next){
+userSchema.pre("save", async function (next) {
 
     // only hash when password is new or modified
-    if(!this.isModified("password")) return next()
+    if (!this.isModified("password")) return next()
 
-   try {
-     const hash =  await bcrypt.hash(this.password,10)
-        this.password = hash
-     next()
-   } catch (error) {
-    console.error("Error while hashing password");
-    next(error as Error)        // if error , it stop saving in document and pass the error to errorHandle middleware
-   }
+    try {
+        const hashPassword = await bcrypt.hash(this.password, 10)
+        this.password = hashPassword
+        next()
+    } catch (error) {
+        console.error("Error while hashing password");
+        next(error as Error)        // if error , it stop saving in document and pass the error to errorHandle middleware
+    }
 })
 
 
-export const User :Model<IUser> = mongoose.model<IUser>("User", userSchema)
+export const User: Model<IUser> = mongoose.model<IUser>("User", userSchema)
 

@@ -6,9 +6,9 @@ export const isLoggedIn = async (req: any, res: any, next: NextFunction) => {
     // how to know if user is logged in? --  just match the token !
 
     //1 get the token
-    const { token } = req.cookies
+    const { refreshToken } = req.cookies
 
-    if (!token) {
+    if (!refreshToken) {
         new ApiError(404, "Access denied, No token provided.")
     }
 
@@ -16,13 +16,13 @@ export const isLoggedIn = async (req: any, res: any, next: NextFunction) => {
     let decoded
     try {
 
-        decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET!)
+        decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!)
         req.user = decoded             // attach user info to req object
         next()                         // pass to next middleware or route handler
 
 
     } catch (error) {
-        console.error("Error while decoding jwt token", error);
+        console.error("Error while decoding jwt token ---->", error);
         next()
     }
 

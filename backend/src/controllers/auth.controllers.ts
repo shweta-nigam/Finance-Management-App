@@ -19,7 +19,7 @@ export const register = async (req: any, res: any, next: NextFunction) => {
    console.log(req.body);
 
 
-   if (!name || !email || !password ||!username) {
+   if (!name || !email || !password || !username) {
       throw new ApiError(400, "All fields are required")
    }
 
@@ -56,7 +56,7 @@ export const register = async (req: any, res: any, next: NextFunction) => {
       await newUser.save()
       await sendEmail(newUser.email, token)
 
-      res.status(200).json(new ApiResponse(200, {newUser:{id: newUser._id, name:newUser.name, email:newUser.email}}))
+      res.status(200).json(new ApiResponse(200, { newUser: { id: newUser._id, name: newUser.name, email: newUser.email } }))
 
    } catch (error) {
       console.error("Error while registering the user.", error);
@@ -70,7 +70,7 @@ export const verify = async (req: any, res: any, next: NextFunction) => {
    // get token form db 
    // match both token to verify user
 
-   const token = req.params.token || req.query.token 
+   const token = req.params.token || req.query.token
 
    if (!token) {
       throw new ApiError(400, "Token is required")
@@ -78,8 +78,8 @@ export const verify = async (req: any, res: any, next: NextFunction) => {
    try {
 
       const user = await User.findOne({
-         verificationToken :token,
-         verificationTokenExpiry: { $gt: new Date()} 
+         verificationToken: token,
+         verificationTokenExpiry: { $gt: new Date() }
       })
 
       if (!user) {
@@ -92,7 +92,7 @@ export const verify = async (req: any, res: any, next: NextFunction) => {
       await user.save()
 
 
-      res.status(200).json(new ApiResponse(200, {user:{id:user._id, name: user.name, username: user.username, isVerified: user.isVerified}}, "User verified successfully!"))
+      res.status(200).json(new ApiResponse(200, { user: { id: user._id, name: user.name, username: user.username, isVerified: user.isVerified } }, "User verified successfully!"))
 
    } catch (error) {
       console.error("User verification failed.", error);
@@ -166,18 +166,41 @@ export const login = async (req: any, res: any, next: NextFunction) => {
 
 export const logout = async (req: any, res: any, next: NextFunction) => {
    try {
-      const user = req.user._id
+      const user = req.user
+
       if (!user) {
-         new ApiError(404, "user not found")
+         return next(new ApiError(404, "user not found"))
       }
 
-      req.clearCookies()
+      const cookieOptions = {
+         httpOnly: true,
+         secure: true,
+         sameSite: "strict" as const,
+      }
+
+      res.clearCookie("accessToken", cookieOptions)
+
+      res.clearCookie("refreshToken", cookieOptions)
 
       return res.status(200).json(new ApiResponse(200, null, "User logged out successfully!"))
 
-   } catch (error) {
+   } catch (error: unknown) {
+
       console.error("Error while logging out.", error);
-      next(error)
+
+      // Safe handling for unknown error
+      if (error instanceof ApiError) {
+         // If we threw our own ApiError somewhere, just forward it
+         return next(error);
+      }
+
+      // For unexpected errors, wrap it in ApiError
+      return next(
+         new ApiError(500, error instanceof Error ? error.message : "Unexpected error")
+      );
+
+      // return next(new ApiError(500,"Error while logging out", error))
+
    }
 }
 

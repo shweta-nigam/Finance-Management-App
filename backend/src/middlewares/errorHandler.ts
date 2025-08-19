@@ -27,3 +27,10 @@ if(err instanceof ApiError){
         message: err.message || "Internal server Error"
     })
 }
+
+
+
+// syntax of errors
+// throw new ApiError(...) → preferred, but only safe if wrapped with asyncHandler.
+// return next(new ApiError(...)) → explicit, works everywhere.
+// next(err) → when you already have an error (from Mongoose, JWT, etc).

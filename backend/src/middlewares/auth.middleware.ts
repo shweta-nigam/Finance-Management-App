@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
 import { ApiError } from "../utils/apiError";
 import jwt from "jsonwebtoken";
+import { User } from "../models/user.model";
 
 export const isLoggedIn = async (req: any, res: any, next: NextFunction) => {
     // how to know if user is logged in? --  just match the token !
@@ -16,8 +17,17 @@ export const isLoggedIn = async (req: any, res: any, next: NextFunction) => {
     let decoded
     try {
 
-        decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!)
-        req.user = decoded             // attach user info to req object
+        decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as {id: string};
+
+        const user = await User.findById(
+            decoded.id
+        )
+
+        if(!user){
+            return next(new ApiError(404, "User not found"))
+        }
+
+        req.user = user             // attach user info to req object
         next()                         // pass to next middleware or route handler
 
 

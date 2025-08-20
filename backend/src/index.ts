@@ -4,6 +4,7 @@ import { db } from "./db"
 import { errorHandler } from "./middlewares/errorHandler"
 import cookieParser from "cookie-parser"
 import authRoutes from "./routes/auth.route"
+import budgetRoutes from "./routes/budget.route"
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 app.use("/api/v1",authRoutes)
+app.use("/api/v1",budgetRoutes)
 
 
 // Register the error middleware LAST

@@ -1,5 +1,4 @@
 import mongoose, { Schema, Model, Document } from "mongoose"
-import { User } from "./user.model"
 
 export interface IBudget extends Document {
     title: string,

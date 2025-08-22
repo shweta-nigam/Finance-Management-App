@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Document } from "mongoose"
+import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface IExpense extends Document {
     title: string,
@@ -11,8 +11,9 @@ export interface IExpense extends Document {
     isRecurring: boolean,
     frequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
     receiptUrl: string,
-    location: string,
+    location?: string,
     tags: string[],
+    isDeleted: boolean,
     user: mongoose.Types.ObjectId,
     category?: mongoose.Types.ObjectId,
     budget?: mongoose.Types.ObjectId,
@@ -58,7 +59,7 @@ const expenseSchema: Schema<IExpense> = new Schema({
     },
     receiptUrl: {
         type: String,
-        trim:true
+        trim: true
     },
     tags: [{
         type: String,
@@ -66,6 +67,10 @@ const expenseSchema: Schema<IExpense> = new Schema({
     }],
     location: {
         type: String,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     },
     user: {
         type: Schema.Types.ObjectId,
@@ -80,8 +85,13 @@ const expenseSchema: Schema<IExpense> = new Schema({
         type: Schema.Types.ObjectId,
         //   ref:"Category"
     }
-},{
-    timestamps:true
+}, {
+    timestamps: true
+})
+
+expenseSchema.pre<Query<any, any>>(/^find/, function (next) {   // --- pre<Query<any, any>> tells TypeScript: “inside this middleware, this is always a Query.”
+    this.where({ isDeleted: false });                         // -- Only return documents where isDeleted: false.
+    next()
 })
 
 export const Expense: Model<IExpense> = mongoose.model<IExpense>("Expense", expenseSchema)

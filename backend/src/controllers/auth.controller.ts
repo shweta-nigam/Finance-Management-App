@@ -1,13 +1,18 @@
-import { User } from "../models/user.model"
+import { IUser, User } from "../models/user.model"
 import { ApiError } from "../utils/apiError"
 import jwt from "jsonwebtoken"
 import { sendEmail } from "../utils/mail"
 import { ApiResponse } from "../utils/apiResponse"
-import { NextFunction } from "express"
+import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import crypto from "crypto"
 
-export const register = async (req: any, res: any, next: NextFunction) => {
+// RequestWithUser = a request object that also carries the logged-in user’s details.
+export interface RequestWithUser extends Request {
+   user?:IUser
+}
+
+export const register = async (req: RequestWithUser, res: Response, next: NextFunction) => {
    // get the data , confirm it
    // check if user exist
    // hash password  -> middleware 
@@ -56,16 +61,15 @@ export const register = async (req: any, res: any, next: NextFunction) => {
       await newUser.save()
       await sendEmail(newUser.email, token)
 
-      res.status(200).json(new ApiResponse(200, { newUser: { id: newUser._id, name: newUser.name, email: newUser.email } }))
+      res.status(201).json(new ApiResponse(201, { newUser: { id: newUser._id, name: newUser.name, email: newUser.email } }))
 
    } catch (error) {
-      console.error("Error while registering the user.", error);
       next(error)
    }
 
 }
 
-export const verify = async (req: any, res: any, next: NextFunction) => {
+export const verify = async (req: RequestWithUser, res: Response, next: NextFunction) => {
    //get verification token from email
    // get token form db 
    // match both token to verify user
@@ -83,7 +87,7 @@ export const verify = async (req: any, res: any, next: NextFunction) => {
       })
 
       if (!user) {
-         throw new ApiError(400, "User not found.")
+         throw new ApiError(404, "User not found.")
       }
       user.isVerified = true
       user.verificationToken = undefined
@@ -100,7 +104,7 @@ export const verify = async (req: any, res: any, next: NextFunction) => {
    }
 }
 
-export const login = async (req: any, res: any, next: NextFunction) => {
+export const login = async (req: RequestWithUser, res: Response, next: NextFunction) => {
    // get data . validate it
    // create accessToken and refreshToken 
    // hash token then save in db
@@ -151,20 +155,18 @@ export const login = async (req: any, res: any, next: NextFunction) => {
          httpOnly: true,
          secure: process.env.NODE_ENV !== "development",
          sameSite: "lax",
-         maxAge: 1000 * 60 * 60 * 24 * 7
+         maxAge: 1000 * 60 * 60 * 24 * 30
       })
 
       res.status(200).json(new ApiResponse(200, { user: { id: user._id, email: user.email, name: user.name }, accessToken: token }))
 
    } catch (error) {
-      console.error("Error while logging user.", error);
       next(error)
-
    }
 
 }
 
-export const logout = async (req: any, res: any, next: NextFunction) => {
+export const logout = async (req: RequestWithUser, res: Response, next: NextFunction) => {
    try {
       const user = req.user
 
@@ -184,23 +186,8 @@ export const logout = async (req: any, res: any, next: NextFunction) => {
 
       return res.status(200).json(new ApiResponse(200, null, "User logged out successfully!"))
 
-   } catch (error: unknown) {
-
-      console.error("Error while logging out.", error);
-
-      // Safe handling for unknown error
-      if (error instanceof ApiError) {
-         // If we threw our own ApiError somewhere, just forward it
-         return next(error);
-      }
-
-      // For unexpected errors, wrap it in ApiError
-      return next(
-         new ApiError(500, error instanceof Error ? error.message : "Unexpected error")
-      );
-
-      // return next(new ApiError(500,"Error while logging out", error))
-
+   } catch (error) {
+     next(error)
    }
 }
 

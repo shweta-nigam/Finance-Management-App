@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Document } from "mongoose"
+import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface ISubscriptionPlan extends Document {
     title: string,
@@ -6,12 +6,12 @@ export interface ISubscriptionPlan extends Document {
     content: string,
     note?: string,
     price: string,
-    duration:string,
-    renewalType: "manual" | "auto"; 
+    duration: string,
+    renewalType: "manual" | "auto";
     features: string[],
-    isDeleted:boolean,
+    isDeleted: boolean,
     isActive: boolean,
-    cancelledAt:Date,
+    cancelledAt: Date,
     startedAt: Date,
     expiredAt: Date,
     payment: Schema.Types.ObjectId,
@@ -23,7 +23,7 @@ const subscriptionPlanSchema: Schema<ISubscriptionPlan> = new Schema({
         type: String,
         trim: true,
         required: true,
-        enum:["Basic", "Pro", "Premium"]
+        enum: ["Basic", "Pro", "Premium"]
     },
     description: {
         type: String,
@@ -47,26 +47,26 @@ const subscriptionPlanSchema: Schema<ISubscriptionPlan> = new Schema({
     expiredAt: {
         type: Date
     },
-    content:{
-        type:String,
-        trim:true
+    content: {
+        type: String,
+        trim: true
     },
-    duration:{
-     type:String  
+    duration: {
+        type: String
     },
-    renewalType:{
-        type:String,
-        enum:["manual","auto"]  
+    renewalType: {
+        type: String,
+        enum: ["manual", "auto"]
     },
-    cancelledAt:{
-        type:Date
+    cancelledAt: {
+        type: Date
     },
-    features:[{
-        type:String
+    features: [{
+        type: String
     }],
-    isDeleted:{
-        type:Boolean,
-        default:false
+    isDeleted: {
+        type: Boolean,
+        default: false
     },
     payment: {
         type: Schema.Types.ObjectId,
@@ -77,8 +77,13 @@ const subscriptionPlanSchema: Schema<ISubscriptionPlan> = new Schema({
         ref: "User"
     }
 
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
 
-export const SubscriptionPlan :Model<ISubscriptionPlan> = mongoose.model<ISubscriptionPlan>("Subscription",subscriptionPlanSchema) 
+subscriptionPlanSchema.pre<Query<any, any>>(/^find/, function (next) {
+    this.where({ isDeleted: false });
+    next()
+})
+
+export const SubscriptionPlan: Model<ISubscriptionPlan> = mongoose.model<ISubscriptionPlan>("Subscription", subscriptionPlanSchema) 

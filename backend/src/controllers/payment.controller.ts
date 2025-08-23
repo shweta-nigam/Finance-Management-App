@@ -117,14 +117,29 @@ export const getPayment = async (req: RequestWithUser, res: Response, next: Next
         }
 
 
-        res.status(200).json(new ApiResponse(200, payment, "Fetched payment  successfully."))
+        res.status(200).json(new ApiResponse(200, {
+            payment: {
+                id: payment.id,
+                amount: payment.amount,
+                date: payment.date,
+                currency: payment.currency,
+                status: payment.status,
+                paymentMethod: payment.paymentMethod,
+                receiptUrl: payment.receiptUrl,
+                paymentId: payment.paymentId,
+                orderId: payment.orderId,
+                isDeleted: payment.isDeleted,
+                signature: payment.signature,
+                isVerified: payment.isVerified
+            }
+        }, "Fetched payment successfully."))
 
     } catch (error) {
         next(error)
     }
 }
 
-export const getAllPayment = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const getAllPayments = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
 
     if (!user) {

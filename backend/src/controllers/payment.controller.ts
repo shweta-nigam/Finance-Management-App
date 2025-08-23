@@ -198,7 +198,8 @@ export const deletePayment = async (req: RequestWithUser, res: Response, next: N
                 paymentId: payment.paymentId,
                 orderId: payment.orderId,
                 signature: payment.signature,
-                isVerified: payment.isVerified
+                isVerified: payment.isVerified,
+                isDeleted:payment.isDeleted
             }
         }, "Deleted payment successfully."))
 

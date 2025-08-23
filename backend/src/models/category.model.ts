@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Document } from "mongoose"
+import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface ICategory extends Document {
     title:string,
@@ -45,7 +45,8 @@ const categorySchema :Schema<ICategory> = new Schema({
     },
     isDeleted:{
         type:Boolean,
-        default:false
+        default:false,
+        index:true
     },
     user:{
         type:Schema.Types.ObjectId,
@@ -57,6 +58,11 @@ const categorySchema :Schema<ICategory> = new Schema({
     }
 },{
     timestamps:true
+})
+
+categorySchema.pre<Query<any,any>>(/^find/,function(next){
+    this.where({isDeleted:false});
+    next()
 })
 
 export const Category :Model<ICategory> = mongoose.model<ICategory>("Category",categorySchema)

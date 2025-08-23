@@ -3,7 +3,7 @@ import mongoose, { Schema, Model, Document, Query } from "mongoose"
 export interface ISubscriptionPlan extends Document {
     title: string,
     description: string,
-    content: string,
+    content?: string,
     note?: string,
     price: string,
     duration: string,

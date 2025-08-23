@@ -16,7 +16,7 @@ export const createSubscriptionPlan = async (req: RequestWithUser, res: Response
         return next(new ApiError(401, "Unauthorized"))
     }
     try {
- 
+
         const validatedData = subscriptionPlanCreateSchema.parse(req.body)
 
         const subscriptionPlan = await SubscriptionPlan.create({
@@ -68,17 +68,18 @@ export const updateSubscriptionPlan = async (req: RequestWithUser, res: Response
         const validatedData = subscriptionPlanUpdateSchema.parse(req.body)
 
         const subscriptionPlan = await SubscriptionPlan.findOneAndUpdate(
-            {  _id: subscriptionPlanId, user: user._id },
-            {  $set: validatedData  },
+            { _id: subscriptionPlanId, user: user._id },
+            { $set: validatedData },
             { new: true, runValidators: true }
         )
 
-        if(!subscriptionPlan){
-             return next(new ApiError(404, "SubscriptionPlan not found"));
+        if (!subscriptionPlan) {
+            return next(new ApiError(404, "SubscriptionPlan not found"));
         }
 
 
-        res.status(200).json(new ApiResponse(200, { subscriptionPlan: {
+        res.status(200).json(new ApiResponse(200, {
+            subscriptionPlan: {
                 id: subscriptionPlan.id,
                 title: subscriptionPlan.title,
                 description: subscriptionPlan.description,
@@ -94,7 +95,8 @@ export const updateSubscriptionPlan = async (req: RequestWithUser, res: Response
                 startedAt: subscriptionPlan.startedAt,
                 expiredAt: subscriptionPlan.expiredAt,
                 payment: subscriptionPlan.payment,
-            }}, "Updated subscriptionPlan successfully."))
+            }
+        }, "Updated subscriptionPlan successfully."))
 
     } catch (error) {
         next(error)
@@ -125,14 +127,32 @@ export const getSubscriptionPlan = async (req: RequestWithUser, res: Response, n
         }
 
 
-        res.status(200).json(new ApiResponse(200, subscriptionPlan, "Fetched subscriptionPlan  successfully."))
+        res.status(200).json(new ApiResponse(200, {
+            subscriptionPlan: {
+                id: subscriptionPlan.id,
+                title: subscriptionPlan.title,
+                description: subscriptionPlan.description,
+                content: subscriptionPlan.content,
+                note: subscriptionPlan.note,
+                price: subscriptionPlan.price,
+                duration: subscriptionPlan.duration,
+                renewalType: subscriptionPlan.renewalType,
+                features: subscriptionPlan.features,
+                isDeleted: subscriptionPlan.isDeleted,
+                isActive: subscriptionPlan.isActive,
+                cancelledAt: subscriptionPlan.cancelledAt,
+                startedAt: subscriptionPlan.startedAt,
+                expiredAt: subscriptionPlan.expiredAt,
+                payment: subscriptionPlan.payment,
+            }
+        }, "Fetched subscriptionPlan  successfully."))
 
     } catch (error) {
         next(error)
     }
 }
 
-export const getAllSubscriptionPlan = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const getAllSubscriptionPlans = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
 
     if (!user) {
@@ -170,10 +190,10 @@ export const deleteSubscriptionPlan = async (req: RequestWithUser, res: Response
 
     try {
         const subscriptionPlan = await SubscriptionPlan.findOneAndUpdate(
-            {  _id: subscriptionPlanId,  user: user._id},
-             {$set:{isDeleted:true}},
-             {new:true}
-            )
+            { _id: subscriptionPlanId, user: user._id },
+            { $set: { isDeleted: true } },
+            { new: true }
+        )
 
         if (!subscriptionPlan) {
             return next(new ApiError(400, "SubscriptionPlan not found"))
@@ -191,6 +211,7 @@ export const deleteSubscriptionPlan = async (req: RequestWithUser, res: Response
                 expiredAt: subscriptionPlan.expiredAt,
                 isActive: subscriptionPlan.isActive,
                 cancelledAt: subscriptionPlan.cancelledAt,
+                isDeleted: subscriptionPlan.isDeleted
             }
         }, "Deleted subscriptionPlan successfully."))
 

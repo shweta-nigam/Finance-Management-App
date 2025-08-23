@@ -199,7 +199,7 @@ export const deletePayment = async (req: RequestWithUser, res: Response, next: N
                 orderId: payment.orderId,
                 signature: payment.signature,
                 isVerified: payment.isVerified,
-                isDeleted:payment.isDeleted
+                isDeleted: payment.isDeleted
             }
         }, "Deleted payment successfully."))
 

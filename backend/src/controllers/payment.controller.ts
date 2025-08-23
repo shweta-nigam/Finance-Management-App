@@ -14,7 +14,7 @@ export const createPayment = async (req: RequestWithUser, res: Response, next: N
         return next(new ApiError(401, "Unauthorized"))
     }
     try {
- 
+
         const validatedData = paymentCreateSchema.parse(req.body)
 
         const payment = await Payment.create({
@@ -45,13 +45,13 @@ export const createPayment = async (req: RequestWithUser, res: Response, next: N
 
 export const updatePayment = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
-    
+
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
     }
 
     const { id } = req.params ?? req.query
-    
+
 
     if (!id) {
         return next(new ApiError(400, "payment Id is required."))
@@ -61,17 +61,18 @@ export const updatePayment = async (req: RequestWithUser, res: Response, next: N
         const validatedData = paymentUpdateSchema.parse(req.body)
 
         const payment = await Payment.findOneAndUpdate(
-            {  _id: id, user: user._id },
-            {  $set: validatedData  },
+            { _id: id, user: user._id },
+            { $set: validatedData },
             { new: true, runValidators: true }
         )
 
-        if(!payment){
-             return next(new ApiError(404, "Payment not found"));
+        if (!payment) {
+            return next(new ApiError(404, "Payment not found"));
         }
 
 
-        res.status(200).json(new ApiResponse(200, { payment: {
+        res.status(200).json(new ApiResponse(200, {
+            payment: {
                 id: payment.id,
                 amount: payment.amount,
                 date: payment.date,
@@ -84,7 +85,8 @@ export const updatePayment = async (req: RequestWithUser, res: Response, next: N
                 isDeleted: payment.isDeleted,
                 signature: payment.signature,
                 isVerified: payment.isVerified
-            }}, "Updated payment successfully."))
+            }
+        }, "Updated payment successfully."))
 
     } catch (error) {
         next(error)
@@ -160,10 +162,10 @@ export const deletePayment = async (req: RequestWithUser, res: Response, next: N
 
     try {
         const payment = await Payment.findOneAndUpdate(
-            {_id: id,  user: user._id},
-             {$set:{isDeleted:true}},
-             {new:true}
-            )
+            { _id: id, user: user._id },
+            { $set: { isDeleted: true } },
+            { new: true }
+        )
 
         if (!payment) {
             return next(new ApiError(400, "Payment not found"))

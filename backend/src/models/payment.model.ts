@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Document } from "mongoose"
+import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface IPayment extends Document {
     amount: number,
@@ -7,10 +7,11 @@ export interface IPayment extends Document {
     status: "Pending" | "Completed" | "Failed";
     paymentMethod: "Card" | "UPI" | "Bank Transfer";
     receiptUrl: string,
-    paymentId:string,
-    orderId:string,
-    signature:string,
-    isVerified:boolean,
+    paymentId: string,
+    orderId: string,
+    signature: string,
+    isVerified: boolean,
+    isDeleted: boolean,
     user: mongoose.Types.ObjectId,
     subscriptionPlan: Schema.Types.ObjectId,
 }
@@ -28,47 +29,57 @@ const paymentSchema: Schema<IPayment> = new Schema({
         type: String,
         required: true,
     },
-    status:{ 
-        type:String,
-        enum:["Pending","Completed","Failed"]
+    status: {
+        type: String,
+        enum: ["Pending", "Completed", "Failed"]
     },
-    paymentMethod:{
-     type:String,
-        enum:["Card", "UPI" ,"Bank Transfer"]
+    paymentMethod: {
+        type: String,
+        enum: ["Card", "UPI", "Bank Transfer"]
     },
     receiptUrl: {
-       type: String,
+        type: String,
         trim: true,
-        required: true  
+        required: true
     },
-    paymentId:{
-        type:String,
-        trim:true,
-        unique:true,
+    paymentId: {
+        type: String,
+        trim: true,
+        unique: true,
     },
-    orderId:{
-        type:String,
-        required:true
+    orderId: {
+        type: String,
+        required: true
     },
-    signature:{
-        type:String,
-        required:true
+    signature: {
+        type: String,
+        required: true
     },
-    isVerified:{
-        type:Boolean,
-        default:false
+    isVerified: {
+        type: Boolean,
+        default: false
     },
-       user: {
+    isDeleted: {
+        type: Boolean,
+        default: false,
+        index: true
+    },
+    user: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
     subscriptionPlan: {
         type: Schema.Types.ObjectId,
-          ref:"SubscriptionPlan"
+        ref: "SubscriptionPlan"
     },
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
 
-export const Payment :Model<IPayment> = mongoose.model<IPayment>("Payment", paymentSchema)
+paymentSchema.pre<Query<any, any>>(/^find/, function (next) {
+    this.where({ isDeleted: false });
+    next()
+})
+
+export const Payment: Model<IPayment> = mongoose.model<IPayment>("Payment", paymentSchema)

@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.route"
 import budgetRoutes from "./routes/budget.route"
 import expressRoutes from "./routes/expense.route"
 import subscriptionPlanRoute from "./routes/subscriptionPlan.route"
+import paymentRoute from "./routes/payment.route"
 
 dotenv.config()
 
@@ -25,6 +26,7 @@ app.use("/api/v1/auth",authRoutes)
 app.use("/api/v1/budget",budgetRoutes)
 app.use("/api/v1/expense",expressRoutes)
 app.use("/api/v1/subscriptionPlan",subscriptionPlanRoute)
+app.use("/api/v1/payment",paymentRoute)
 
 
 // Register the error middleware LAST

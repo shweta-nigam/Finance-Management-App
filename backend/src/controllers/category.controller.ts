@@ -123,14 +123,14 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
                 color: category.color,
                 isDefault: category.isDefault
             }
-        }, "Fetched category  successfully."))
+        }, "Fetched category successfully."))
 
     } catch (error) {
         next(error)
     }
 }
 
-export const getAllCategory = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const getAllCategories = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
 
     if (!user) {

@@ -112,7 +112,8 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
         }
 
 
-        res.status(200).json(new ApiResponse(200,  {category: {
+        res.status(200).json(new ApiResponse(200, {
+            category: {
                 id: category.id,
                 title: category.title,
                 description: category.description,

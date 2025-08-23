@@ -10,9 +10,9 @@ export interface IExpense extends Document {
     paymentMethod: "Cash" | "Card" | "UPI" | "Bank Transfer";
     isRecurring: boolean,
     frequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
-    receiptUrl: string,
+    receiptUrl?: string,
     location?: string,
-    tags: string[],
+    tags?: string[],
     isDeleted: boolean,
     user: mongoose.Types.ObjectId,
     category?: mongoose.Types.ObjectId,
@@ -70,7 +70,8 @@ const expenseSchema: Schema<IExpense> = new Schema({
     },
     isDeleted: {
         type: Boolean,
-        default: false
+        default: false,
+        index: true
     },
     user: {
         type: Schema.Types.ObjectId,

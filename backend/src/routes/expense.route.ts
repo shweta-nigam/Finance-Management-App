@@ -1,14 +1,14 @@
 import express from "express"
-import { createExpense, deleteAllExpenses, deleteExpense, getAllExpense, getExpense, updateExpense } from "../controllers/expense.controller"
+import { createExpense, deleteAllExpenses, deleteExpense, getAllExpenses, getExpense, updateExpense } from "../controllers/expense.controller"
 import { isLoggedIn } from "../middlewares/auth.middleware"
 
-const expressRoutes = express.Router()
+const expressRoute = express.Router()
 
-expressRoutes.post("/", isLoggedIn, createExpense)
-expressRoutes.patch("/:expenseId", isLoggedIn, updateExpense)
-expressRoutes.get("/:expenseId", isLoggedIn, getExpense)
-expressRoutes.get("/", isLoggedIn, getAllExpense)
-expressRoutes.delete("/:expenseId", isLoggedIn, deleteExpense)
-expressRoutes.delete("/", isLoggedIn, deleteAllExpenses)
+expressRoute.post("/", isLoggedIn, createExpense)
+expressRoute.patch("/:expenseId", isLoggedIn, updateExpense)
+expressRoute.get("/:expenseId", isLoggedIn, getExpense)
+expressRoute.get("/", isLoggedIn, getAllExpenses)
+expressRoute.delete("/:expenseId", isLoggedIn, deleteExpense)
+expressRoute.delete("/", isLoggedIn, deleteAllExpenses)
 
-export default expressRoutes
+export default expressRoute

@@ -3,6 +3,7 @@ import { RequestWithUser } from "./auth.controller";
 import { ApiError } from "../utils/apiError";
 import { Expense } from "../models/expense.model";
 import { ApiResponse } from "../utils/apiResponse";
+import { expenseCreateSchema, expenseUpdateSChema } from "../validators/expense.validator";
 
 
 
@@ -11,34 +12,16 @@ export const createExpense = async (req: RequestWithUser, res: Response, next: N
 
     const user = req.user
 
-    // console.log("logged user---------------->>>>> ", user);
-
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { title, description, amount, date, currency, frequency, paymentMethod, note, tags, location, category, budget, isRecurring } = req.body
-
-    if (!title || !description || !amount || !date || !currency || !paymentMethod) {
-        return next(new ApiError(400, "Required fields missing."))
-    }
-
     try {
+        const validatedData = expenseCreateSchema.parse(req.body)
+
         const expense = await Expense.create({
-            title,
-            description,
-            amount,
-            date,
-            currency,
-            frequency,
-            user: user._id,
-            paymentMethod,
-            note,
-            tags,
-            location,
-            category,
-            budget,
-            isRecurring: isRecurring ?? false
+            ...validatedData,
+            user: user._id
         })
 
 
@@ -69,8 +52,6 @@ export const createExpense = async (req: RequestWithUser, res: Response, next: N
 export const updateExpense = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
 
-    // console.log("logged user----------------> ", user);
-
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
     }
@@ -81,23 +62,38 @@ export const updateExpense = async (req: RequestWithUser, res: Response, next: N
         return next(new ApiError(400, "Expense Id is required."))
     }
 
-    const { title, description, amount, date, currency, frequency, paymentMethod, note, tags, location, category, budget, isRecurring } = req.body
-
-    if (!title && !description && !amount && !date && !currency && !paymentMethod && !frequency && !note && !tags && !location && !category && !budget && !isRecurring) {
-        return next(new ApiError(400, "Provide at least one field to update."))
-    }
-
     try {
-        const expense = await Expense.findOneAndUpdate({
-            _id: expenseId,
-            user: user._id
-        },
-            { $set: { title, description, amount, date, currency, frequency, paymentMethod, note, tags, location, category, budget, isRecurring } },
+
+        const validatedData = expenseUpdateSChema.parse(req.body)
+
+        const expense = await Expense.findOneAndUpdate(
+            { _id: expenseId, user: user._id },
+            { $set: validatedData },
             { new: true, runValidators: true }
         )
 
+        if (!expense) {
+            return next(new ApiError(404, "Expense not found"))
+        }
 
-        res.status(200).json(new ApiResponse(200, expense, "Updated expense successfully."))
+        res.status(200).json(new ApiResponse(200, {
+            expense: {
+                id: expense.id,
+                title: expense.title,
+                description: expense.description,
+                amount: expense.amount,
+                date: expense.date,
+                currency: expense.currency,
+                frequency: expense.frequency,
+                paymentMethod: expense.paymentMethod,
+                note: expense.note,
+                tags: expense.tags,
+                location: expense.location,
+                category: expense.category,
+                budget: expense.budget,
+                isRecurring: expense.isRecurring
+            }
+        }, "Updated expense successfully."))
 
     } catch (error) {
         next(error)
@@ -106,8 +102,6 @@ export const updateExpense = async (req: RequestWithUser, res: Response, next: N
 
 export const getExpense = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
-
-    // console.log("logged user----------------> ", user);
 
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
@@ -130,17 +124,32 @@ export const getExpense = async (req: RequestWithUser, res: Response, next: Next
         }
 
 
-        res.status(200).json(new ApiResponse(200, expense, "Fetched expense  successfully."))
+        res.status(200).json(new ApiResponse(200, {
+            expense: {
+                id: expense.id,
+                title: expense.title,
+                description: expense.description,
+                amount: expense.amount,
+                date: expense.date,
+                currency: expense.currency,
+                frequency: expense.frequency,
+                paymentMethod: expense.paymentMethod,
+                note: expense.note,
+                tags: expense.tags,
+                location: expense.location,
+                category: expense.category,
+                budget: expense.budget,
+                isRecurring: expense.isRecurring
+            }
+        }, "Fetched expense  successfully."))
 
     } catch (error) {
         next(error)
     }
 }
 
-export const getAllExpense = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const getAllExpenses = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
-
-    // console.log("logged user----------------> ", user);
 
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
@@ -165,8 +174,6 @@ export const getAllExpense = async (req: RequestWithUser, res: Response, next: N
 export const deleteExpense = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
 
-    // console.log("logged user----------------> ", user);
-
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
     }
@@ -178,10 +185,11 @@ export const deleteExpense = async (req: RequestWithUser, res: Response, next: N
     }
 
     try {
-        const expense = await Expense.findOneAndDelete({
-            _id: expenseId,
-            user: user._id
-        })
+        const expense = await Expense.findOneAndUpdate(
+            { _id: expenseId, user: user._id },
+            { isDeleted: true },
+            { new: true }
+        )
 
         if (!expense) {
             return next(new ApiError(400, "Expense not found"))
@@ -195,7 +203,8 @@ export const deleteExpense = async (req: RequestWithUser, res: Response, next: N
                 amount: expense.amount,
                 date: expense.date,
                 currency: expense.currency,
-                paymentMethod: expense.paymentMethod
+                paymentMethod: expense.paymentMethod,
+                isDeleted: expense.isDeleted
             }
         }, "Deleted expense successfully."))
 

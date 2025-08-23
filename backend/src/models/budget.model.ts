@@ -1,5 +1,4 @@
 import mongoose, { Schema, Model, Document, Query } from "mongoose"
-import { boolean } from "zod";
 
 export interface IBudget extends Document {
     title: string,

@@ -151,7 +151,7 @@ export const deleteBudget = async (req: any, res: any, next: NextFunction) => {
     try {
         const budget = await Budget.findOneAndUpdate(
             { _id: BudgetId, user: user._id },
-           {$set: { isDeleted: true }},  // ---update this document and mark its isDeleted flag as true 
+            { $set: { isDeleted: true } },  // ---update this document and mark its isDeleted flag as true 
             { new: true } // --- return updated doc,because Mongoose returns the old/original document (the one before the update).
         )
 
@@ -167,7 +167,7 @@ export const deleteBudget = async (req: any, res: any, next: NextFunction) => {
                 description: budget.description,
                 amount: budget.amount,
                 date: budget.date,
-                isDeleted:budget.isDeleted
+                isDeleted: budget.isDeleted
             }
         }, "Budget deleted successfully!"))
 
@@ -188,7 +188,7 @@ export const deleteALlBudgets = async (req: any, res: any, next: NextFunction) =
     try {
         const budgets = await Budget.updateMany(
             { user: user._id },
-          {$set:{isDeleted:true}}
+            { $set: { isDeleted: true } }
         )
 
         if (!budgets) {

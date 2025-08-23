@@ -1,5 +1,5 @@
 import express from "express"
-import { createBudget, deleteALlBudgets, deleteBudget,getAllBudgets, getBudgetById, updateBudget } from "../controllers/budget.controller"
+import { createBudget, deleteALlBudgets, deleteBudget, getAllBudgets, getBudgetById, updateBudget } from "../controllers/budget.controller"
 import { isLoggedIn } from "../middlewares/auth.middleware"
 
 const budgetRoutes = express.Router()

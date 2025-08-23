@@ -10,7 +10,7 @@ export interface IBudget extends Document {
     frequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
     note?: string,
     currency: string,
-    isDeleted:boolean,
+    isDeleted: boolean,
     user: mongoose.Types.ObjectId,
     expense?: mongoose.Types.ObjectId,
     category?: mongoose.Types.ObjectId,
@@ -50,10 +50,10 @@ const budgetSchema: Schema<IBudget> = new Schema({
         type: String,
         enum: ["Daily", "Weekly", "Monthly", "Yearly"]
     },
-    isDeleted:{
-    type:Boolean,
-    default:false,
-    index:true
+    isDeleted: {
+        type: Boolean,
+        default: false,
+        index: true
     },
     user: {
         type: Schema.Types.ObjectId,
@@ -72,8 +72,8 @@ const budgetSchema: Schema<IBudget> = new Schema({
     { timestamps: true }
 )
 
-budgetSchema.pre<Query<any,any>>(/^find/, function(next){
-    this.where({isDeleted:false});
+budgetSchema.pre<Query<any, any>>(/^find/, function (next) {
+    this.where({ isDeleted: false });
     next()
 })
 

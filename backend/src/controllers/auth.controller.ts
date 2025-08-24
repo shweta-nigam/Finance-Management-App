@@ -25,7 +25,7 @@ export const register = async (req: RequestWithUser, res: Response, next: NextFu
    try {
       const validatedData = registerUserSchema.parse(req.body)
 
-const {name, email, password, username} = validatedData
+      const { name, email, password, username } = validatedData
 
       const existingUser = await User.findOne({ email })
 
@@ -99,9 +99,9 @@ export const login = async (req: RequestWithUser, res: Response, next: NextFunct
    // hash token then save in db
 
    try {
-       const validatedData = loginUserSchema.parse(req.body)
+      const validatedData = loginUserSchema.parse(req.body)
 
-const {email, password} = validatedData
+      const { email, password } = validatedData
 
       const user = await User.findOne({ email })
       if (!user) {

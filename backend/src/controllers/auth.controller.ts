@@ -6,10 +6,12 @@ import { ApiResponse } from "../utils/apiResponse"
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import crypto from "crypto"
+import { OAuth2Client } from "google-auth-library"
+import { loginUserSchema, registerUserSchema } from "../validators/user.validator"
 
 // RequestWithUser = a request object that also carries the logged-in user’s details.
 export interface RequestWithUser extends Request {
-   user?:IUser
+   user?: IUser
 }
 
 export const register = async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -20,26 +22,13 @@ export const register = async (req: RequestWithUser, res: Response, next: NextFu
    // create token for verification through crypto
    // -> send verification token to email
 
-   const { name, email, password, username } = req.body
-   console.log(req.body);
-
-
-   if (!name || !email || !password || !username) {
-      throw new ApiError(400, "All fields are required")
-   }
-
-
-   if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-      throw new ApiError(400, "Invalid email format")
-   }
-   if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/.test(password)) {
-      throw new ApiError(400, "Invalid password format")
-   }
-
-
-
    try {
+      const validatedData = registerUserSchema.parse(req.body)
+
+const {name, email, password, username} = validatedData
+
       const existingUser = await User.findOne({ email })
+
       if (existingUser) {
          throw new ApiError(400, "User already exists.")
       }
@@ -109,12 +98,10 @@ export const login = async (req: RequestWithUser, res: Response, next: NextFunct
    // create accessToken and refreshToken 
    // hash token then save in db
 
-   const { email, password } = req.body
-   if (!email || !password) {
-      throw new ApiError(400, "All fields are required")
-   }
-
    try {
+       const validatedData = loginUserSchema.parse(req.body)
+
+const {email, password} = validatedData
 
       const user = await User.findOne({ email })
       if (!user) {
@@ -187,10 +174,78 @@ export const logout = async (req: RequestWithUser, res: Response, next: NextFunc
       return res.status(200).json(new ApiResponse(200, null, "User logged out successfully!"))
 
    } catch (error) {
-     next(error)
+      next(error)
    }
 }
 
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+export const googleAuth = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+   try {
+
+      const { idToken } = req.body      // frontend send google ID token
+
+      if (!idToken) {
+         return next(new ApiError(400, "Google Id is required"))
+      }
+
+      const ticket = await client.verifyIdToken({
+         idToken,
+         audience: process.env.GOOGLE_CLIENT_ID
+      })
+
+      const payload = ticket.getPayload()
+
+      if (!payload) {
+         return next(new ApiError(400, "Invalid Google token"))
+      }
+
+      const { name, email, picture, sub } = payload
+
+      let user = await User.findOne({ email })
+
+      if (user) {
+         return next(new ApiError(400, "User already exist"))
+      }
+
+      user = await User.create({
+         name,
+         email,
+         password: "",
+         username: email?.split("@")[0],
+         isVerified: true,
+         googleId: sub,
+         avatar: picture
+      })
+
+      if (!process.env.JWT_ACCESS_SECRET) {
+         return next(new ApiError(400, "JWT Access secret is not set"))
+      }
+
+      const accessToken = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, {
+         expiresIn: "15min"
+      })
+
+      if (!process.env.JWT_REFRESH_SECRET) {
+         return next(new ApiError(400, "JWT Access secret is not set"))
+      }
+
+      const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, {
+         expiresIn: "30d"
+      })
+
+      res.cookie("refreshToken", refreshToken, {
+         httpOnly: true,
+         secure: process.env.NODE_ENV !== "development"
+      })
+
+      res.status(200).json(new ApiResponse(200, {
+         user: { id: user._id, name: user.name, email: user.email, avatar: user.avatar }
+      }, accessToken))
+
+   } catch (error) {
+      next(error)
+   }
+}
 

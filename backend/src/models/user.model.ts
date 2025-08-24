@@ -4,12 +4,13 @@ import bcrypt from "bcryptjs";
 // Define TypeScript interface with extra Mongoose stuff
 export interface IUser extends Document {
     name: string,
-    username: string,
+    username?: string,
     password: string,
     email: string,
     avatar?: string,
     isVerified?: boolean,
-    isPremium: boolean,
+    googleId: string,
+    isPlanActive: boolean,
     role: "User" | "Admin",
     verificationToken?: string,
     verificationTokenExpiry?: Date,
@@ -46,7 +47,7 @@ const userSchema: Schema<IUser> = new Schema({
         type: Boolean,
         default: false
     },
-    isPremium: {
+    isPlanActive: {
         type: Boolean,
         default: false
     },
@@ -56,6 +57,9 @@ const userSchema: Schema<IUser> = new Schema({
         default: "User"
     },
     avatar: {
+        type: String
+    },
+    googleId: {
         type: String
     },
     verificationToken: String,

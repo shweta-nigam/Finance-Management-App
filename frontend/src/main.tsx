@@ -8,9 +8,9 @@ import { BrowserRouter } from "react-router-dom";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+  <StrictMode>                                                    // development-only checks.
+    <QueryClientProvider client={queryClient}>                      // makes the queryClient available to the entire component tree, so you can use React Query hooks. 
+      <BrowserRouter>                                              //enables client-side routing/navigation.
         <App />
       </BrowserRouter>
     </QueryClientProvider>

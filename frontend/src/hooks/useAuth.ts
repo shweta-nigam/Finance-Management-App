@@ -17,10 +17,30 @@ export function useLogin() {
       setLoading(false);
     } catch (error: any) {
       setError(error.message || "Something went wrong");
-    } finally {
       setLoading(false);
     }
   }
 
   return [login, response, error, loading]
+}
+
+export function useSignUp(){
+  const [signingUp, setSigningUp] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [response, setResponse] = useState<any>(null)
+
+  const signup = async (urlPath:string, data:any) =>{
+    try {
+      setError(null)
+      setSigningUp(true)
+      const res = await axios.post(urlPath, data)
+      setResponse(res.data)
+      setSigningUp(false)
+    } catch (error:any) {
+      setError(error.message || "Something went wrong")
+    } finally{
+       setSigningUp(false)
+    }
+  }
+  return [signup, signingUp, error, response]
 }

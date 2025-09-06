@@ -3,6 +3,9 @@ import dotenv from "dotenv"
 import { db } from "./db"
 import { errorHandler } from "./middlewares/errorHandler"
 import cookieParser from "cookie-parser"
+import cors from "cors"
+
+// routes
 import authRoutes from "./routes/auth.route"
 import budgetRoutes from "./routes/budget.route"
 import expressRoute from "./routes/expense.route"
@@ -14,6 +17,14 @@ dotenv.config()
 
 const app = express()
 const port = process.env.PORT  ?? 3000
+
+const corsOptions = {
+    origin: process.env.BASE_URL,
+    credential:true,
+     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+     allowedHeaders:["Content-Type", "Authorization"]
+}
+app.use(cors(corsOptions))
 
 // db function
 db()

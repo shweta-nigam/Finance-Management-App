@@ -1,4 +1,6 @@
-import { FeatureCards } from "@/components/FeatureCards";
+import Charts from "@/components/homePage/Charts";
+import { FeatureCards } from "@/components/homePage/FeatureCards";
+import Testimonials from "@/components/homePage/Testimonials";
 import React from "react";
 
 function HomePage() {
@@ -10,8 +12,8 @@ function HomePage() {
         </h1>
         <p className="text-lg max-w-xl mb-6">
           Single destination to track and manage your money
-          <p className="text-gray-400">— all in one simple dashboard.</p>
         </p>
+          <p className="text-gray-400">— all in one simple dashboard.</p>
         <button className="shadow-md  transition btn-D">Get Started</button>
       </div>
       {/* quote: 2nd section */}
@@ -28,7 +30,14 @@ function HomePage() {
         <p>links and icons here</p>
       </div>
       {/* cards: 3rd section */}
-     <FeatureCards />
+      <FeatureCards />
+      
+      {/* charts preview : 4th section*/}
+      
+      <Charts />
+      {/* testimonials: 5th section */}
+<Testimonials />
+
     </>
   );
 }

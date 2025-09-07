@@ -1,9 +1,36 @@
-import React from 'react'
+import { FeatureCards } from "@/components/FeatureCards";
+import React from "react";
 
 function HomePage() {
   return (
-    <div>HomePage</div>
-  )
+    <>
+      <div className="w-full min-h-screen flex flex-col items-center justify-center text-center  p-6 text-white bg">
+        <h1 className="text-5xl font-bold mb-6">
+          FinEase - Manage Money Easily
+        </h1>
+        <p className="text-lg max-w-xl mb-6">
+          Single destination to track and manage your money
+          <p className="text-gray-400">— all in one simple dashboard.</p>
+        </p>
+        <button className="shadow-md  transition btn-D">Get Started</button>
+      </div>
+      {/* quote: 2nd section */}
+      <div className=" min-h-screen flex flex-col items-center justify-center text-center p-6 text-cyan-400 bg-D-blue">
+        <h1 className="text-6xl font-bold mb-4">Less Math, More Clarity</h1>
+        <p className="text-lg max-w-xl mb-6">
+          Track your expenses, set smart budgets, and achieve your financial
+          goals — all in one simple dashboard.
+        </p>
+
+        {/* <p className="text-md  italic mb-8">
+        “A budget is telling your money where to go instead of wondering where it went.”
+      </p> */}
+        <p>links and icons here</p>
+      </div>
+      {/* cards: 3rd section */}
+     <FeatureCards />
+    </>
+  );
 }
 
-export default HomePage
+export default HomePage;

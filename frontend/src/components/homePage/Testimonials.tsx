@@ -46,7 +46,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-10">
+    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-600 text-white p-10">
       <h2 className="text-4xl font-bold mb-4">What Users Say</h2>
       <p className="max-w-xl text-center mb-10 text-lg">
         Thousands of people are already managing money smarter with FinEase.
@@ -57,7 +57,7 @@ export default function Testimonials() {
         {testimonials.map((t, index) => (
           <motion.div
             key={index}
-            className="p-6 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg flex flex-col items-center text-center"
+            className="p-6 backdrop-blur-md rounded-2xl shadow-lg flex flex-col items-center text-center bg-D-blue"
             initial={{ opacity: 0, y: 50, rotate: -3 }}
             whileInView={{ opacity: 1, y: 0, rotate: 0 }}
             whileHover={{ scale: 1.05, rotate: 2 }}

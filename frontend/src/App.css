@@ -14,7 +14,7 @@
   );
 }
 /* dark blue */
-.bg-D-blue{
+.bg-D-blue {
   background: linear-gradient(
     90deg,
     rgba(2, 0, 36, 1) 0%,
@@ -23,7 +23,7 @@
   );
 }
 /* light blue */
-.bg-L-blue{
+.bg-L-blue {
   background: linear-gradient(
     90deg,
     rgba(0, 212, 255, 1) 0%,
@@ -32,47 +32,29 @@
   );
 }
 
-
 /* buttons */
-.btn-D {
+.btn-L-blue {
   font-size: 16px;
   position: relative;
   padding-inline: calc(var(--spacing) * 6);
   padding-block: calc(var(--spacing) * 3);
+  /* padding: 10px; */
   border-radius: var(--radius-2xl);
   border: 2px solid #050c2b;
-  background: #3234cc;
+  background: #4042eefa;
   transition: all 0.1s linear;
-  box-shadow: 0 0.4em 1em rgba(0, 0, 0, 0.1);
-  color: #02071f;
+  box-shadow: 0 0.4em 1em #4043eed7;
+  color: #050c2b;
 }
 
-.btn-D:active {
-  transform: scale(0.95);
+.btn-L-blue:hover {
+  background: #191baa;
+  color: white;
+  border: 2px solid #dbdde4;
+  font-weight: bold;
 }
 
-.btn-D span {
-  color: #464646;
-}
-
-.btn-D .border {
-  position: absolute;
-  border: 0.15em solid #fff;
-  transition: all 0.3s 0.08s linear;
-  top: 50%;
-  left: 50%;
-  width: 9em;
-  height: 3em;
-  transform: translate(-50%, -50%);
-}
-
-.btn-D:hover .border {
-  display: block;
-  width: 9.9em;
-  height: 3.7em;
-}
-
-.btn-W {
+.btn-D-blue {
   font-size: 16px;
   position: relative;
   padding-inline: calc(var(--spacing) * 6);
@@ -82,19 +64,17 @@
   border: 2px solid #dbdde4;
   background: #191baa;
   transition: all 0.1s linear;
-  box-shadow: 0 0.4em 1em rgb(56, 54, 54);
+ box-shadow: 0 0.2em 0.65em #2125eb;
   color: white;
 }
-
-.btn-W:active {
+.btn-D-blue:active {
   transform: scale(0.95);
 }
-
-.btn-W span {
-  color: #464646;
+.btn-D-blue span {
+  color: #5471d1;
 }
 
-.btn-W .border {
+.btn-D-blue .border {
   position: absolute;
   border: 0.15em solid #fff;
   transition: all 0.3s 0.08s linear;
@@ -105,8 +85,9 @@
   transform: translate(-50%, -50%);
 }
 
-.btn-W:hover .border {
-  display: block;
-  width: 9.9em;
-  height: 3.7em;
+.btn-D-blue:hover {
+  background: #4042eefa;
+  color: #050c2b;
+  border: 2px solid #050c2b;
+  font-weight: bold;
 }

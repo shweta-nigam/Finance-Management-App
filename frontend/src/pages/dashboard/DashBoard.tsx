@@ -2,7 +2,7 @@ import { Home, Wallet, BarChart, Target, Settings } from "lucide-react";
 import { useState } from "react";
 
 const menuItems = [
-  { id: "user-info", label: "Dashboard", icon: <Home size={18} /> },
+  { id: "profile", label: "profile", icon: <Home size={18} /> },
   { id: "budgets", label: "Budgets", icon: <Wallet size={18} /> },
   { id: "reports", label: "Reports", icon: <BarChart size={18} /> },
   { id: "goals", label: "Goals", icon: <Target size={18} /> },

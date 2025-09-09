@@ -38,7 +38,7 @@ export default function Dashboard() {
   return (
     <>
       {/* hero section */}
-      <div className="flex h-screen bg-D-blue">
+      <div className="flex h-screen bg-D-blue pt-20">
         {/* sidebar */}
         <div className="w-64 bg text-white flex flex-col p-4">
           <div className="mb-6 text-center">

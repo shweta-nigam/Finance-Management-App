@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthRoute } from "./authRoutes";
 import HomePage from "@/pages/HomePage";
-import Dashboard from "@/pages/auth/DashBoard";
+import Dashboard from "@/pages/dashboard/DashBoard";
 
 export function AppRoutes() {
   return (

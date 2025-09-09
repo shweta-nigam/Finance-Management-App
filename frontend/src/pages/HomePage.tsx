@@ -13,7 +13,7 @@ function HomePage() {
         <p className="text-lg max-w-xl mb-6">
           Single destination to track and manage your money
         </p>
-          <p className="text-gray-400">— all in one simple dashboard.</p>
+        <p className="text-gray-400">— all in one simple dashboard.</p>
         <button className="shadow-md  transition btn-D">Get Started</button>
       </div>
       {/* quote: 2nd section */}
@@ -31,13 +31,23 @@ function HomePage() {
       </div>
       {/* cards: 3rd section */}
       <FeatureCards />
-      
+
       {/* charts preview : 4th section*/}
-      
+
       <Charts />
       {/* testimonials: 5th section */}
-<Testimonials />
 
+{/* accordion */}
+
+      <Testimonials />
+      {/* final call to action :last section*/}
+      <div className="min-h-[50vh] flex flex-col items-center justify-center bg-D-blue text-white p-8">
+        <h2 className="text-4xl font-bold mb-4">Ready to Take Control?</h2>
+        <p className="mb-6 text-gray-300 max-w-md text-center">
+          Start tracking expenses and building smarter budgets today.
+        </p>
+        <button className="btn-D shadow-md">Create Free Account</button>
+      </div>
     </>
   );
 }

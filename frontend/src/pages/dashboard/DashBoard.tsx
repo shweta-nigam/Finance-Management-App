@@ -1,16 +1,40 @@
-import { Home, Wallet, BarChart, Target, Settings } from "lucide-react";
-import { useState } from "react";
+import { User, Wallet, BarChart, Target, Settings } from "lucide-react";
+import { Link, Outlet } from "react-router-dom";
 
 const menuItems = [
-  { id: "profile", label: "profile", icon: <Home size={18} /> },
-  { id: "budgets", label: "Budgets", icon: <Wallet size={18} /> },
-  { id: "reports", label: "Reports", icon: <BarChart size={18} /> },
-  { id: "goals", label: "Goals", icon: <Target size={18} /> },
-  { id: "settings", label: "Settings", icon: <Settings size={18} /> },
+  {
+    id: "profile",
+    label: "Profile",
+    icon: <User size={18} />,
+    path: "/dashboard/profile",
+  },
+  {
+    id: "budgets",
+    label: "Budgets",
+    icon: <Wallet size={18} />,
+    path: "/dashboard/budgets",
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    icon: <BarChart size={18} />,
+    path: "/dashboard/reports",
+  },
+  {
+    id: "goals",
+    label: "Goals",
+    icon: <Target size={18} />,
+    path: "/dashboard/goals",
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    icon: <Settings size={18} />,
+    path: "/dashboard/settings",
+  },
 ];
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState<string>();
   return (
     <>
       {/* hero section */}
@@ -31,17 +55,13 @@ export default function Dashboard() {
             <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.id}>
-                  <button
-                    onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center w-full px-3 py-2 rounded-lg transition ${
-                      activeTab === item.id
-                        ? "bg-indigo-600"
-                        : "hover:bg-indigo-500"
-                    }`}
+                  <Link
+                    to={item.path}
+                    className="flex items-center w-full px-3 py-2 rounded-lg hover:bg-indigo-500"
                   >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.label}
-                  </button>
+                  <span className="mr-2">{item.icon}</span>
+                  {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -49,21 +69,7 @@ export default function Dashboard() {
         </div>
         {/* Main Content Area */}
         <div className="flex-1 p-6 overflow-y-auto">
-          {activeTab === "user-info" && (
-            <h1 className="text-2xl font-bold">📊 User info Overview</h1>
-          )}
-          {activeTab === "budgets" && (
-            <h1 className="text-2xl font-bold">💰 Manage Budgets</h1>
-          )}
-          {activeTab === "reports" && (
-            <h1 className="text-2xl font-bold">📈 Reports & Analytics</h1>
-          )}
-          {activeTab === "goals" && (
-            <h1 className="text-2xl font-bold">🎯 Savings Goals</h1>
-          )}
-          {activeTab === "settings" && (
-            <h1 className="text-2xl font-bold">⚙️ Settings</h1>
-          )}
+          <Outlet />
         </div>
       </div>
     </>

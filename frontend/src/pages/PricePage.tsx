@@ -1,126 +1,81 @@
+import { motion } from "framer-motion";
+
 export default function PricePage() {
+  const plans = [
+    {
+      title: "Basic",
+      price: 199,
+      duration: "per month",
+      description: "Perfect for individuals getting started.",
+      features: ["Track expenses", "Set budgets", "Basic reports"],
+    },
+    {
+      title: "Pro",
+      price: 499,
+      duration: "per month",
+      description: "Great for growing users who need more insights.",
+      features: [
+        "Everything in Basic",
+        "Advanced analytics",
+        "Export reports",
+        "Email support",
+      ],
+      highlighted: true, // to make this one stand out
+    },
+    {
+      title: "Premium",
+      price: 999,
+      duration: "per month",
+      description: "Best for power users & professionals.",
+      features: [
+        "Everything in Pro",
+        "Unlimited accounts",
+        "Priority support",
+        "Custom insights",
+      ],
+    },
+  ];
+
   return (
-    <>
-      <div className="w-full max-h-screen ">
-        <div className="card w-96 bg-base-100 shadow-sm">
-          <div className="card-body">
-            <span className="badge badge-xs badge-warning">Most Popular</span>
-            <div className="flex justify-between">
-              <h2 className="text-3xl font-bold">Premium</h2>
-              <span className="text-xl">$29/mo</span>
+    <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-blue-600 flex flex-col items-center justify-center p-6">
+      <h1 className="text-4xl font-bold text-white mb-12">Choose Your Plan</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
+        {plans.map((plan, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            className={`rounded-2xl shadow-xl p-8 text-center bg-white transition-all duration-300 ${
+              plan.highlighted ? "border-4 border-yellow-400 shadow-2xl" : ""
+            }`}
+          >
+            <h2 className="text-2xl font-bold mb-2">{plan.title}</h2>
+            <p className="text-gray-600 mb-4">{plan.description}</p>
+            <div className="text-4xl font-extrabold text-indigo-600 mb-1">
+              ₹{plan.price}
             </div>
-            <ul className="mt-6 flex flex-col gap-2 text-xs">
-              <li>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 me-2 inline-block text-success"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span>High-resolution image generation</span>
-              </li>
-              <li>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 me-2 inline-block text-success"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span>Customizable style templates</span>
-              </li>
-              <li>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 me-2 inline-block text-success"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span>Batch processing capabilities</span>
-              </li>
-              <li>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 me-2 inline-block text-success"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span>AI-driven image enhancements</span>
-              </li>
-              <li className="opacity-50">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 me-2 inline-block text-base-content/50"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="line-through">Seamless cloud integration</span>
-              </li>
-              <li className="opacity-50">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-4 me-2 inline-block text-base-content/50"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="line-through">
-                  Real-time collaboration tools
-                </span>
-              </li>
+            <div className="text-gray-500 mb-6">{plan.duration}</div>
+            <ul className="text-left mb-6 space-y-2">
+              {plan.features.map((feature, idx) => (
+                <li key={idx} className="flex items-center gap-2">
+                  <span className="text-green-500">✔</span>
+                  <span>{feature}</span>
+                </li>
+              ))}
             </ul>
-            <div className="mt-6">
-              <button className="btn btn-primary btn-block">Subscribe</button>
-            </div>
-          </div>
-        </div>
+            <button
+              className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
+                plan.highlighted
+                  ? "bg-yellow-400 text-black hover:bg-yellow-500"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
+            >
+              Get Started
+            </button>
+          </motion.div>
+        ))}
       </div>
-    </>
+    </div>
   );
 }
+

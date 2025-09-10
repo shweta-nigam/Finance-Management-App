@@ -9,7 +9,10 @@ function App() {
   return (
     <BrowserRouter>
      <Navbar />
+     <div className='pt-30'>
+
      <AppRoutes />
+     </div>
      <Footer />
     </BrowserRouter>
   )

@@ -9,7 +9,7 @@ export default function DashboardRoutes() {
       <Route path="/dashboard" element={<Dashboard />}> {/*Absolute path */}
         <Route index element={<Profile />} />
         <Route path="profile" element={<Profile />} /> {/*relative path */}
-        <Route path="budgets" element={<BudgetPage />} />
+        <Route path="budget" element={<BudgetPage />} />
       </Route>
     </>
   );

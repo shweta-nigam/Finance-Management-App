@@ -12,7 +12,7 @@ const menuItems = [
     id: "budgets",
     label: "Budgets",
     icon: <Wallet size={18} />,
-    path: "/dashboard/budgets",
+    path: "/dashboard/budget",
   },
   {
     id: "reports",
@@ -38,7 +38,7 @@ export default function Dashboard() {
   return (
     <>
       {/* hero section */}
-      <div className="flex h-screen bg-D-blue pt-20">
+      <div className="flex h-screen bg-D-blue">
         {/* sidebar */}
         <div className="w-64 bg text-white flex flex-col p-4">
           <div className="mb-6 text-center">

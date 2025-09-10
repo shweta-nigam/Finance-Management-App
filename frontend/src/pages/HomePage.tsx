@@ -1,27 +1,35 @@
 import Charts from "@/components/homePage/Charts";
+import CoinAnimation from "@/components/homePage/CoinAnimation";
 import { FeatureCards } from "@/components/homePage/FeatureCards";
 import Testimonials from "@/components/homePage/Testimonials";
-import React from "react";
 
 function HomePage() {
   return (
     <>
-      <div className="w-full min-h-screen flex flex-col items-center justify-center text-center  p-6 text-white bg">
-        <h1 className="text-5xl font-bold mb-6">
-          FinEase - Manage Money Easily
-        </h1>
-        <p className="text-lg max-w-xl mb-6">
-          Single destination to track and manage your money
-        </p>
-        <p className="text-gray-400">— all in one simple dashboard.</p>
-        <button className="shadow-md  transition btn-D">Get Started</button>
+      <div className="w-full min-h-screen bg  ">
+        <div className="flex flex-col items-center justify-center text-center p-6 text-white pt-34">
+          <h1 className="text-5xl font-bold mb-6">
+            FinEase - Manage Money Easily
+          </h1>
+          <p className="text-lg max-w-xl mb-2">
+            Single destination to track and manage your money
+          </p>
+          <p className="text-gray-400">— all in one simple dashboard.</p>
+          <button className="shadow-md mt-6 transition btn-L-blue btn-L-blue:hover">
+            Get Started
+          </button>
+        </div>
+        {/* coins animation */}
+        <div>
+          <CoinAnimation />
+        </div>
       </div>
       {/* quote: 2nd section */}
       <div className=" min-h-screen flex flex-col items-center justify-center text-center p-6 text-cyan-400 bg-D-blue">
         <h1 className="text-6xl font-bold mb-4">Less Math, More Clarity</h1>
         <p className="text-lg max-w-xl mb-6">
           Track your expenses, set smart budgets, and achieve your financial
-          goals — all in one simple dashboard.
+          {/* goals — all in one simple dashboard. */}
         </p>
 
         {/* <p className="text-md  italic mb-8">
@@ -37,7 +45,7 @@ function HomePage() {
       <Charts />
       {/* testimonials: 5th section */}
 
-{/* accordion */}
+      {/* accordion */}
 
       <Testimonials />
       {/* final call to action :last section*/}

@@ -10,7 +10,7 @@ import {
 
 export function Navbar() {
   return (
-    <nav className="p-6 bg w-full fixed flex items-center justify-between">
+    <nav className="p-6 bg w-full fixed flex items-center justify-between z-999">
       {/* Left Section*/}
       <div className="flex items-center gap-4">
         <div>

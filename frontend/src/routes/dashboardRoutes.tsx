@@ -4,6 +4,7 @@ import Dashboard from "@/pages/dashboard/DashBoard";
 import BudgetPage from "@/pages/dashboard/Budget";
 import Overview from "@/pages/dashboard/Overview";
 import Report from "@/pages/dashboard/Report";
+import Goal from "@/pages/dashboard/Goal";
 
 export default function DashboardRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function DashboardRoutes() {
         <Route path="budget" element={<BudgetPage />} />
         <Route path="overview" element={<Overview />} />
         <Route path="report" element={<Report />} />
+        <Route path="goal" element={<Goal />} />
       </Route>
     </>
   );

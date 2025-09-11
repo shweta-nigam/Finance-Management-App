@@ -1,4 +1,4 @@
-import { User, Wallet, BarChart, Target, Settings } from "lucide-react";
+import { User, Wallet, BarChart, Target, Settings, BarChart3 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 
 const menuItems = [
@@ -9,20 +9,26 @@ const menuItems = [
     path: "/dashboard/profile",
   },
   {
-    id: "budgets",
-    label: "Budgets",
+    id: "overview",
+    label: "Overview",
+    icon: <BarChart3 size={18} />,
+    path: "/dashboard/overview",
+  },
+  {
+    id: "budget",
+    label: "Budget",
     icon: <Wallet size={18} />,
     path: "/dashboard/budget",
   },
   {
-    id: "reports",
-    label: "Reports",
+    id: "report",
+    label: "Report",
     icon: <BarChart size={18} />,
-    path: "/dashboard/reports",
+    path: "/dashboard/report",
   },
   {
-    id: "goals",
-    label: "Goals",
+    id: "goal",
+    label: "Goal",
     icon: <Target size={18} />,
     path: "/dashboard/goals",
   },
@@ -38,7 +44,7 @@ export default function Dashboard() {
   return (
     <>
       {/* hero section */}
-      <div className="flex h-screen bg-D-blue">
+      <div className="flex h-auto bg-D-blue">
         {/* sidebar */}
         <div className="w-64 bg text-white flex flex-col p-4">
           <div className="mb-6 text-center">
@@ -68,7 +74,7 @@ export default function Dashboard() {
           </nav>
         </div>
         {/* Main Content Area */}
-        <div className="flex-1 p-6 overflow-y-auto">
+        <div className="flex-1 p-6">
           <Outlet />
         </div>
       </div>

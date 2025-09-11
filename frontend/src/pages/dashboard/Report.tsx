@@ -15,12 +15,12 @@ function Report() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Reports</h1>
+        <h1 className="text-2xl font-bold text-white">Reports</h1>
 
         <select
           value={view}
           onChange={(e) => setView(e.target.value as "month" | "year" | "custom")}
-          className="border rounded-md px-3 py-2"
+          className="border rounded-md px-3 py-2 text-white "
         >
           <option value="month">This Month</option>
           <option value="year">This Year</option>

@@ -1,167 +1,123 @@
-"use client"; // if you’re in Next.js 13 app router
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import React, { useState } from "react";
 
-interface Budget {
-  id: string;
-  title: string;
-  description?: string;
-  amount: number;
-  date: string;
-  currency?: string;
-  isDeleted?: boolean;
+interface BudgetItem {
+  name: string;
+  budget: number;
+  actual: number;
 }
 
-export default function BudgetPage() {
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    amount: "",
-    date: "",
-  });
+function Budget() {
+  const [view, setView] = useState<"month" | "year" | "all">("month"); // restricts allowed values
+  const [editing, setEditing] = useState<boolean>(false);
 
-  // Fetch budgets
-  const fetchBudgets = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("/api/budgets"); // proxy to backend
-      setBudgets(res.data.data.budgets);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Strongly typed initial state
+  const [budgetData, setBudgetData] = useState<BudgetItem[]>([
+    { name: "Food", budget: 500, actual: 650 },
+    { name: "Rent", budget: 1200, actual: 1200 },
+    { name: "Travel", budget: 300, actual: 180 },
+    { name: "Entertainment", budget: 200, actual: 250 },
+    { name: "Savings", budget: 800, actual: 600 },
+  ]);
 
-  useEffect(() => {
-    fetchBudgets();
-  }, []);
-
-  // Create budget
-  const handleCreate = async () => {
-    try {
-      await axios.post("/api/budgets", {
-        ...form,
-        amount: parseFloat(form.amount),
-      });
-      setForm({ title: "", description: "", amount: "", date: "" });
-      setShowForm(false);
-      fetchBudgets();
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Failed to create budget");
-    }
-  };
-
-  // Delete budget
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this budget?")) return;
-    try {
-      await axios.delete(`/api/budgets/${id}`);
-      fetchBudgets();
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Failed to delete budget");
-    }
+  // Type-safe handler
+  const handleBudgetChange = (index: number, newValue: string | number): void => {
+    const updated = [...budgetData];
+    updated[index].budget = Number(newValue);
+    setBudgetData(updated);
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">💰 My Budgets</h1>
-        <button
-          className="btn btn-primary flex items-center gap-2"
-          onClick={() => setShowForm(true)}
+    <div className="p-6 space-y-6 text-white">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Budget Overview</h1>
+
+        <select
+          value={view}
+          onChange={(e) => setView(e.target.value as "month" | "year" | "all")}
+          className="border rounded-md px-3 py-2"
         >
-          <Plus size={18} /> Add Budget
-        </button>
+          <option value="month">This Month</option>
+          <option value="year">This Year</option>
+          <option value="all">All Years</option>
+        </select>
       </div>
 
-      {loading && <p>Loading budgets...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {/* Budgets List */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {budgets.map((b) => (
-          <div
-            key={b.id}
-            className="card bg-base-100 shadow-md p-4 flex flex-col justify-between"
+      {/* Budget Table */}
+      <div className="shadow-md border rounded-lg p-4">
+        <div className="flex justify-between mb-4">
+          <h2 className="font-semibold">Budget Breakdown</h2>
+          <button
+            onClick={() => setEditing(!editing)}
+            className="px-4 py-1 bg-blue-600 text-white rounded-md"
           >
-            <div>
-              <h2 className="text-xl font-semibold">{b.title}</h2>
-              <p className="text-gray-500">{b.description}</p>
-              <p className="mt-2 font-bold text-green-600">
-                {b.currency || "₹"} {b.amount}
-              </p>
-              <p className="text-sm text-gray-400">
-                {new Date(b.date).toLocaleDateString()}
-              </p>
-            </div>
-            <div className="flex gap-2 mt-4">
-              <button className="btn btn-sm btn-outline">
-                <Pencil size={16} /> Edit
-              </button>
-              <button
-                className="btn btn-sm btn-error text-white"
-                onClick={() => handleDelete(b.id)}
-              >
-                <Trash2 size={16} /> Delete
-              </button>
-            </div>
-          </div>
-        ))}
+            {editing ? "Save" : "Edit"}
+          </button>
+        </div>
+
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b">
+              <th className="p-2">Category</th>
+              <th className="p-2">Budget (₹)</th>
+              <th className="p-2">Actual (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {budgetData.map((item, index) => (
+              <tr key={index} className="border-b">
+                <td className="p-2">{item.name}</td>
+                <td className="p-2">
+                  {editing ? (
+                    <input
+                      type="number"
+                      value={item.budget}
+                      onChange={(e) => handleBudgetChange(index, e.target.value)}
+                      className="border rounded-md px-2 py-1 w-24"
+                    />
+                  ) : (
+                    <span>₹{item.budget}</span>
+                  )}
+                </td>
+                <td className="p-2 text-gray-600">₹{item.actual}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {/* Create Budget Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center">
-          <div className="card bg-base-100 shadow-lg w-96 p-6">
-            <h2 className="text-xl font-bold mb-4">Add New Budget</h2>
-            <input
-              type="text"
-              placeholder="Title"
-              className="input input-bordered w-full mb-3"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-            />
-            <textarea
-              placeholder="Description"
-              className="textarea textarea-bordered w-full mb-3"
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Amount"
-              className="input input-bordered w-full mb-3"
-              value={form.amount}
-              onChange={(e) => setForm({ ...form, amount: e.target.value })}
-            />
-            <input
-              type="date"
-              className="input input-bordered w-full mb-3"
-              value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                className="btn btn-ghost"
-                onClick={() => setShowForm(false)}
-              >
-                Cancel
-              </button>
-              <button className="btn btn-primary" onClick={handleCreate}>
-                Save
-              </button>
+      {/* Budget vs Actual Comparison */}
+      <div className="shadow-md border rounded-lg p-4 space-y-4">
+        <h2 className="font-semibold">Budget vs Actual Spending</h2>
+        {budgetData.map((item, index) => {
+          const percentage = Math.min((item.actual / item.budget) * 100, 100);
+          const overSpent = item.actual > item.budget;
+
+          return (
+            <div key={index} className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span>{item.name}</span>
+                <span className={overSpent ? "text-red-600" : "text-green-600"}>
+                  {item.actual > item.budget
+                    ? `Overspent by ₹${item.actual - item.budget}`
+                    : `Saved ₹${item.budget - item.actual}`}
+                </span>
+              </div>
+              {/* progress bar */}
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className={`h-2 rounded-full ${
+                    overSpent ? "bg-red-500" : "bg-green-500"
+                  }`}
+                  style={{ width: `${percentage}%` }}
+                ></div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }
+
+export default Budget;

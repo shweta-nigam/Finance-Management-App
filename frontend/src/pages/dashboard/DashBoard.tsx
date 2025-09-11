@@ -30,7 +30,7 @@ const menuItems = [
     id: "goal",
     label: "Goal",
     icon: <Target size={18} />,
-    path: "/dashboard/goals",
+    path: "/dashboard/goal",
   },
   {
     id: "settings",

@@ -5,7 +5,7 @@ export function useBudget() {
     const [response, setResponse] = useState<any>(null)
     const [error, setError] = useState<null | string>(null)
     const [chartData, setChartData] = useState<any[]>([])
-
+    const [month, setMonth] = useState<any>("")
 
 
     const createBudget = async (urlPath: string, data: any) => {
@@ -50,7 +50,9 @@ export function useBudget() {
         try {
             setError(null)
             const res = await axios.get(urlPath)
-            setResponse(res.data.data.budgets)
+            const budgets = res.data.data.budgets
+
+            setResponse(budgets)
 
             // convert to chart data
             const tranformed = res.data.data.budgets.map((b: any) => ({
@@ -58,6 +60,14 @@ export function useBudget() {
                 amount: b.amount,
             }))
             setChartData(tranformed)
+
+            if(budgets.length >0){
+                const monthName = new Date(budgets[0].date).toLocaleDateString("default", {
+                    month: "long"
+                }) 
+                setMonth(monthName)
+            }
+
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while fetching budgets details")
         }
@@ -82,7 +92,7 @@ export function useBudget() {
         }
     }
 
-    return { response, chartData, error, createBudget, updateBudget, getBudget, getAllBudgets, deleteBudget, deleteAllBudgets }
+    return { response, chartData, month, error, createBudget, updateBudget, getBudget, getAllBudgets, deleteBudget, deleteAllBudgets }
 }
 
 //Note:-

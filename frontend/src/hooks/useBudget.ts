@@ -2,7 +2,7 @@ import axios from "axios"
 import { useState } from "react"
 
 export function useBudget(){
-  const [response, setResponse] = useState("")
+  const [response, setResponse] = useState<any>(null)
   const [error, setError] = useState<null | string>(null)
 
 

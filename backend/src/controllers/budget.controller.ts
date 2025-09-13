@@ -104,7 +104,7 @@ export const getAllBudgets = async (req: any, res: any, next: NextFunction) => {
         }
 
         if (budgets.length === 0) {
-            return next(new ApiError(404, "No budget found."))
+            return res.status(200).json(new ApiResponse(200, { budgets: [] }, "No budgets yet"))
         }
 
         res.status(200).json(new ApiResponse(200, { budgets }, " Fetched Budget(s) successfully!"))

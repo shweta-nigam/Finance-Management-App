@@ -1,9 +1,9 @@
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { motion } from "framer-motion"
-import { Calendar, ArrowLeft, Plus } from "lucide-react"
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
+import { Calendar, ArrowLeft, Plus } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -11,84 +11,75 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-} from "recharts"
+} from "recharts";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useBudget } from "@/hooks/useBudget";
 
 type Category = {
-  name: string
-  spent: number
-  limit: number
-  perDay: number
-}
+  name: string;
+  spent: number | "";
+  limit: number | "";
+  perDay: number | "";
+};
 
-export default function(){
-const [activeTab, setActiveTab] = useState("categories")
-const [categories,setCategories] = useState<Category[]>([])
+export default function () {
+  const [activeTab, setActiveTab] = useState("categories");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const { response, chartData, month, getAllBudgets } = useBudget();
 
-  // Form state for adding category
-  const [newCategory, setNewCategory] = useState({
+  useEffect(() => {
+    getAllBudgets("/api/v1/budget/");
+  }, []);
+
+  const [newCategory, setNewCategory] = useState<Category>({
     name: "",
-    spent: 0,
-    limit: 0,
-    perDay: 0,
-  })
+    spent: "",
+    limit: "",
+    perDay: "",
+  });
 
-  // Example chart data
-  const chartData = [
-    { day: "01", amount: 200 },
-    { day: "05", amount: 800 },
-    { day: "10", amount: 1200 },
-    { day: "15", amount: 2500 },
-    { day: "20", amount: 3200 },
-    { day: "25", amount: 3800 },
-    { day: "30", amount: 4167 },
-  ]
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleAddCategory = () => {
-    if(!newCategory.name || !newCategory.limit) return
-    setCategories([...categories, {...newCategory}])
-    setNewCategory({name:"",spent:0,limit:0,perDay:0})
-  }
-  return(
-
-  <div className="min-h-screen w-full text-white bg">
-     <div className="flex items-center justify-between mb-6">
-        <ArrowLeft className="w-6 h-6 cursor-pointer hover:scale-110 transition" />
-        <Calendar className="w-6 h-6 cursor-pointer hover:scale-110 transition" />
+  return (
+    <div className="relative rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 p-6 mb-6 shadow-xl">
+      <div className="text-center mb-4">
+        <p className="text-4xl font-bold">
+          ${response?.[0]?.amount?.toLocalString() ?? "0.00"}
+        </p>
+        <p className="opacity-80">{month}</p>
+      </div>
+      {/* Chart */}
+      <div className="h-32 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData}>
+            <XAxis dataKey="day" stroke="#fff" />
+            <YAxis hide />
+            <Tooltip
+              contentStyle={{
+                background: "#1E293B",
+                borderRadius: "10px",
+                color: "#fff",
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="amount"
+              stroke="#fff"
+              strokeWidth={2.5}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
-      <motion.div initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-6"
-      >
-        <p className="text-4xl font-bold">4,167.56</p>
-        <p className="opacity-80">June</p>
-      </motion.div>
-
-<div className="h-40 w-full bg-white/10 rounded-2xl flex items-center justify-center mb-6 p-3 "
-> 
-<ResponsiveContainer width="100" height="100
-%">
-  <LineChart data={chartData}>
-    <XAxis dataKey="day" stroke="#fff" />
-    <YAxis stroke="#fff"/>
-    <Tooltip contentStyle={{background:"#222", borderRadius: "10px", color:"#fff"}}/>
-    <Line type="monotone" dataKey="amount" stroke="#00d4ff" strokeWidth={3} dot={false} />
-  </LineChart>
-
-</ResponsiveContainer>
-  </div>
-
-  
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="flex justify-center gap-6 bg-transparent border-b border-white/20">
@@ -109,43 +100,92 @@ const [categories,setCategories] = useState<Category[]>([])
         {/* Categories Tab */}
         <TabsContent value="categories" className="mt-6 space-y-4">
           {/* Add Category Button */}
-          <Dialog>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button
-                className="w-full bg-blue-500 hover:bg-blue-600 rounded-xl shadow-md flex items-center gap-2"
-              >
+              <Button className="w-full bg-blue-500 hover:bg-blue-600 rounded-xl shadow-md flex items-center gap-2">
                 <Plus className="w-5 h-5" /> Add Category
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-white text-black rounded-xl">
+
+            <DialogContent className="bg-white text-black rounded-xl z-1000">
               <DialogHeader>
                 <DialogTitle>Add New Category</DialogTitle>
               </DialogHeader>
+
               <div className="flex flex-col gap-3 mt-4">
-                <Input
-                  placeholder="Category Name"
-                  value={newCategory.name}
-                  onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                />
-                <Input
-                  type="number"
-                  placeholder="Spent Amount"
-                  value={newCategory.spent}
-                  onChange={(e) => setNewCategory({ ...newCategory, spent: Number(e.target.value) })}
-                />
-                <Input
-                  type="number"
-                  placeholder="Limit"
-                  value={newCategory.limit}
-                  onChange={(e) => setNewCategory({ ...newCategory, limit: Number(e.target.value) })}
-                />
-                <Input
-                  type="number"
-                  placeholder="Per Day"
-                  value={newCategory.perDay}
-                  onChange={(e) => setNewCategory({ ...newCategory, perDay: Number(e.target.value) })}
-                />
-                <Button onClick={handleAddCategory} className="bg-blue-600 text-white">
+                <div>
+                  <label className="text-sm font-medium">Category Name</label>
+                  <Input
+                    placeholder="e.g. Food"
+                    value={newCategory.name}
+                    onChange={(e) =>
+                      setNewCategory({ ...newCategory, name: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Spent Amount</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={newCategory.spent === "" ? "" : newCategory.spent}
+                    onChange={(e) =>
+                      setNewCategory({
+                        ...newCategory,
+                        spent:
+                          e.target.value === "" ? "" : Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Limit</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={newCategory.limit === "" ? "" : newCategory.limit}
+                    onChange={(e) =>
+                      setNewCategory({
+                        ...newCategory,
+                        limit:
+                          e.target.value === "" ? "" : Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Per Day</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={newCategory.perDay === "" ? "" : newCategory.perDay}
+                    onChange={(e) =>
+                      setNewCategory({
+                        ...newCategory,
+                        perDay:
+                          e.target.value === "" ? "" : Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <Button
+                  onClick={() => {
+                    if (!newCategory.name || !newCategory.limit) return;
+                    setCategories([...categories, { ...newCategory }]);
+                    setNewCategory({
+                      name: "",
+                      spent: "",
+                      limit: "",
+                      perDay: "",
+                    });
+                    setDialogOpen(false);
+                  }}
+                  className="bg-blue-600 text-white"
+                >
                   Save
                 </Button>
               </div>
@@ -154,62 +194,54 @@ const [categories,setCategories] = useState<Category[]>([])
 
           {/* Render Categories */}
           {categories.length === 0 ? (
-            <p className="text-center opacity-80">No categories yet. Add one!</p>
+            <p className="text-center opacity-80">
+              No categories yet. Add one!
+            </p>
           ) : (
-            categories.map((cat, i) => {
-              const progress = (cat.spent / cat.limit) * 100
+            categories.map((cat:any, i) => {
+              const progress = (cat.spent / cat.limit) * 100;
               const status =
                 cat.spent < cat.limit
                   ? { msg: "You are still on track", color: "text-green-400" }
-                  : { msg: "You are exceeding your budget", color: "text-red-400" }
+                  : {
+                      msg: "You are exceeding your budget",
+                      color: "text-red-400",
+                    };
 
               return (
-                <Card key={i} className="bg-white/10 border-none rounded-2xl shadow-lg">
+                <Card
+                  key={i}
+                  className="bg-white/10 border-none rounded-2xl shadow-lg"
+                >
                   <CardContent className="p-4">
                     <div className="mb-2">
                       <p className="font-semibold">{cat.name}</p>
-                      <p className="text-xs opacity-70">${cat.perDay} per day</p>
+                      <p className="text-xs opacity-70">
+                        ${cat.perDay} per day
+                      </p>
                     </div>
                     <Progress value={progress} className="mb-2" />
                     <div className="flex justify-between text-sm">
                       <p className="text-pink-400">${cat.spent.toFixed(2)}</p>
                       <p className="opacity-70">${cat.limit.toFixed(2)}</p>
                     </div>
-                    <p className={`text-xs mt-1 ${status.color}`}>{status.msg}</p>
+                    <p className={`text-xs mt-1 ${status.color}`}>
+                      {status.msg}
+                    </p>
                   </CardContent>
                 </Card>
-              )
+              );
             })
           )}
         </TabsContent>
 
         {/* Merchants Tab */}
         <TabsContent value="merchants" className="mt-6">
-          <p className="opacity-80 text-center">[ Merchants Data Coming Soon ]</p>
+          <p className="opacity-80 text-center">
+            [ Merchants Data Coming Soon ]
+          </p>
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

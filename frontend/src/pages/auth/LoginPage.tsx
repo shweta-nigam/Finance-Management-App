@@ -29,6 +29,7 @@ export function LoginPage() {
   }
 
   return (
+    <div className="bg flex flex-col items-center p-6">
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>Login to your account</CardTitle>
@@ -93,5 +94,6 @@ export function LoginPage() {
         </Button>
       </CardFooter>
     </Card>
+    </div>
   );
 }

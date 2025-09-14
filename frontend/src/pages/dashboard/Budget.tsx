@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,7 @@ export default function () {
     <div className="relative rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 p-6 mb-6 shadow-xl">
       <div className="text-center mb-4">
         <p className="text-4xl font-bold">
-          ${response?.[0]?.amount?.toLocalString() ?? "0.00"}
+          ${response?.[0]?.amount?.toLocaleString() ?? "0.00"}
         </p>
         <p className="opacity-80">{month}</p>
       </div>
@@ -107,12 +108,15 @@ export default function () {
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="bg-white text-black rounded-xl z-1000">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Category</DialogTitle>
+                <DialogDescription>
+                  Fill out the details to create a new budget category.
+                </DialogDescription>
               </DialogHeader>
 
-              <div className="flex flex-col gap-3 mt-4">
+              <div className="flex flex-col gap-3 mt-4 z-1000">
                 <div>
                   <label className="text-sm font-medium">Category Name</label>
                   <Input
@@ -198,7 +202,7 @@ export default function () {
               No categories yet. Add one!
             </p>
           ) : (
-            categories.map((cat:any, i) => {
+            categories.map((cat: any, i) => {
               const progress = (cat.spent / cat.limit) * 100;
               const status =
                 cat.spent < cat.limit

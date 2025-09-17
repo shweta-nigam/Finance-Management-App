@@ -36,8 +36,10 @@ export function useSignUp(){
       const res = await axios.post(urlPath, data)
       setResponse(res.data)
       setSigningUp(false)
+      return response.data;
     } catch (error:any) {
       setError(error.message || "Something went wrong")
+      return null;
     } finally{
        setSigningUp(false)
     }

@@ -27,7 +27,7 @@ const cardData: Card[] = [
     icon: Wallet,
     borderColor: "border-red-400",
     textColor: "text-red-500",
-    img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
+    img: "/assets/img1.webp",
   },
   {
     title: "Manage Budget",
@@ -37,7 +37,7 @@ const cardData: Card[] = [
     icon: Settings,
     borderColor: "border-yellow-400",
     textColor: "text-yellow-500",
-    img: "https://picsum.photos/id/1015/400/250", // different image
+    img: "/assets/img2.webp", // different image
   },
   {
     title: "Check Charts",
@@ -47,7 +47,7 @@ const cardData: Card[] = [
     icon: PieChart,
     borderColor: "border-blue-400",
     textColor: "text-blue-500",
-    img: "https://picsum.photos/id/1025/400/250",
+    img: "/assets/img3-1.webp",
   },
   {
     title: "Analyze Reports",
@@ -57,7 +57,7 @@ const cardData: Card[] = [
     icon: BarChart3,
     borderColor: "border-green-400",
     textColor: "text-green-500",
-    img: "https://picsum.photos/id/1035/400/250",
+    img: "/assets/img4.webp",
   },
   {
     title: "Set Goals",
@@ -67,7 +67,7 @@ const cardData: Card[] = [
     icon: Target,
     borderColor: "border-purple-400",
     textColor: "text-purple-500",
-    img: "https://picsum.photos/id/1045/400/250",
+    img: "/assets/img5.webp",
   },
   {
     title: "View Insights",
@@ -77,7 +77,7 @@ const cardData: Card[] = [
     icon: Lightbulb,
     borderColor: "border-indigo-400",
     textColor: "text-indigo-500",
-    img: "https://picsum.photos/id/1055/400/250",
+    img: "/assets/img6.webp",
   },
 ];
 
@@ -93,7 +93,7 @@ export function FeatureCards() {
             className={`card w-80 bg-base-100 shadow-lg border-t-4 ${card.borderColor} hover:shadow-xl hover:scale-105 transform transition-transform duration-300 p-5`}
           >
             <figure className="px-10 pt-10">
-              <img src={card.img} alt={card.title} className="rounded-xl" />
+              <img src={card.img} alt={card.title} className="rounded-xl text-white" />
             </figure>
             <div className="card-body items-center cursor-pointer">
               <Icon className={`w-12 h-12 ${card.textColor} mb-3`} />

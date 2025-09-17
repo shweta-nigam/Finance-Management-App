@@ -61,7 +61,7 @@
   padding-block: calc(var(--spacing) * 3);
   /* padding: 10px; */
   border-radius: var(--radius-2xl);
-  border: 2px solid #dbdde4;
+  border: 1px solid #dbdde4;
   background: #191baa;
   transition: all 0.1s linear;
  box-shadow: 0 0.2em 0.65em #2125eb;
@@ -91,3 +91,10 @@
   border: 2px solid #050c2b;
   font-weight: bold;
 }
+
+/* text color */
+
+.t-L{
+  color:rgb(29, 209, 245) ;
+}
+

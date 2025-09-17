@@ -7,7 +7,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
-import { useAuth } from "@/context/AuthContext";
+import useAuth from "@/context/AuthContext";
 
 export function Navbar() {
   const { user, logout } = useAuth();

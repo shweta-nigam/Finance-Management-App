@@ -46,7 +46,7 @@ export default function Charts() {
     <div className="min-h-[70vh] flex items-center justify-center p-6 bg text-white">
       {/* left side text with animation */}
       <motion.div
-        className="flex-1 pr-6 text-center"
+        className="flex flex-col items-center pr-6 text-center"
         initial={{ opacity: 0, x: -50 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}

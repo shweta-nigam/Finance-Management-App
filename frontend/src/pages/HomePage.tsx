@@ -15,28 +15,52 @@ function HomePage() {
             Single destination to track and manage your money
           </p>
           <p className="text-gray-400">— all in one simple dashboard.</p>
-          <button className="shadow-md mt-6 transition btn-L-blue btn-L-blue:hover">
+          <button className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover">
             Get Started
           </button>
         </div>
+
         {/* coins animation */}
         <div>
           <CoinAnimation />
         </div>
       </div>
-      {/* quote: 2nd section */}
-      <div className=" min-h-screen flex flex-col items-center justify-center text-center p-6 text-cyan-400 bg-D-blue">
-        <h1 className="text-6xl font-bold mb-4">Less Math, More Clarity</h1>
-        <p className="text-lg max-w-xl mb-6">
-          Track your expenses, set smart budgets, and achieve your financial
-          {/* goals — all in one simple dashboard. */}
-        </p>
 
-        {/* <p className="text-md  italic mb-8">
-        “A budget is telling your money where to go instead of wondering where it went.”
-      </p> */}
+      {/* quote: 2nd section */}
+      <div className="relative min-h-screen flex flex-col items-center justify-center text-center p-6 t-L bg-D-blue overflow-hidden">
+        <h1 className="text-6xl font-bold mb-4">Less Math, More Clarity</h1>
+        <p className="text-lg max-w-xl">
+          Track your expenses, set smart budgets, and achieve your financial
+          goals
+        </p>
+        <p className="italic mb-8 text-cyan-200">
+          “A budget is telling your money where to go instead of wondering where
+          it went.”
+        </p>
         <p>links and icons here</p>
+
+        <div className="mt-12 flex flex-col md:flex-row gap-6">
+          <div className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm">
+            <h2 className="text-xl font-semibold mb-2">📱 FinEase App</h2>
+            <p className="text-sm">
+              Download our Android app and manage your finances on the go.
+            </p>
+          </div>
+          <div className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm">
+            <h2 className="text-xl font-semibold mb-2">⬇️ 50K+ Downloads</h2>
+            <p className="text-sm">
+              Trusted by thousands of users across India.
+            </p>
+          </div>
+          <div className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm">
+            <h2 className="text-xl font-semibold mb-2">⭐ 4.8/5 Rating</h2>
+            <p className="text-sm">
+              Loved by our community for simplicity and clarity.
+            </p>
+          </div>
+        </div>
       </div>
+
       {/* cards: 3rd section */}
       <FeatureCards />
 

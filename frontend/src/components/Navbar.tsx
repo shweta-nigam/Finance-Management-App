@@ -1,14 +1,17 @@
 "use client";
 import { Link } from "react-router-dom";
-import { Moon, Sun } from "lucide-react"; 
+import { Moon, Sun } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
+import { useAuth } from "@/context/AuthContext";
 
 export function Navbar() {
+  const { user, logout } = useAuth();
+
   return (
     <nav className="h-30 p-6 bg w-full fixed flex items-center justify-between z-99">
       {/* Left Section*/}
@@ -33,7 +36,10 @@ export function Navbar() {
           ].map((item) => (
             <NavigationMenuItem key={item.to}>
               <NavigationMenuLink asChild>
-                <Link to={item.to} className="btn-D-blue btn-D-blue:hover btn-D-blue span">
+                <Link
+                  to={item.to}
+                  className="btn-D-blue btn-D-blue:hover btn-D-blue span"
+                >
                   {item.label}
                 </Link>
               </NavigationMenuLink>
@@ -52,11 +58,28 @@ export function Navbar() {
           <Sun className="h-5 w-5 hidden dark:block text-yellow-400" />
         </button>
 
-        <img
-          src="/profile.jpg"
-          alt="User Profile"
-          className="w-10 h-10 rounded-full border-2 border-white object-cover"
-        />
+        {user ? (
+          <div className="flex items-center gap-3">
+            <img
+              src={user.avatar}
+              alt={user.name}
+              className="w-10 h-10 rounded-full border-2 border-white object-cover"
+            />
+            <button
+              onClick={logout}
+              className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="btn-D-blue btn-D-blue:hover btn-D-blue span"
+          >
+            Login
+          </Link>
+        )}
       </div>
     </nav>
   );

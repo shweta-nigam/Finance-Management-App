@@ -73,7 +73,7 @@ export function Navbar() {
             />
             <button
               onClick={logout}
-              className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+              className="px-5 py-3 rounded bg-blue-500 text-white hover:bg-blue-600"
             >
               Logout
             </button>
@@ -120,7 +120,7 @@ export function Navbar() {
                 logout();
                 setMobileOpen(false);
               }}
-              className="mt-2 px-3 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+              className="mt-2 px-3 py-2 rounded bg-blue-400 text-white hover:bg-blue-500"
             >
               Logout
             </button>

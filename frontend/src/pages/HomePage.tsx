@@ -111,9 +111,12 @@ function HomePage() {
         <p className="mb-6 text-gray-300 max-w-md text-center">
           Start tracking expenses and building smarter budgets today.
         </p>
-        <button className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover">
+        <Link
+          to="/signup"
+          className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover"
+        >
           Create Free Account
-        </button>
+        </Link>
       </div>
     </>
   );

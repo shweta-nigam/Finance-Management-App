@@ -5,7 +5,7 @@ export default function Profile() {
   const { user } = useAuth();
 
   if (!user) {
-    return <p>Please log in to view your profile</p>;
+    return <p className="text-xl text-white">Please log in to view your profile</p>;
   }
 
   return (

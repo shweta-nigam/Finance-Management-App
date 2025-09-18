@@ -1,6 +1,13 @@
+import useAuth from "@/context/AuthContext";
 import { Edit, Lock, Shield } from "lucide-react";
 
 export default function Profile() {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <p>Please log in to view your profile</p>;
+  }
+
   return (
     <div className="max-w-5xl mx-auto p-6 text-white">
       {/* Profile Header */}
@@ -12,9 +19,9 @@ export default function Profile() {
             className="w-32 h-32 rounded-full border-4 border-white shadow-md"
           />
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-3xl font-bold">John Doe</h2>
-            <p className="text-gray-200">john.doe@example.com</p>
-            <p className="text-gray-300 mt-1">📍 New Delhi, India</p>
+            <h2 className="text-3xl font-bold">{user.name} </h2>
+            <p className="text-gray-200">{user.email}</p>
+            {/* <p className="text-gray-300 mt-1">{user.address}</p>  ------------> add address in backend */}
           </div>
           <button className="btn shadow-md mt-6 transition btn-L-blue btn-L-blue:hover">
             <Edit className="w-4 h-4 mr-2" /> Edit Profile
@@ -30,19 +37,19 @@ export default function Profile() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-gray-500 font-medium">Full Name</p>
-            <p className="text-lg font-semibold ">John Doe</p>
+            <p className="text-lg font-semibold ">{user.name}</p>
           </div>
           <div>
             <p className="text-gray-500 font-medium">Email</p>
-            <p className="text-lg font-semibold ">john.doe@example.com</p>
+            <p className="text-lg font-semibold ">{user.email}</p>
           </div>
           <div>
             <p className="text-gray-500 font-medium">username</p>
-            <p className="text-lg font-semibold "> Jantyi</p>
+            {/* <p className="text-lg font-semibold ">{user.username}</p> */}
           </div>
           <div>
             <p className="text-gray-500 font-medium">Account Balance</p>
-            <p className="text-lg font-bold text-green-600">₹45,200</p>
+            {/* <p className="text-lg font-bold text-green-600">{user.balance}</p> */}
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const teams = [
   {
     id: 1,
@@ -109,7 +111,12 @@ const AboutPage = () => {
           Take control of your finances with ease. Start tracking your expenses
           and building smarter budgets now.
         </p>
-        <button className="btn-L-blue shadow-md">Get Started</button>
+        <Link
+          to="/login"
+          className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover"
+        >
+          Get Started
+        </Link>
       </div>
     </div>
   );

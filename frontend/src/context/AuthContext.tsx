@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type User = {
   id: string;
@@ -19,6 +19,13 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+
+  useEffect(()=>{
+  const storedUser = localStorage.getItem("user");
+  if(storedUser){
+    setUser(JSON.parse(storedUser));
+  }
+  },[])
 
   const login = (userData: User) => {
     setUser(userData);

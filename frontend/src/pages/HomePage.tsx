@@ -41,6 +41,7 @@ function HomePage() {
           “A budget is telling your money where to go instead of wondering where
           it went.”
         </p>
+        <Link to="/under-construction" className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover" >Get App →</Link>
 
         <div className="mt-12 flex flex-col md:flex-row gap-6">
           <div className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm">

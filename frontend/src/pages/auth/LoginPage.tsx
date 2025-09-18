@@ -28,7 +28,7 @@ export function LoginPage() {
     const res = await login("/api/v1/auth/login", { email, password });
 
     const user = res?.data?.user;
-    const token = res?.data?.accessToken
+    const token = res?.data?.accessToken;
 
     if (user && token) {
       setAuthUser({
@@ -104,16 +104,17 @@ export function LoginPage() {
               <p className="text-green-600"> Login successful</p>
             )}
             {error && <p className="text-red-500"> Error: {error}</p>}
+
+            <CardFooter className="flex-col gap-2">
+              <Button type="submit" className="w-full">
+                {loading ? "Logging in..." : "Login"}
+              </Button>
+              <Button variant="outline" className="w-full">
+                Login with Google
+              </Button>
+            </CardFooter>
           </form>
         </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" >
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );

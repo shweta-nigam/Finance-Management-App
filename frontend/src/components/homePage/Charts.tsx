@@ -16,6 +16,7 @@ import {
   Cell,
 } from "recharts";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const data = [
   { month: "Jan", expense: 400, income: 2400 },
@@ -44,7 +45,6 @@ export default function Charts() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-6 bg text-white">
-      {/* left side text with animation */}
       <motion.div
         className="flex flex-col items-center pr-6 text-center"
         initial={{ opacity: 0, x: -50 }}
@@ -57,9 +57,14 @@ export default function Charts() {
           Get interactive insights with charts and reports to understand your
           spending patterns.
         </p>
+        <Link
+          to="/budget"
+          className="mt-6 transition btn-D-blue btn-D-blue:hover"
+        >
+          See charts
+        </Link>
       </motion.div>
 
-      {/* right side 4 grid charts with staggered animations */}
       <div className="flex-1 grid grid-cols-2 gap-4">
         {[
           <LineChart data={data}>
@@ -148,5 +153,3 @@ export default function Charts() {
     </div>
   );
 }
-
-

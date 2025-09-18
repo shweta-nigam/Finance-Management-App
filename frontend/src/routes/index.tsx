@@ -6,6 +6,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
 import PricePage from "@/pages/PricePage";
+import UnderConstructionAppPage from "@/pages/UnderConstructionAppPage";
 
 export function AppRoutes() {
   return (
@@ -15,6 +16,7 @@ export function AppRoutes() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/price" element={<PricePage />} />
+        <Route path="/under-construction" element={<UnderConstructionAppPage />} />
         {AuthRoute()}
         {DashboardRoutes()}
         <Route path="*" element={<NotFoundPage />} />

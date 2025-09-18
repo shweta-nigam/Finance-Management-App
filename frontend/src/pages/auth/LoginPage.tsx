@@ -15,7 +15,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "@/context/AuthContext.tsx";
 
-
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,13 +27,18 @@ export function LoginPage() {
     e.preventDefault();
     const res = await login("/api/v1/auth/login", { email, password });
 
-    if (res?.user) {
+    const user = res?.data?.user;
+    const token = res?.data?.accessToken
+
+    if (user && token) {
       setAuthUser({
         id: res.user.id,
         name: res.user.name,
         email: res.user.email,
         avatar: res.user.avatar || "/profile.jpg",
       });
+
+      localStorage.setItem("token", res.accessToken);
       navigate("/");
     }
   };
@@ -103,7 +107,7 @@ export function LoginPage() {
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" onClick={handleSubmit}>
+          <Button type="submit" className="w-full" >
             {loading ? "Logging in..." : "Login"}
           </Button>
           <Button variant="outline" className="w-full">

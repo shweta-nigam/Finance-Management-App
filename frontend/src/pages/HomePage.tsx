@@ -98,20 +98,22 @@ function HomePage() {
       <FeatureCards />
 
       {/* charts preview : 4th section*/}
-
       <Charts />
-      {/* testimonials: 5th section */}
 
       {/* accordion */}
 
+      {/* testimonials: 5th section */}
       <Testimonials />
+
       {/* final call to action :last section*/}
       <div className="min-h-[50vh] flex flex-col items-center justify-center bg-D-blue text-white p-8">
         <h2 className="text-4xl font-bold mb-4">Ready to Take Control?</h2>
         <p className="mb-6 text-gray-300 max-w-md text-center">
           Start tracking expenses and building smarter budgets today.
         </p>
-        <button className="btn-D shadow-md">Create Free Account</button>
+        <button className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover">
+          Create Free Account
+        </button>
       </div>
     </>
   );

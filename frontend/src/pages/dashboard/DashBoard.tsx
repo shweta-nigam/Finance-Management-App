@@ -44,7 +44,7 @@ export default function Dashboard() {
   return (
     <>
       {/* hero section */}
-      <div className="flex h-auto bg-D-blue">
+      <div className="flex h-auto bg">
         {/* sidebar */}
         <div className="w-64 bg text-white flex flex-col p-4">
           <div className="mb-6 text-center">
@@ -73,7 +73,7 @@ export default function Dashboard() {
             </ul>
           </nav>
         </div>
-        {/* Main Content Area */}
+        {/*Content Area */}
         <div className="flex-1 p-6">
           <Outlet />
         </div>

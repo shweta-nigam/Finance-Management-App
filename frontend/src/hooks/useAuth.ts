@@ -15,21 +15,24 @@ export function useLogin() {
       console.log("response---", response);
       setResponse(response.data);
       setLoading(false);
+
+      return response.data
     } catch (error: any) {
       setError(error.message || "Something went wrong");
       setLoading(false);
+      throw error
     }
   }
 
-  return [login, response, error, loading]
+  return [login, response, error, loading] as const
 }
 
-export function useSignUp(){
+export function useSignUp() {
   const [signingUp, setSigningUp] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [response, setResponse] = useState<any>(null)
 
-  const signup = async (urlPath:string, data:any) =>{
+  const signup = async (urlPath: string, data: any) => {
     try {
       setError(null)
       setSigningUp(true)
@@ -37,11 +40,11 @@ export function useSignUp(){
       setResponse(res.data)
       setSigningUp(false)
       return response.data;
-    } catch (error:any) {
+    } catch (error: any) {
       setError(error.message || "Something went wrong")
       return null;
-    } finally{
-       setSigningUp(false)
+    } finally {
+      setSigningUp(false)
     }
   }
   return [signup, signingUp, error, response]

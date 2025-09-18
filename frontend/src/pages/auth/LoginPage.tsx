@@ -24,6 +24,8 @@ export function LoginPage() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("handleSubmit called");
+
     e.preventDefault();
     const res = await login("/api/v1/auth/login", { email, password });
 
@@ -31,14 +33,16 @@ export function LoginPage() {
     const token = res?.data?.accessToken;
 
     if (user && token) {
+      console.log("User found:----", user);
       setAuthUser({
-        id: res.user.id,
-        name: res.user.name,
-        email: res.user.email,
-        avatar: res.user.avatar || "/profile.jpg",
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar || "/profile.jpg",
       });
 
-      localStorage.setItem("token", res.accessToken);
+      localStorage.setItem("token", token);
+      console.log("Navigating now...");
       navigate("/");
     }
   };

@@ -37,7 +37,7 @@ const cardData: Card[] = [
     icon: Settings,
     borderColor: "border-yellow-400",
     textColor: "text-yellow-500",
-    img: "/assets/img2.webp", // different image
+    img: "/assets/img2.webp",
   },
   {
     title: "Check Charts",
@@ -93,11 +93,26 @@ export function FeatureCards() {
             className={`card w-80 bg-base-100 shadow-lg border-t-4 ${card.borderColor} hover:shadow-xl hover:scale-105 transform transition-transform duration-300 p-5`}
           >
             <figure className="px-10 pt-10">
-              <img src={card.img} alt={card.title} className="rounded-xl text-white" />
+              <img
+                src={card.img}
+                alt={card.title}
+                className="rounded-xl text-white"
+              />
             </figure>
             <div className="card-body items-center cursor-pointer">
               <Icon className={`w-12 h-12 ${card.textColor} mb-3`} />
-              <h2 className={`card-title ${card.textColor}`}>{card.title}</h2>
+
+              <div className=" flex flex-col items-center">
+                <h2 className={`card-title ${card.textColor}`}>{card.title}</h2>
+                <div className="relative flex justify-center items-center w-1/2 my-3">
+                  <div
+                    className={`flex-grow h-0.5 bg-current ${card.textColor}`}
+                  ></div>
+                  <div
+                    className={`w-0 h-0 border-t-8 border-b-8 border-l-8 border-t-transparent border-b-transparent border-l-current ${card.textColor}`}
+                  ></div>
+                </div>
+              </div>
               <p className="text-white">{card.description}</p>
             </div>
           </Link>

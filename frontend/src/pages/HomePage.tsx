@@ -2,6 +2,7 @@ import Charts from "@/components/homePage/Charts";
 import CoinAnimation from "@/components/homePage/CoinAnimation";
 import { FeatureCards } from "@/components/homePage/FeatureCards";
 import Testimonials from "@/components/homePage/Testimonials";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 function HomePage() {
@@ -41,27 +42,55 @@ function HomePage() {
           “A budget is telling your money where to go instead of wondering where
           it went.”
         </p>
-        <Link to="/under-construction" className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover" >Get App →</Link>
+        <Link
+          to="/under-construction"
+          className="shadow-md mt-6 transition btn-D-blue btn-D-blue:hover"
+        >
+          Get App →
+        </Link>
 
         <div className="mt-12 flex flex-col md:flex-row gap-6">
-          <div className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm">
+          {/* Card 1 */}
+          <motion.div
+            className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            whileHover={{ scale: 1.05 }}
+          >
             <h2 className="text-xl font-semibold mb-2">📱 FinEase App</h2>
             <p className="text-sm">
               Download our Android app and manage your finances on the go.
             </p>
-          </div>
-          <div className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm">
+          </motion.div>
+
+          {/* Card 2 */}
+          <motion.div
+            className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            whileHover={{ scale: 1.05 }}
+          >
             <h2 className="text-xl font-semibold mb-2">⬇️ 50K+ Downloads</h2>
             <p className="text-sm">
               Trusted by thousands of users across India.
             </p>
-          </div>
-          <div className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm">
+          </motion.div>
+
+          {/* Card 3 */}
+          <motion.div
+            className="bg-white/10 border border-white/20 rounded-2xl p-6 w-72 text-white backdrop-blur-sm"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+          >
             <h2 className="text-xl font-semibold mb-2">⭐ 4.8/5 Rating</h2>
             <p className="text-sm">
               Loved by our community for simplicity and clarity.
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
 

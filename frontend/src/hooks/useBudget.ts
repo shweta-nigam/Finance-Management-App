@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useState } from "react"
 
-export function useBudget() {
+export function useBudgetApi() {
     const [response, setResponse] = useState<any>(null)
     const [error, setError] = useState<null | string>(null)
     const [chartData, setChartData] = useState<any[]>([])
@@ -55,11 +55,11 @@ export function useBudget() {
             setResponse(budgets)
 
             // convert to chart data
-            const tranformed = res.data.data.budgets.map((b: any) => ({
+            const transformed = res.data.data.budgets.map((b: any) => ({
                 day: new Date(b.date).getDate(),
                 amount: b.amount,
             }))
-            setChartData(tranformed)
+            setChartData(transformed)
 
             if(budgets.length >0){
                 const monthName = new Date(budgets[0].date).toLocaleDateString("default", {

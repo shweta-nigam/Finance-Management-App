@@ -32,7 +32,7 @@ export function useBudget() {
             const res = await axios.get(urlPath)
             setResponse(res.data.data)
 
-            // tranform to chart data
+            // transform to chart data
             if (res.data.data?.date && res.data.data?.amount) {
                 setChartData([
                     {

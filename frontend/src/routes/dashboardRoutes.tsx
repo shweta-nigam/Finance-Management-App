@@ -6,11 +6,21 @@ import Overview from "@/pages/dashboard/Overview";
 import Report from "@/pages/dashboard/Report";
 import Goal from "@/pages/dashboard/Goal";
 import Settings from "@/pages/dashboard/Settings";
+import { BudgetProvider } from "@/context/BudgetContext";
 
 export default function DashboardRoutes() {
   return (
     <>
-      <Route path="/dashboard" element={<Dashboard />}> {/*Absolute path */}
+      <Route
+        path="/dashboard"
+        element={
+          <BudgetProvider>
+            <Dashboard />
+          </BudgetProvider>
+        }
+      >
+        {" "}
+        {/*Absolute path */}
         <Route index element={<Profile />} />
         <Route path="profile" element={<Profile />} /> {/*relative path */}
         <Route path="budget" element={<BudgetPage />} />

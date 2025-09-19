@@ -22,7 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useBudget } from "@/hooks/useBudget";
+import { useBudgetApi } from "@/hooks/useBudget";
+import useBudget from "@/context/BudgetContext";
 
 type Category = {
   name: string;
@@ -34,11 +35,20 @@ type Category = {
 export default function () {
   const [activeTab, setActiveTab] = useState("categories");
   const [categories, setCategories] = useState<Category[]>([]);
-  const { response, chartData, month, getAllBudgets } = useBudget();
+  const { response, chartData, month, getAllBudgets } = useBudgetApi();
+  const { budget, addBudget } = useBudget();
 
+  // fetch data once on mount
   useEffect(() => {
     getAllBudgets("/api/v1/budget/");
   }, []);
+
+  // when response changes , sync with context
+useEffect(()=>{
+  if(response && response.length > 0){
+    addBudget(response[0])
+  }
+},[response])
 
   const [newCategory, setNewCategory] = useState<Category>({
     name: "",
@@ -53,7 +63,7 @@ export default function () {
     <div className="relative rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 p-6 mb-6 shadow-xl">
       <div className="text-center mb-4">
         <p className="text-4xl font-bold">
-          ${response?.[0]?.amount?.toLocaleString() ?? "0.00"}
+          ₹{budget?.amount?.toLocaleString() ?? response?.[0]?.amount?.toLocalString() ?? "0.00"}
         </p>
         <p className="opacity-80">{month}</p>
       </div>

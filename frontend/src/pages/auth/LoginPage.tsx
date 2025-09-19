@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useLogin } from "../../hooks/useAuth.ts";
+import { useLogin } from "../../hooks/useAuthApi.ts";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "@/context/AuthContext.tsx";

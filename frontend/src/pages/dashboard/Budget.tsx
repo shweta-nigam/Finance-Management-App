@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useBudgetApi } from "@/hooks/useBudget";
+import { useBudgetApi } from "@/hooks/useBudgetApi";
 import useBudget from "@/context/BudgetContext";
 
 type Category = {

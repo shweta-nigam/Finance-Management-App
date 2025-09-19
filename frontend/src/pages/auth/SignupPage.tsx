@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSignUp } from "@/hooks/useAuth";
+import { useSignUp } from "@/hooks/useAuthApi";
 import { useState } from "react";
 
 export function SignupPage() {

@@ -32,7 +32,7 @@ type Category = {
   perDay: number | "";
 };
 
-export default function () {
+export default function Budget() {
   const [activeTab, setActiveTab] = useState("categories");
   const [categories, setCategories] = useState<Category[]>([]);
   const { response, chartData, month, getAllBudgets } = useBudgetApi();

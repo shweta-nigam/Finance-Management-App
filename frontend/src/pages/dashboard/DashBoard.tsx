@@ -21,6 +21,12 @@ const menuItems = [
     path: "/dashboard/budget",
   },
   {
+    id: "expense",
+    label: "expense",
+    icon: <Wallet size={18} />,
+    path: "/dashboard/expense",
+  },
+  {
     id: "report",
     label: "Report",
     icon: <BarChart size={18} />,

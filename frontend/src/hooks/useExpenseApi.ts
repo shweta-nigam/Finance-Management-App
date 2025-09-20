@@ -28,55 +28,88 @@ export function useExpenseApi() {
         throw error
     }
 
-    const updateExpense = async (urlPath: string, data: any) => {
+    const updateExpense = async (
+        urlPath: string,
+        data: Partial<Expense>
+    ): Promise<Expense> => {
         try {
-            setError(null)
-            const res = await axios.patch(urlPath, data)
-            setResponse(res.data.data.expense)
+            setError(null);
+            const res = await axios.patch(urlPath, data);
+            const expense: Expense = res.data.data.expense;
+            setResponse(expense);
+            return expense;
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while updating expense")
+            setError(
+                error.response?.data?.message ||
+                "Something went wrong while updating expense"
+            );
+            throw error;
         }
     }
 
-    const getExpense = async (urlPath: string) => {
+    const getExpense = async (urlPath: string): Promise<Expense> => {
         try {
-            setError(null)
-            const res = await axios.get(urlPath)
-            setResponse(res.data.data.expense)
+            setError(null);
+            const res = await axios.get(urlPath);
+            const expense: Expense = res.data.data.expense;
+            setResponse(expense);
+            return expense;
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while fetching expense")
+            setError(
+                error.response?.data?.message ||
+                "Something went wrong while fetching expense"
+            );
+            throw error;
         }
-    }
+    };
 
-    const getAllExpenses = async (urlPath: string) => {
+    const getAllExpenses = async (urlPath: string): Promise<Expense[]> => {
         try {
-            setError(null)
-            const res = await axios.get(urlPath)
-            setResponse(res.data.data.expenses)
+            setError(null);
+            const res = await axios.get(urlPath);
+            const expenses: Expense[] = res.data.data.expenses;
+            setResponse(expenses);
+            return expenses;
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while fetching all expenses")
+            setError(
+                error.response?.data?.message ||
+                "Something went wrong while fetching all expenses"
+            );
+            throw error;
         }
-    }
+    };
 
-    const deleteExpense = async (urlPath: string) => {
+    const deleteExpense = async (urlPath: string): Promise<Expense> => {
         try {
-            setError(null)
-            const res = await axios.delete(urlPath)
-            setResponse(res.data.data.expense)
+            setError(null);
+            const res = await axios.delete(urlPath);
+            const expense: Expense = res.data.data.expense;
+            setResponse(expense);
+            return expense;
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while deleting expense")
+            setError(
+                error.response?.data?.message ||
+                "Something went wrong while deleting expense"
+            );
+            throw error;
         }
-    }
+    };
 
-    const deleteAllExpenses = async (urlPath: string) => {
+    const deleteAllExpenses = async (urlPath: string): Promise<Expense[]> => {
         try {
-            setError(null)
-            const res = await axios.delete(urlPath)
-            setResponse(res.data.data.expense)
+            setError(null);
+            const res = await axios.delete(urlPath);
+            const expenses: Expense[] = res.data.data.expenses;
+            setResponse(expenses);
+            return expenses;
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while deleting all expenses")
+            setError(
+                error.response?.data?.message ||
+                "Something went wrong while deleting all expenses"
+            );
+            throw error;
         }
-    }
+    };
 
     return { response, error, date, createExpense, updateExpense, getExpense, getAllExpenses, deleteExpense, deleteAllExpenses }
 

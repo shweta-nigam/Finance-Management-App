@@ -1,17 +1,27 @@
 import axios from "axios"
 import { useState } from "react"
 
+
+export type Expense = {
+    id: string;
+    description: string;
+    amount: number;
+    date: string;
+    categoryId: string;
+};
+
 export function useExpenseApi() {
-    const [response, setResponse] = useState<any>(null)
+    const [response, setResponse] = useState<Expense | Expense[] | null>(null)
     const [error, setError] = useState<null | string>(null)
     const [date, setDate] = useState<Date | string>("")
 
-    const createExpense = async (urlPath: string, data: any) => {
+    const createExpense = async (urlPath: string, data: Omit<Expense, "id">): Promise<Expense> => {
         try {
             setError(null)
             const res = await axios.post(urlPath, data)
-            setResponse(res.data.data.expense)
-            return res
+            const expense: Expense = res.data.data.expense
+            setResponse(expense)
+            return expense
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while creating expense")
         }
@@ -68,6 +78,6 @@ export function useExpenseApi() {
         }
     }
 
-return {response,error, date, createExpense, updateExpense, getExpense, getAllExpenses,deleteExpense, deleteAllExpenses}
+    return { response, error, date, createExpense, updateExpense, getExpense, getAllExpenses, deleteExpense, deleteAllExpenses }
 
 }

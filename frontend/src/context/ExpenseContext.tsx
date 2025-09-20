@@ -1,16 +1,24 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { useExpenseApi } from "@/hooks/useExpenseApi";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
 type Expense = {
   id: string;
+  description: string;
   amount: number;
-  date: Date;
-  frequency: string[];
+  date: string;
+  categoryId: string;
 };
 
 type ExpenseContextType = {
-  expense: Expense | null;
-  addExpense: (expense: Expense) => void;
-  clearExpense: () => void;
+  expenses: Expense[];
+  addExpense: (expense: Omit<Expense, "id">) => Promise<void>;
+  clearExpenses: () => void;
 };
 
 export const ExpenseContext = createContext<ExpenseContextType | undefined>(
@@ -18,19 +26,38 @@ export const ExpenseContext = createContext<ExpenseContextType | undefined>(
 );
 
 export function ExpenseProvider({ children }: { children: ReactNode }) {
-  // destructure from {props.children}
-  const [expense, setExpense] = useState<Expense | null>(null);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const { response, getAllExpenses, createExpense } = useExpenseApi();
 
-  const addExpense = (newExpense: Expense) => {
-    setExpense(newExpense);
+  useEffect(() => {
+    getAllExpenses("/api/v1/expense/");
+  }, []);
+
+  useEffect(() => {
+    if (response && Array.isArray(response)) {
+      setExpenses(response);
+    }
+  }, [response]);
+
+  const addExpense = async (newExpense: Omit<Expense, "id">) => {
+    try {
+      const saved = await createExpense("/api/v1/expense/", newExpense);
+
+      setExpenses((prev) => [
+        { ...newExpense, id: saved.id ?? Date.now().toString() },
+        ...prev,
+      ]);
+    } catch (err) {
+      console.error("Failed to add expense:", err);
+    }
   };
 
-  const clearExpense = () => {
-    setExpense(null);
+  const clearExpenses = () => {
+    setExpenses([]);
   };
 
   return (
-    <ExpenseContext.Provider value={{ expense, addExpense, clearExpense }}>
+    <ExpenseContext.Provider value={{ expenses, addExpense, clearExpenses }}>
       {children}
     </ExpenseContext.Provider>
   );
@@ -40,7 +67,7 @@ export default function useExpense() {
   const context = useContext(ExpenseContext);
 
   if (!context) {
-    throw new Error("useExpense must be used within an ExpenseProvider ");
+    throw new Error("useExpense must be used within an ExpenseProvider");
   }
   return context;
 }

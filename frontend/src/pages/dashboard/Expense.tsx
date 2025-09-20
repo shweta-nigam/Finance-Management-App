@@ -1,61 +1,154 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import React from 'react'
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 function Expense() {
+  const [open, setOpen] = useState(false);
+  const [newExpense, setNewExpense] = useState({
+    description: "",
+    amount: 0,
+    categoryId: "",
+  });
+  const [expenses, setExpenses] = useState<
+    { id: string; description: string; amount: number; categoryId: string }[]
+  >([]);
 
-    const [newExpense, setNewExpense] = 
+  // Dummy categories (replace with API/context later)
+  const categories = [
+    { id: "food", name: "Food" },
+    { id: "travel", name: "Travel" },
+    { id: "shopping", name: "Shopping" },
+  ];
+
+  const addExpense = () => {
+    const expense = {
+      id: Date.now().toString(),
+      ...newExpense,
+    };
+    setExpenses([expense, ...expenses]);
+    setOpen(false);
+    setNewExpense({ description: "", amount: 0, categoryId: "" });
+  };
 
   return (
-    <div>
-        <Dialog open={open} onOpenChange={setOpen}>
-  <DialogTrigger asChild>
-    <Button className="bg-green-500">+ Add Expense</Button>
-  </DialogTrigger>
+    <div className="p-6 space-y-6">
+      {/* Add Expense Dialog */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button className="bg-green-500 hover:bg-green-600 transition">
+            + Add Expense
+          </Button>
+        </DialogTrigger>
 
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Add New Expense</DialogTitle>
-    </DialogHeader>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Add New Expense
+            </DialogTitle>
+          </DialogHeader>
 
-    <div className="flex flex-col gap-3">
-      <Input
-        placeholder="Description (e.g. Lunch at McDonalds)"
-        value={newExpense.description}
-        onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
-      />
-      <Input
-        type="number"
-        placeholder="Amount"
-        value={newExpense.amount}
-        onChange={(e) => setNewExpense({...newExpense, amount: Number(e.target.value)})}
-      />
-      <select
-        value={newExpense.categoryId}
-        onChange={(e) => setNewExpense({...newExpense, categoryId: e.target.value})}
-      >
-        <option value="">Select Category</option>
-        {categories.map(cat => (
-          <option key={cat.id} value={cat.id}>{cat.name}</option>
-        ))}
-      </select>
+          <div className="flex flex-col gap-4 mt-3">
+            {/* Description */}
+            <Input
+              placeholder="Description (e.g. Lunch at McDonalds)"
+              value={newExpense.description}
+              onChange={(e) =>
+                setNewExpense({ ...newExpense, description: e.target.value })
+              }
+            />
 
-      <Button
-        onClick={() => {
-          addExpense(newExpense); // calls POST /api/v1/expense
-          setOpen(false);
-        }}
-        className="bg-green-600 text-white"
-      >
-        Save
-      </Button>
+            {/* Amount */}
+            <Input
+              type="number"
+              placeholder="Amount"
+              value={newExpense.amount || ""}
+              onChange={(e) =>
+                setNewExpense({
+                  ...newExpense,
+                  amount: Number(e.target.value),
+                })
+              }
+            />
+
+            {/* Category */}
+            <Select
+              value={newExpense.categoryId}
+              onValueChange={(val) =>
+                setNewExpense({ ...newExpense, categoryId: val })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Save button */}
+            <Button
+              onClick={addExpense}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Save Expense
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Expense List */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">Recent Expenses</h2>
+        {expenses.length === 0 ? (
+          <p className="text-gray-500">No expenses yet. Add one above 👆</p>
+        ) : (
+          expenses.map((expense) => (
+            <Card key={expense.id} className="shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-base font-medium">
+                  {expense.description}
+                </CardTitle>
+                <span className="text-green-600 font-semibold">
+                  ₹{expense.amount}
+                </span>
+              </CardHeader>
+              <CardContent className="text-sm text-gray-500">
+                Category:{" "}
+                {
+                  categories.find((c) => c.id === expense.categoryId)?.name ??
+                  "Uncategorized"
+                }
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
     </div>
-  </DialogContent>
-</Dialog>
-
-    </div>
-  )
+  );
 }
 
-export default Expense
+export default Expense;

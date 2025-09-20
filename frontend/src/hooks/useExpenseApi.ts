@@ -11,9 +11,11 @@ export function useExpenseApi() {
             setError(null)
             const res = await axios.post(urlPath, data)
             setResponse(res.data.data.expense)
+            return res
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while creating expense")
         }
+        throw error
     }
 
     const updateExpense = async (urlPath: string, data: any) => {

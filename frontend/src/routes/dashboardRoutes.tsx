@@ -8,6 +8,7 @@ import Goal from "@/pages/dashboard/Goal";
 import Settings from "@/pages/dashboard/Settings";
 import { BudgetProvider } from "@/context/BudgetContext";
 import Expense from "@/pages/dashboard/Expense";
+import { ExpenseProvider } from "@/context/ExpenseContext";
 
 export default function DashboardRoutes() {
   return (
@@ -16,7 +17,9 @@ export default function DashboardRoutes() {
         path="/dashboard"
         element={
           <BudgetProvider>
-            <Dashboard />
+            <ExpenseProvider>
+              <Dashboard />
+            </ExpenseProvider>
           </BudgetProvider>
         }
       >

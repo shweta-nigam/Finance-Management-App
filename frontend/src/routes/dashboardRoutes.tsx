@@ -6,9 +6,8 @@ import Overview from "@/pages/dashboard/Overview";
 import Report from "@/pages/dashboard/Report";
 import Goal from "@/pages/dashboard/Goal";
 import Settings from "@/pages/dashboard/Settings";
-import { BudgetProvider } from "@/context/BudgetContext";
 import Expense from "@/pages/dashboard/Expense";
-import { ExpenseProvider } from "@/context/ExpenseContext";
+import { DashboardProvider } from "@/context/DashboardProvider";
 
 export default function DashboardRoutes() {
   return (
@@ -16,14 +15,11 @@ export default function DashboardRoutes() {
       <Route
         path="/dashboard"
         element={
-          <BudgetProvider>
-            <ExpenseProvider>
+         <DashboardProvider>
               <Dashboard />
-            </ExpenseProvider>
-          </BudgetProvider>
+           </DashboardProvider>
         }
       >
-        {" "}
         {/*Absolute path */}
         <Route index element={<Profile />} />
         <Route path="profile" element={<Profile />} /> {/*relative path */}

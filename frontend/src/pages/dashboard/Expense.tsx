@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useExpense from "@/context/ExpenseContext";
-import useCategory from "@/context/CategoryContext"; // Using the CategoryProvider context
+import useCategory from "@/context/CategoryContext"; // fully context-driven
 import {
   LineChart,
   Line,
@@ -29,8 +29,8 @@ import {
 } from "recharts";
 
 function Expense() {
-  const { expenses, addExpense } = useExpense(); 
-  const { categories, getAllCategories } = useCategory(); //Category context exposes getAllCategories
+  const { expenses, addExpense } = useExpense();
+  const { categories } = useCategory(); // already fetched in CategoryProvider
 
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState({
@@ -39,11 +39,6 @@ function Expense() {
     categoryId: "",
     date: new Date().toISOString(),
   });
-
-  // Fetch categories once
-  useEffect(() => {
-    getAllCategories("/api/v1/categories");
-  }, [getAllCategories]);
 
   // Calculate current month total
   const currentMonthTotal = useMemo(() => {
@@ -66,7 +61,7 @@ function Expense() {
     return Object.entries(grouped).map(([date, total]) => ({ date, total }));
   }, [expenses]);
 
-  // Handle Add Expense
+  // Save new expense
   const handleSaveExpense = async () => {
     await addExpense(newExpense);
     setOpen(false);
@@ -180,4 +175,3 @@ function Expense() {
 }
 
 export default Expense;
-

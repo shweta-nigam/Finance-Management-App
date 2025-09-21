@@ -18,7 +18,7 @@ type Expense = {
 type ExpenseContextType = {
   expenses: Expense[];
   addExpense: (expense: Omit<Expense, "id">) => Promise<void>;
-  clearExpenses: () => void;
+  clearExpense: () => void;
 };
 
 export const ExpenseContext = createContext<ExpenseContextType | undefined>(
@@ -43,21 +43,18 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
     try {
       const saved = await createExpense("/api/v1/expense/", newExpense);
 
-      setExpenses((prev) => [
-        { ...newExpense, id: saved.id ?? Date.now().toString() },
-        ...prev,
-      ]);
+      setExpenses((prev) => [saved, ...prev]);
     } catch (err) {
       console.error("Failed to add expense:", err);
     }
   };
 
-  const clearExpenses = () => {
+  const clearExpense = () => {
     setExpenses([]);
   };
 
   return (
-    <ExpenseContext.Provider value={{ expenses, addExpense, clearExpenses }}>
+    <ExpenseContext.Provider value={{ expenses, addExpense, clearExpense }}>
       {children}
     </ExpenseContext.Provider>
   );

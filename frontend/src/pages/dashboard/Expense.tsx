@@ -21,8 +21,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useExpenseApi } from "@/hooks/useExpenseApi";
 import useExpense from "@/context/ExpenseContext";
+// import useCategoryApi from "@/hooks/useCategoryApi"; //only for categories
 import {
   LineChart,
   Line,
@@ -34,10 +34,9 @@ import {
 } from "recharts";
 
 function Expense() {
-  const { response, error, getAllExpenses } = useExpenseApi();
-  const { expense, addExpense, clearExpense } = useExpense();
-
-  const [expenses, setExpenses] = useState<any[]>([]);
+  const { expenses, addExpense } = useExpense(); //  only context
+  const { response: categoryResponse, getAllCategories } = useCategoryApi();
+  const [categories, setCategories] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState({
     description: "",
@@ -46,35 +45,29 @@ function Expense() {
     date: new Date().toISOString(),
   });
 
-  // Dummy categories (replace with API/context later)
-  const categories = [
-    { id: "food", name: "Food" },
-    { id: "travel", name: "Travel" },
-    { id: "shopping", name: "Shopping" },
-  ];
-
+  // fetch categories once
   useEffect(() => {
-    getAllExpenses("/api/v1/expense/");
+    getAllCategories("/api/v1/category/");
   }, []);
 
   useEffect(() => {
-    if (response && response.length > 0) {
-      setExpenses(response);
-    }
-  }, [response]);
+    if (categoryResponse) setCategories(categoryResponse);
+  }, [categoryResponse]);
 
-  // Calculate current month total
+  //  current month total
   const currentMonthTotal = useMemo(() => {
     const now = new Date();
     return expenses
       .filter((e) => {
         const d = new Date(e.date);
-        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        return (
+          d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+        );
       })
       .reduce((sum, e) => sum + e.amount, 0);
   }, [expenses]);
 
-  // Prepare data for chart (group by date)
+  // hart data
   const chartData = useMemo(() => {
     const grouped: Record<string, number> = {};
     expenses.forEach((e) => {
@@ -144,7 +137,7 @@ function Expense() {
             <div className="flex flex-col gap-4 mt-3">
               {/* Description */}
               <Input
-                placeholder="Description (e.g. Lunch at McDonalds)"
+                placeholder="Description"
                 value={newExpense.description}
                 onChange={(e) =>
                   setNewExpense({ ...newExpense, description: e.target.value })
@@ -157,10 +150,7 @@ function Expense() {
                 placeholder="Amount"
                 value={newExpense.amount || ""}
                 onChange={(e) =>
-                  setNewExpense({
-                    ...newExpense,
-                    amount: Number(e.target.value),
-                  })
+                  setNewExpense({ ...newExpense, amount: Number(e.target.value) })
                 }
               />
 
@@ -183,17 +173,10 @@ function Expense() {
                 </SelectContent>
               </Select>
 
-              {/* Save button */}
+              {/* Save */}
               <Button
-                onClick={() => {
-                  setExpenses([
-                    {
-                      ...newExpense,
-                      id: Date.now().toString(),
-                      date: new Date().toISOString(),
-                    },
-                    ...expenses,
-                  ]);
+                onClick={async () => {
+                  await addExpense(newExpense); //  saves to API + context
                   setOpen(false);
                   setNewExpense({
                     description: "",
@@ -228,10 +211,8 @@ function Expense() {
                 </CardHeader>
                 <CardContent className="text-sm text-gray-500">
                   Category:{" "}
-                  {
-                    categories.find((c) => c.id === expense.categoryId)?.name ??
-                    "Uncategorized"
-                  }
+                  {categories.find((c) => c.id === expense.categoryId)?.name ??
+                    "Uncategorized"}
                 </CardContent>
               </Card>
             ))

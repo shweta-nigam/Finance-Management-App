@@ -22,7 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useExpense from "@/context/ExpenseContext";
-// import useCategoryApi from "@/hooks/useCategoryApi"; //only for categories
+import useCategoryApi from "@/hooks/useCategoryApi"; //only for categories
 import {
   LineChart,
   Line,

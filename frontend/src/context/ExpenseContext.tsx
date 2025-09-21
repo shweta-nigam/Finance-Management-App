@@ -6,14 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-
-type Expense = {
-  id: string;
-  description: string;
-  amount: number;
-  date: string;
-  categoryId: string;
-};
+import type { Expense } from "@/types";
 
 type ExpenseContextType = {
   expenses: Expense[];

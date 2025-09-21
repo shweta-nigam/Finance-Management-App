@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,14 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useExpense from "@/context/ExpenseContext";
-import useCategoryApi from "@/hooks/useCategoryApi"; //only for categories
+import useCategory from "@/context/CategoryContext"; // Using the CategoryProvider context
 import {
   LineChart,
   Line,
@@ -34,9 +29,9 @@ import {
 } from "recharts";
 
 function Expense() {
-  const { expenses, addExpense } = useExpense(); //  only context
-  const { response: categoryResponse, getAllCategories } = useCategoryApi();
-  const [categories, setCategories] = useState<any[]>([]);
+  const { expenses, addExpense } = useExpense(); 
+  const { categories, getAllCategories } = useCategory(); //Category context exposes getAllCategories
+
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState({
     description: "",
@@ -45,47 +40,47 @@ function Expense() {
     date: new Date().toISOString(),
   });
 
-  // fetch categories once
+  // Fetch categories once
   useEffect(() => {
-    getAllCategories("/api/v1/category/");
-  }, []);
+    getAllCategories("/api/v1/categories");
+  }, [getAllCategories]);
 
-  useEffect(() => {
-    if (categoryResponse) setCategories(categoryResponse);
-  }, [categoryResponse]);
-
-  //  current month total
+  // Calculate current month total
   const currentMonthTotal = useMemo(() => {
     const now = new Date();
     return expenses
       .filter((e) => {
         const d = new Date(e.date);
-        return (
-          d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
-        );
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
       })
       .reduce((sum, e) => sum + e.amount, 0);
   }, [expenses]);
 
-  // hart data
+  // Chart data grouped by date
   const chartData = useMemo(() => {
     const grouped: Record<string, number> = {};
     expenses.forEach((e) => {
-      const d = new Date(e.date).toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-      });
+      const d = new Date(e.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
       grouped[d] = (grouped[d] || 0) + e.amount;
     });
-    return Object.entries(grouped).map(([date, total]) => ({
-      date,
-      total,
-    }));
+    return Object.entries(grouped).map(([date, total]) => ({ date, total }));
   }, [expenses]);
+
+  // Handle Add Expense
+  const handleSaveExpense = async () => {
+    await addExpense(newExpense);
+    setOpen(false);
+    setNewExpense({
+      description: "",
+      amount: 0,
+      categoryId: "",
+      date: new Date().toISOString(),
+    });
+  };
 
   return (
     <div className="p-6 space-y-10">
-      {/* ===== TOP: Expense Chart ===== */}
+      {/* ===== Expense Chart ===== */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Expenses Overview</CardTitle>
@@ -103,7 +98,7 @@ function Expense() {
         </CardContent>
       </Card>
 
-      {/* ===== CENTER: Current Month Total ===== */}
+      {/* ===== Current Month Total ===== */}
       <Card className="bg-green-50 border-green-200 text-center shadow-sm">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-green-700">
@@ -111,55 +106,36 @@ function Expense() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-extrabold text-green-600">
-            ₹{currentMonthTotal}
-          </p>
+          <p className="text-3xl font-extrabold text-green-600">₹{currentMonthTotal}</p>
         </CardContent>
       </Card>
 
-      {/* ===== BOTTOM: Manage Expenses ===== */}
+      {/* ===== Manage Expenses ===== */}
       <div className="space-y-6">
         {/* Add Expense Dialog */}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-green-500 hover:bg-green-600 transition">
-              + Add Expense
-            </Button>
+            <Button className="bg-green-500 hover:bg-green-600 transition">+ Add Expense</Button>
           </DialogTrigger>
-
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">
-                Add New Expense
-              </DialogTitle>
+              <DialogTitle className="text-lg font-semibold">Add New Expense</DialogTitle>
             </DialogHeader>
-
             <div className="flex flex-col gap-4 mt-3">
-              {/* Description */}
               <Input
                 placeholder="Description"
                 value={newExpense.description}
-                onChange={(e) =>
-                  setNewExpense({ ...newExpense, description: e.target.value })
-                }
+                onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
               />
-
-              {/* Amount */}
               <Input
                 type="number"
                 placeholder="Amount"
                 value={newExpense.amount || ""}
-                onChange={(e) =>
-                  setNewExpense({ ...newExpense, amount: Number(e.target.value) })
-                }
+                onChange={(e) => setNewExpense({ ...newExpense, amount: Number(e.target.value) })}
               />
-
-              {/* Category */}
               <Select
                 value={newExpense.categoryId}
-                onValueChange={(val) =>
-                  setNewExpense({ ...newExpense, categoryId: val })
-                }
+                onValueChange={(val) => setNewExpense({ ...newExpense, categoryId: val })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Category" />
@@ -172,21 +148,7 @@ function Expense() {
                   ))}
                 </SelectContent>
               </Select>
-
-              {/* Save */}
-              <Button
-                onClick={async () => {
-                  await addExpense(newExpense); //  saves to API + context
-                  setOpen(false);
-                  setNewExpense({
-                    description: "",
-                    amount: 0,
-                    categoryId: "",
-                    date: new Date().toISOString(),
-                  });
-                }}
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
+              <Button onClick={handleSaveExpense} className="bg-green-600 hover:bg-green-700 text-white">
                 Save Expense
               </Button>
             </div>
@@ -202,17 +164,11 @@ function Expense() {
             expenses.map((expense) => (
               <Card key={expense.id} className="shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-base font-medium">
-                    {expense.description}
-                  </CardTitle>
-                  <span className="text-green-600 font-semibold">
-                    ₹{expense.amount}
-                  </span>
+                  <CardTitle className="text-base font-medium">{expense.description}</CardTitle>
+                  <span className="text-green-600 font-semibold">₹{expense.amount}</span>
                 </CardHeader>
                 <CardContent className="text-sm text-gray-500">
-                  Category:{" "}
-                  {categories.find((c) => c.id === expense.categoryId)?.name ??
-                    "Uncategorized"}
+                  Category: {categories.find((c) => c.id === expense.categoryId)?.name ?? "Uncategorized"}
                 </CardContent>
               </Card>
             ))
@@ -224,3 +180,4 @@ function Expense() {
 }
 
 export default Expense;
+

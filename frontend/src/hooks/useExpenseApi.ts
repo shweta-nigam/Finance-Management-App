@@ -1,14 +1,6 @@
 import axios from "axios"
 import { useState } from "react"
-
-
-export type Expense = {
-    id: string;
-    description: string;
-    amount: number;
-    date: string;
-    categoryId: string;
-};
+import type { Expense } from "@/types";
 
 export function useExpenseApi() {
     const [response, setResponse] = useState<Expense | Expense[] | null>(null)

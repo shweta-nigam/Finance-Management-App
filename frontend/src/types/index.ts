@@ -1,0 +1,22 @@
+// src/types/finance.ts
+export type PaymentMethod = "Cash" | "Card" | "UPI" | "Bank Transfer";
+
+export type Expense = {
+  id: string;
+  title: string;
+  description: string;
+  amount: number;
+  currency: string;
+  categoryId: string;
+  paymentMethod: PaymentMethod;
+  isRecurring: boolean;
+  tags: string[];
+  date: string; // ISO string
+};
+
+export type Category = {
+  id: string;
+  title: string;
+  amount: number;
+  date: string;
+};

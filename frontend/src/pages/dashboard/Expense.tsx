@@ -138,7 +138,7 @@ function Expense() {
                 <SelectContent>
                   {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
+                      {cat.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -163,7 +163,7 @@ function Expense() {
                   <span className="text-green-600 font-semibold">₹{expense.amount}</span>
                 </CardHeader>
                 <CardContent className="text-sm text-gray-500">
-                  Category: {categories.find((c) => c.id === expense.categoryId)?.name ?? "Uncategorized"}
+                  Category: {categories.find((c) => c.id === expense.categoryId)?.title ?? "Uncategorized"}
                 </CardContent>
               </Card>
             ))

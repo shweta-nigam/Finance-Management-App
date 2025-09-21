@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,9 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import useExpense from "@/context/ExpenseContext";
-import useCategory from "@/context/CategoryContext"; // fully context-driven
+import useCategory from "@/context/CategoryContext";
 import {
   LineChart,
   Line,
@@ -27,20 +32,29 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import type { Expense, PaymentMethod } from "@/types";
 
-function Expense() {
+const defaultExpense: Expense = {
+  id: "",
+  title: "",
+  description: "",
+  amount: 0,
+  currency: "INR",
+  categoryId: "",
+  paymentMethod: "Cash",
+  isRecurring: false,
+  tags: [],
+  date: new Date().toISOString(),
+};
+
+export default function Expense() {
   const { expenses, addExpense } = useExpense();
-  const { categories } = useCategory(); // already fetched in CategoryProvider
+  const { categories } = useCategory();
 
   const [open, setOpen] = useState(false);
-  const [newExpense, setNewExpense] = useState({
-    description: "",
-    amount: 0,
-    categoryId: "",
-    date: new Date().toISOString(),
-  });
+  const [newExpense, setNewExpense] = useState<Expense>(defaultExpense);
+  const [tagsInput, setTagsInput] = useState(""); // for text input
 
-  // Calculate current month total
   const currentMonthTotal = useMemo(() => {
     const now = new Date();
     return expenses
@@ -51,32 +65,42 @@ function Expense() {
       .reduce((sum, e) => sum + e.amount, 0);
   }, [expenses]);
 
-  // Chart data grouped by date
   const chartData = useMemo(() => {
     const grouped: Record<string, number> = {};
     expenses.forEach((e) => {
-      const d = new Date(e.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+      const d = new Date(e.date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      });
       grouped[d] = (grouped[d] || 0) + e.amount;
     });
     return Object.entries(grouped).map(([date, total]) => ({ date, total }));
   }, [expenses]);
 
-  // Save new expense
   const handleSaveExpense = async () => {
-    await addExpense(newExpense);
-    setOpen(false);
-    setNewExpense({
-      description: "",
-      amount: 0,
-      categoryId: "",
-      date: new Date().toISOString(),
-    });
+    try {
+      const finalExpense = {
+        ...newExpense,
+        id: crypto.randomUUID(),
+        tags: tagsInput
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+      };
+
+      await addExpense(finalExpense);
+      setOpen(false);
+      setNewExpense(defaultExpense);
+      setTagsInput("");
+    } catch (err) {
+      console.error("Failed to save expense:", err);
+    }
   };
 
   return (
     <div className="p-6 space-y-10">
       {/* ===== Expense Chart ===== */}
-      <Card>
+      <Card className="bg-D-blue shadow-md">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Expenses Overview</CardTitle>
         </CardHeader>
@@ -110,13 +134,22 @@ function Expense() {
         {/* Add Expense Dialog */}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-green-500 hover:bg-green-600 transition">+ Add Expense</Button>
+            <Button className="bg-green-500 hover:bg-green-600 transition">
+              + Add Expense
+            </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+
+          <DialogContent className="sm:max-w-md z-[9999]">
             <DialogHeader>
               <DialogTitle className="text-lg font-semibold">Add New Expense</DialogTitle>
             </DialogHeader>
+
             <div className="flex flex-col gap-4 mt-3">
+              <Input
+                placeholder="Title"
+                value={newExpense.title}
+                onChange={(e) => setNewExpense({ ...newExpense, title: e.target.value })}
+              />
               <Input
                 placeholder="Description"
                 value={newExpense.description}
@@ -126,8 +159,42 @@ function Expense() {
                 type="number"
                 placeholder="Amount"
                 value={newExpense.amount || ""}
-                onChange={(e) => setNewExpense({ ...newExpense, amount: Number(e.target.value) })}
+                onChange={(e) =>
+                  setNewExpense({ ...newExpense, amount: Number(e.target.value) })
+                }
               />
+              <Select
+                value={newExpense.currency}
+                onValueChange={(val) => setNewExpense({ ...newExpense, currency: val })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["INR", "USD", "EUR"].map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={newExpense.paymentMethod}
+                onValueChange={(val: PaymentMethod) =>
+                  setNewExpense({ ...newExpense, paymentMethod: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Payment Method" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Cash", "Card", "UPI", "Bank Transfer"].map((method) => (
+                    <SelectItem key={method} value={method}>
+                      {method}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Select
                 value={newExpense.categoryId}
                 onValueChange={(val) => setNewExpense({ ...newExpense, categoryId: val })}
@@ -143,7 +210,30 @@ function Expense() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button onClick={handleSaveExpense} className="bg-green-600 hover:bg-green-700 text-white">
+
+              {/* ✅ Recurring Checkbox */}
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={newExpense.isRecurring}
+                  onChange={(e) =>
+                    setNewExpense({ ...newExpense, isRecurring: e.target.checked })
+                  }
+                />
+                Recurring Expense
+              </label>
+
+              {/* ✅ Tags Input */}
+              <Input
+                placeholder="Tags (comma separated)"
+                value={tagsInput}
+                onChange={(e) => setTagsInput(e.target.value)}
+              />
+
+              <Button
+                onClick={handleSaveExpense}
+                className="bg-green-600 hover:bg-green-700 text-white mt-2"
+              >
                 Save Expense
               </Button>
             </div>
@@ -159,11 +249,19 @@ function Expense() {
             expenses.map((expense) => (
               <Card key={expense.id} className="shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-base font-medium">{expense.description}</CardTitle>
+                  <CardTitle className="text-base font-medium">{expense.title}</CardTitle>
                   <span className="text-green-600 font-semibold">₹{expense.amount}</span>
                 </CardHeader>
                 <CardContent className="text-sm text-gray-500">
-                  Category: {categories.find((c) => c.id === expense.categoryId)?.title ?? "Uncategorized"}
+                  Category:{" "}
+                  {categories.find((c) => c.id === expense.categoryId)?.title ??
+                    "Uncategorized"}
+                  <br />
+                  Payment: {expense.paymentMethod}
+                  <br />
+                  Recurring: {expense.isRecurring ? "Yes" : "No"}
+                  <br />
+                  Tags: {expense.tags.length > 0 ? expense.tags.join(", ") : "None"}
                 </CardContent>
               </Card>
             ))
@@ -173,5 +271,3 @@ function Expense() {
     </div>
   );
 }
-
-export default Expense;

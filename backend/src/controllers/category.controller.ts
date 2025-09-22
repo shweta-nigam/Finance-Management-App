@@ -108,11 +108,11 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
         })
 
         if (!category) {
-            return next(new ApiError(400, "Category not found"))
+            return next(new ApiError(404, "Category not found"))
         }
 
 
-        res.status(200).json(new ApiResponse(200, {
+        return res.status(200).json(new ApiResponse(200, {
             category: {
                 id: category.id,
                 title: category.title,
@@ -143,7 +143,7 @@ export const getAllCategories = async (req: RequestWithUser, res: Response, next
         }).select("title description note type icon color isDefault")
 
         if (!categories.length) {
-            return next(new ApiError(404, "Categories not found"))
+            return res.status(200).json(new ApiResponse(200, [], "No categories found"))
         }
 
         res.status(200).json(new ApiResponse(200, categories, "Fetched categories successfully."))

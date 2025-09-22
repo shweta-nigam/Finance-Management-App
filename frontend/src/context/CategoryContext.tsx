@@ -14,7 +14,7 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
   const { response, getAllCategories, createCategory } = useCategoryAPi();
 
   useEffect(() => {
-    getAllCategories("/api/v1/category");
+    getAllCategories("/api/v1/category/");
   }, []);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
 
   const addCategory = async (newCategory: Omit<Category, "id">) => {
     try {
-      const saved = await createCategory("/api/v1/category", newCategory);
+      const saved = await createCategory("/api/v1/category/", newCategory);
       setCategories((prev) => [saved, ...prev]);
     } catch (err) {
       console.error("Failed to add category:", err);

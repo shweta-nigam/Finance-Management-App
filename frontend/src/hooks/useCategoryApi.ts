@@ -1,13 +1,6 @@
 import axios from "axios"
 import { useState } from "react"
-
-
-export type Category = {
-    id: string
-    amount: number
-    date: Date
-    title: string
-}
+import type { Category } from "@/types"
 
 export function useCategoryAPi() {
     const [response, setResponse] = useState<Category | Category[] | null>(null)
@@ -15,74 +8,81 @@ export function useCategoryAPi() {
     const [date, setDate] = useState<Date | string>("")
 
 
-    const createCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category> => {
+    const createCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category | null> => {
         try {
             setError(null)
             const res = await axios.post(urlPath, data)
             const category: Category = res.data.data.category
             setResponse(category)
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while creating category")
+            setError(error.response?.data?.message || "Something went wrong while creating category");
+            return null
         }
-        throw error
+        return null
     }
-    const updateCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category> => {
+
+    const updateCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category | null> => {
         try {
             setError(null)
             const res = await axios.patch(urlPath, data)
             const category: Category = res.data.data.category
             setResponse(category)
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while updating category")
+            setError(error.response?.data?.message || "Something went wrong while updating category");
+            return null
         }
-        throw error
+        return null
     }
 
-const getCategory = async (urlPath: string) : Promise<Category>=> {
-    try {
-        setError(null)
-        const res = await axios.get(urlPath)
-        const category: Category = res.data.data.category
-        setResponse(category)
-    } catch (error: any) {
-        setError(error.response?.data?.message || "Something went wrong while fetching category")
+    const getCategory = async (urlPath: string): Promise<Category | null> => {
+        try {
+            setError(null)
+            const res = await axios.get(urlPath)
+            const category: Category = res.data.data.category
+            setResponse(category)
+        } catch (error: any) {
+            setError(error.response?.data?.message || "Something went wrong while fetching category")
+            return null
+        }
+        return null
     }
-    throw error
-}
 
-const getAllCategories = async (urlPath: string): Promise<Category>=> {
-    try {
-        setError(null)
-        const res = await axios.get(urlPath)
-        const category: Category = res.data.data.category
-        setResponse(category)
-    } catch (error: any) {
-        setError(error.response?.data?.message || "Something went wrong while fetching categories")
+    const getAllCategories = async (urlPath: string): Promise<Category | null> => {
+        try {
+            setError(null)
+            const res = await axios.get(urlPath)
+            const categories: Category[] = res.data.data
+            setResponse(categories)
+        } catch (error: any) {
+            setError(error.response?.data?.message || "Something went wrong while fetching categories")
+            return null
+        }
+        return null
     }
-    throw error
-}
-const deleteCategory = async (urlPath: string): Promise<Category> =>  {
-    try {
-        setError(null)
-        const res = await axios.delete(urlPath)
-        const category: Category = res.data.data.category
-        setResponse(category)
-    } catch (error: any) {
-        setError(error.response?.data?.message || "Something went wrong while deleting category")
+    const deleteCategory = async (urlPath: string): Promise<Category | null> => {
+        try {
+            setError(null)
+            const res = await axios.delete(urlPath)
+            const category: Category = res.data.data.category
+            setResponse(category)
+        } catch (error: any) {
+            setError(error.response?.data?.message || "Something went wrong while deleting category")
+            return null
+        }
+        return null
     }
-    throw error
-}
-const deleteAllCategories = async (urlPath: string): Promise<Category> => {
-    try {
-        setError(null)
-        const res = await axios.delete(urlPath)
-        const category: Category = res.data.data.category
-        setResponse(category)
-    } catch (error: any) {
-        setError(error.response?.data?.message || "Something went wrong while deleting all categories")
+    const deleteAllCategories = async (urlPath: string): Promise<Category | null> => {
+        try {
+            setError(null)
+            const res = await axios.delete(urlPath)
+            const category: Category = res.data.data.category
+            setResponse(category)
+        } catch (error: any) {
+            setError(error.response?.data?.message || "Something went wrong while deleting all categories")
+            return null
+        }
+        return null
     }
-    throw error
-}
 
-return {response, error, date, createCategory, updateCategory, getCategory, getAllCategories, deleteCategory, deleteAllCategories}
+    return { response, error, date, createCategory, updateCategory, getCategory, getAllCategories, deleteCategory, deleteAllCategories }
 }

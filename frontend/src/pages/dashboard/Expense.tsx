@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,12 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useExpense from "@/context/ExpenseContext";
 import useCategory from "@/context/CategoryContext";
 import {
@@ -60,7 +56,10 @@ export default function Expense() {
     return expenses
       .filter((e) => {
         const d = new Date(e.date);
-        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        return (
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear()
+        );
       })
       .reduce((sum, e) => sum + e.amount, 0);
   }, [expenses]);
@@ -102,7 +101,9 @@ export default function Expense() {
       {/* ===== Expense Chart ===== */}
       <Card className="bg-D-blue shadow-md">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Expenses Overview</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            Expenses Overview
+          </CardTitle>
         </CardHeader>
         <CardContent className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -111,7 +112,12 @@ export default function Expense() {
               <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="total" stroke="#16a34a" strokeWidth={2} />
+              <Line
+                type="monotone"
+                dataKey="total"
+                stroke="#16a34a"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -125,7 +131,9 @@ export default function Expense() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-extrabold text-green-600">₹{currentMonthTotal}</p>
+          <p className="text-3xl font-extrabold text-green-600">
+            ₹{currentMonthTotal}
+          </p>
         </CardContent>
       </Card>
 
@@ -141,31 +149,45 @@ export default function Expense() {
 
           <DialogContent className="sm:max-w-md z-[9999]">
             <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">Add New Expense</DialogTitle>
+              <DialogTitle className="text-lg font-semibold">
+                Add New Expense
+              </DialogTitle>
+              <DialogDescription>
+                Fill in the details below to record a new expense.
+              </DialogDescription>
             </DialogHeader>
 
             <div className="flex flex-col gap-4 mt-3">
               <Input
                 placeholder="Title"
                 value={newExpense.title}
-                onChange={(e) => setNewExpense({ ...newExpense, title: e.target.value })}
+                onChange={(e) =>
+                  setNewExpense({ ...newExpense, title: e.target.value })
+                }
               />
               <Input
                 placeholder="Description"
                 value={newExpense.description}
-                onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
+                onChange={(e) =>
+                  setNewExpense({ ...newExpense, description: e.target.value })
+                }
               />
               <Input
                 type="number"
                 placeholder="Amount"
                 value={newExpense.amount || ""}
                 onChange={(e) =>
-                  setNewExpense({ ...newExpense, amount: Number(e.target.value) })
+                  setNewExpense({
+                    ...newExpense,
+                    amount: Number(e.target.value),
+                  })
                 }
               />
               <Select
                 value={newExpense.currency}
-                onValueChange={(val) => setNewExpense({ ...newExpense, currency: val })}
+                onValueChange={(val) =>
+                  setNewExpense({ ...newExpense, currency: val })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Currency" />
@@ -197,7 +219,9 @@ export default function Expense() {
               </Select>
               <Select
                 value={newExpense.categoryId}
-                onValueChange={(val) => setNewExpense({ ...newExpense, categoryId: val })}
+                onValueChange={(val) =>
+                  setNewExpense({ ...newExpense, categoryId: val })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Category" />
@@ -217,7 +241,10 @@ export default function Expense() {
                   type="checkbox"
                   checked={newExpense.isRecurring}
                   onChange={(e) =>
-                    setNewExpense({ ...newExpense, isRecurring: e.target.checked })
+                    setNewExpense({
+                      ...newExpense,
+                      isRecurring: e.target.checked,
+                    })
                   }
                 />
                 Recurring Expense
@@ -249,8 +276,12 @@ export default function Expense() {
             expenses.map((expense) => (
               <Card key={expense.id} className="shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-base font-medium">{expense.title}</CardTitle>
-                  <span className="text-green-600 font-semibold">₹{expense.amount}</span>
+                  <CardTitle className="text-base font-medium">
+                    {expense.title}
+                  </CardTitle>
+                  <span className="text-green-600 font-semibold">
+                    ₹{expense.amount}
+                  </span>
                 </CardHeader>
                 <CardContent className="text-sm text-gray-500">
                   Category:{" "}
@@ -261,7 +292,8 @@ export default function Expense() {
                   <br />
                   Recurring: {expense.isRecurring ? "Yes" : "No"}
                   <br />
-                  Tags: {expense.tags.length > 0 ? expense.tags.join(", ") : "None"}
+                  Tags:{" "}
+                  {expense.tags.length > 0 ? expense.tags.join(", ") : "None"}
                 </CardContent>
               </Card>
             ))

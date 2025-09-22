@@ -17,6 +17,10 @@ export type Expense = {
 export type Category = {
   id: string;
   title: string;
-  amount: number;
-  date: string;
+  description?: string;
+  note?: string;
+  type?: string;
+  icon?: string;
+  color?: string;
+  isDefault?: boolean;
 };

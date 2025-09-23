@@ -247,11 +247,12 @@ export default function Expense() {
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.title}
-                    </SelectItem>
-                  ))}
+                  {Array.isArray(categories) &&
+                    categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.title}
+                      </SelectItem>
+                    ))}
                   <SelectItem value="uncategorized">Uncategorized</SelectItem>
                 </SelectContent>
               </Select>
@@ -307,7 +308,7 @@ export default function Expense() {
                 <CardContent className="text-sm text-gray-500">
                   Category:{" "}
                   {categories?.find((c) => c.id === expense.categoryId)
-                    ?.title ?? "Uncategorized"}
+                    ?.title || "Uncategorized"}
                   <br />
                   Payment: {expense.paymentMethod}
                   <br />

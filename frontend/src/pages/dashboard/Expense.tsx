@@ -237,7 +237,6 @@ export default function Expense() {
                   ))}
                 </SelectContent>
               </Select>
-
               <Select
                 value={newExpense.categoryId}
                 onValueChange={(val) =>
@@ -253,6 +252,7 @@ export default function Expense() {
                       {cat.title}
                     </SelectItem>
                   ))}
+                  <SelectItem value="uncategorized">Uncategorized</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -306,8 +306,8 @@ export default function Expense() {
                 </CardHeader>
                 <CardContent className="text-sm text-gray-500">
                   Category:{" "}
-                  {categories.find((c) => c.id === expense.categoryId)?.title ??
-                    "Uncategorized"}
+                  {categories?.find((c) => c.id === expense.categoryId)
+                    ?.title ?? "Uncategorized"}
                   <br />
                   Payment: {expense.paymentMethod}
                   <br />

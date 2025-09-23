@@ -37,7 +37,7 @@ const defaultExpense: Expense = {
   description: "",
   amount: 0,
   currency: "INR",
-  categoryId: "",
+  categoryId: "uncategorized",
   paymentMethod: "Cash",
   isRecurring: false,
   tags: [],
@@ -89,6 +89,7 @@ export default function Expense() {
           .map((t) => t.trim())
           .filter(Boolean),
         date: new Date().toISOString(),
+        categoryId: newExpense.categoryId || "uncategorized",
       };
 
       await addExpense(finalExpense);

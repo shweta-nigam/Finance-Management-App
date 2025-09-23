@@ -29,6 +29,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { Expense, PaymentMethod } from "@/types";
+import { toast } from "sonner"; //  new toast API
 
 const defaultExpense: Expense = {
   id: "",
@@ -49,11 +50,12 @@ export default function Expense() {
 
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState<Expense>(defaultExpense);
-  const [tagsInput, setTagsInput] = useState(""); // for text input
+  const [tagsInput, setTagsInput] = useState("");
 
   const currentMonthTotal = useMemo(() => {
     const now = new Date();
     return expenses
+      .filter((e) => e?.date)
       .filter((e) => {
         const d = new Date(e.date);
         return (
@@ -67,6 +69,7 @@ export default function Expense() {
   const chartData = useMemo(() => {
     const grouped: Record<string, number> = {};
     expenses.forEach((e) => {
+      if (!e?.date) return;
       const d = new Date(e.date).toLocaleDateString("en-IN", {
         day: "2-digit",
         month: "short",
@@ -78,21 +81,30 @@ export default function Expense() {
 
   const handleSaveExpense = async () => {
     try {
-      const finalExpense = {
+      const finalExpense: Expense = {
         ...newExpense,
         id: crypto.randomUUID(),
         tags: tagsInput
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean),
+        date: new Date().toISOString(),
       };
 
       await addExpense(finalExpense);
+
+      toast.success("Expense Added", {
+        description: "Your expense was saved successfully!",
+      });
+
       setOpen(false);
       setNewExpense(defaultExpense);
       setTagsInput("");
-    } catch (err) {
-      console.error("Failed to save expense:", err);
+    } catch (error: any) {
+      toast.error("Failed to Save Expense", {
+        description:
+          error?.message || "Something went wrong. Please try again.",
+      });
     }
   };
 
@@ -139,144 +151,141 @@ export default function Expense() {
 
       {/* ===== Manage Expenses ===== */}
       <div className="space-y-6">
-        {/* Add Expense Dialog */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSaveExpense();
-          }}
-          className="flex flex-col gap-4 mt-3"
-        >
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-green-500 hover:bg-green-600 transition">
-                + Add Expense
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-green-500 hover:bg-green-600 transition">
+              + Add Expense
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="sm:max-w-md z-[9999]">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold">
+                Add New Expense
+              </DialogTitle>
+              <DialogDescription>
+                Fill in the details below to record a new expense.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveExpense();
+              }}
+              className="flex flex-col gap-4 mt-3"
+            >
+              <Input
+                placeholder="Title"
+                value={newExpense.title}
+                onChange={(e) =>
+                  setNewExpense({ ...newExpense, title: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Description"
+                value={newExpense.description}
+                onChange={(e) =>
+                  setNewExpense({ ...newExpense, description: e.target.value })
+                }
+              />
+              <Input
+                type="number"
+                placeholder="Amount"
+                value={newExpense.amount || ""}
+                onChange={(e) =>
+                  setNewExpense({
+                    ...newExpense,
+                    amount: Number(e.target.value),
+                  })
+                }
+              />
+
+              <Select
+                value={newExpense.currency}
+                onValueChange={(val) =>
+                  setNewExpense({ ...newExpense, currency: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["INR", "USD", "EUR"].map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={newExpense.paymentMethod}
+                onValueChange={(val: PaymentMethod) =>
+                  setNewExpense({ ...newExpense, paymentMethod: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Payment Method" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Cash", "Card", "UPI", "Bank Transfer"].map((method) => (
+                    <SelectItem key={method} value={method}>
+                      {method}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={newExpense.categoryId}
+                onValueChange={(val) =>
+                  setNewExpense({ ...newExpense, categoryId: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/*  Recurring Checkbox */}
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={newExpense.isRecurring}
+                  onChange={(e) =>
+                    setNewExpense({
+                      ...newExpense,
+                      isRecurring: e.target.checked,
+                    })
+                  }
+                />
+                Recurring Expense
+              </label>
+
+              {/*  Tags Input */}
+              <Input
+                placeholder="Tags (comma separated)"
+                value={tagsInput}
+                onChange={(e) => setTagsInput(e.target.value)}
+              />
+
+              <Button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-white mt-2"
+              >
+                Save Expense
               </Button>
-            </DialogTrigger>
-
-            <DialogContent className="sm:max-w-md z-[9999]">
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  Add New Expense
-                </DialogTitle>
-                <DialogDescription>
-                  Fill in the details below to record a new expense.
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="flex flex-col gap-4 mt-3">
-                <Input
-                  placeholder="Title"
-                  value={newExpense.title}
-                  onChange={(e) =>
-                    setNewExpense({ ...newExpense, title: e.target.value })
-                  }
-                />
-                <Input
-                  placeholder="Description"
-                  value={newExpense.description}
-                  onChange={(e) =>
-                    setNewExpense({
-                      ...newExpense,
-                      description: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  type="number"
-                  placeholder="Amount"
-                  value={newExpense.amount || ""}
-                  onChange={(e) =>
-                    setNewExpense({
-                      ...newExpense,
-                      amount: Number(e.target.value),
-                    })
-                  }
-                />
-                <Select
-                  value={newExpense.currency}
-                  onValueChange={(val) =>
-                    setNewExpense({ ...newExpense, currency: val })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["INR", "USD", "EUR"].map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={newExpense.paymentMethod}
-                  onValueChange={(val: PaymentMethod) =>
-                    setNewExpense({ ...newExpense, paymentMethod: val })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Payment Method" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["Cash", "Card", "UPI", "Bank Transfer"].map((method) => (
-                      <SelectItem key={method} value={method}>
-                        {method}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={newExpense.categoryId}
-                  onValueChange={(val) =>
-                    setNewExpense({ ...newExpense, categoryId: val })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {/* ✅ Recurring Checkbox */}
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={newExpense.isRecurring}
-                    onChange={(e) =>
-                      setNewExpense({
-                        ...newExpense,
-                        isRecurring: e.target.checked,
-                      })
-                    }
-                  />
-                  Recurring Expense
-                </label>
-
-                {/* ✅ Tags Input */}
-                <Input
-                  placeholder="Tags (comma separated)"
-                  value={tagsInput}
-                  onChange={(e) => setTagsInput(e.target.value)}
-                />
-
-                <Button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white mt-2"
-                >
-                  Save Expense
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </form>
+            </form>
+          </DialogContent>
+        </Dialog>
 
         {/* Expense List */}
         <div className="space-y-4">

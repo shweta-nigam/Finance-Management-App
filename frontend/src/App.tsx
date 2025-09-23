@@ -3,8 +3,7 @@ import "./App.css";
 import { AppRoutes } from "./routes";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
-// import { Toaster } from "@/components/ui/sonner"
-
+import { Toaster } from "sonner";
 
 function App() {
   return (
@@ -12,9 +11,9 @@ function App() {
       <Navbar />
       <div className="pt-30">
         <AppRoutes />
-         {/* <Toaster richColors position="top-right" /> */}
       </div>
       <Footer />
+      <Toaster richColors position="top-right" />
     </BrowserRouter>
   );
 }

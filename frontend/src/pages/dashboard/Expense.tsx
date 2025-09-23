@@ -29,7 +29,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { Expense, PaymentMethod } from "@/types";
-import { toast } from "sonner"; //  new toast API
+import { toast } from "sonner"; 
 
 const defaultExpense: Expense = {
   id: "",
@@ -83,7 +83,6 @@ export default function Expense() {
     try {
       const finalExpense: Expense = {
         ...newExpense,
-        id: crypto.randomUUID(),
         tags: tagsInput
           .split(",")
           .map((t) => t.trim())

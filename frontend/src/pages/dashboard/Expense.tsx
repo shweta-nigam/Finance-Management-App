@@ -30,7 +30,9 @@ import {
 } from "recharts";
 import type { Expense, PaymentMethod } from "@/types";
 import { toast } from "sonner";
-import type { Value } from "@radix-ui/react-select";
+
+import CategorySelect from "@/components/CategorySelect";
+import CategoryDialog from "@/components/CategoryDialog";
 
 const defaultExpense: Expense = {
   id: "",
@@ -47,7 +49,9 @@ const defaultExpense: Expense = {
 
 export default function Expense() {
   const { expenses, addExpense } = useExpense();
-  const { categories } = useCategory();
+  const { categories, addCategory } = useCategory();
+
+  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState<Expense>(defaultExpense);
@@ -257,7 +261,7 @@ export default function Expense() {
                 <SelectTrigger>
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
-                <SelectContent>
+                {/* <SelectContent>
                   {categories.length === 0 ? (
                     <SelectItem value="uncategorized" disabled>
                       {" "}
@@ -271,8 +275,27 @@ export default function Expense() {
                     ))
                   )}
                   <SelectItem value="uncategorized">Uncategorized</SelectItem>
-                </SelectContent>
+                  <SelectItem value="__ADD_NEW__">+ Add new category</SelectItem>
+                </SelectContent> */}
               </Select>
+
+              <CategorySelect
+                value={newExpense.categoryId}
+                onChange={(val:any) =>
+                  setNewExpense({ ...newExpense, categoryId: val })
+                }
+                onAddNew={() => setShowCategoryDialog(true)}
+              />
+
+              {showCategoryDialog && (
+                <CategoryDialog
+                  triggerLabel="Hidden"
+                  onCreated={(cat:any) => {
+                    setNewExpense((p) => ({ ...p, categoryId: cat.id }));
+                    setShowCategoryDialog(false);
+                  }}
+                />
+              )}
 
               {/*  Recurring Checkbox */}
               <label className="flex items-center gap-2 text-sm">

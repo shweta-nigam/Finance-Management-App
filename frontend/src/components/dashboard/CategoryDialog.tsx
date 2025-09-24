@@ -1,5 +1,4 @@
-// components/CategoryDialog.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ type Props = {
 };
 
 export default function CategoryDialog({ triggerLabel = "+ Add Category", onCreated }: Props) {
-  const { addCategory } = useCategory(); // expects Promise<Category>
+  const { addCategory } = useCategory(); 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,7 +25,7 @@ export default function CategoryDialog({ triggerLabel = "+ Add Category", onCrea
     }
     setLoading(true);
     try {
-      const created = await addCategory({ title: name }); // should return Category
+      const created = await addCategory({ title: name }); 
       toast.success("Category created");
       setTitle("");
       setOpen(false);

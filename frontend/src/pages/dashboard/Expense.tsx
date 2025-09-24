@@ -30,6 +30,7 @@ import {
 } from "recharts";
 import type { Expense, PaymentMethod } from "@/types";
 import { toast } from "sonner";
+import type { Value } from "@radix-ui/react-select";
 
 const defaultExpense: Expense = {
   id: "",
@@ -90,7 +91,7 @@ export default function Expense() {
       toast.error("Enter a valid amount");
     }
     setSaving(true);
-    
+
     try {
       const finalExpense: Expense = {
         ...newExpense,
@@ -257,12 +258,18 @@ export default function Expense() {
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.isArray(categories) &&
+                  {categories.length === 0 ? (
+                    <SelectItem value="uncategorized" disabled>
+                      {" "}
+                      Loading categories...
+                    </SelectItem>
+                  ) : (
                     categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id}>
                         {cat.title}
                       </SelectItem>
-                    ))}
+                    ))
+                  )}
                   <SelectItem value="uncategorized">Uncategorized</SelectItem>
                 </SelectContent>
               </Select>
@@ -290,10 +297,11 @@ export default function Expense() {
               />
 
               <Button
+                disabled={saving}
                 type="submit"
                 className="bg-green-600 hover:bg-green-700 text-white mt-2"
               >
-                Save Expense
+                {saving ? "Saving..." : "Save Expense"}
               </Button>
             </form>
           </DialogContent>

@@ -11,7 +11,7 @@ import type { Category } from "@/types";
 type Props = {
   value: string;
   onChange: (val: string) => void;
-  onAddNew?: () => void; // called when user picks "+ Add new"
+  onAddNew?: () => void;
   includeUncategorized?: boolean;
 };
 
@@ -22,6 +22,14 @@ export default function CategorySelect({
   includeUncategorized = true,
 }: Props) {
   const { categories } = useCategory();
+
+  // console.log("CategorySelect categories:", categories);
+
+  const uniqueCategories = Array.isArray(categories)
+    ? Array.from(new Map(categories.map((c) => [c.id, c])).values())
+    : [];
+
+  const hasUncategorized = uniqueCategories.some((c) => c.id === "uncategorized");
 
   return (
     <Select
@@ -37,23 +45,33 @@ export default function CategorySelect({
       <SelectTrigger>
         <SelectValue placeholder="Select Category" />
       </SelectTrigger>
+
       <SelectContent>
-        {Array.isArray(categories) && categories.length > 0 ? (
-          categories.map((cat: Category) => (
+        {uniqueCategories.length > 0 ? (
+          uniqueCategories.map((cat) => (
             <SelectItem key={cat.id} value={cat.id}>
               {cat.title}
             </SelectItem>
           ))
         ) : (
-          <SelectItem value="uncategorized" disabled>
+          
+          <SelectItem key="loading" value="__loading__" disabled>
             Loading categories…
           </SelectItem>
         )}
-        {includeUncategorized && (
-          <SelectItem value="uncategorized">Uncategorized</SelectItem>
+
+       
+        {!hasUncategorized && includeUncategorized && (
+          <SelectItem key="uncategorized-default" value="uncategorized">
+            Uncategorized
+          </SelectItem>
         )}
-        <SelectItem value="__ADD_NEW__">+ Add new category</SelectItem>
+
+        <SelectItem key="__ADD_NEW__" value="__ADD_NEW__">
+          + Add new category
+        </SelectItem>
       </SelectContent>
     </Select>
   );
 }
+

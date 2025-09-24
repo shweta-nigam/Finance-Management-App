@@ -10,7 +10,7 @@ import {
 
 type CategoryContextType = {
   categories: Category[];
-  addCategory: (category: Omit<Category, "id">) => Promise<void>;
+  addCategory: (category: Omit<Category, "id">) => Promise<Category>;
   clearCategories: () => void;
 };
 
@@ -30,15 +30,13 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
     }
   }, [response]);
 
-  const addCategory = async (newCategory: Omit<Category, "id">) => {
-    try {
-      const saved = await createCategory("/api/v1/category/", newCategory);
-      if (saved) {
-        setCategories((prev) => [saved, ...prev]);
-      } // takes the previous categories array (prev), adds the new one (saved) at the beginning, and returns the updated array.
-    } catch (err) {
-      console.error("Failed to add category:", err);
-    }
+  const addCategory = async (
+    newCategory: Omit<Category, "id">
+  ): Promise<Category> => {
+    const saved = await createCategory("/api/v1/category/", newCategory);
+    if (!saved) throw new Error("Failed to create category");
+    setCategories((prev) => [saved, ...prev]);
+    return saved;
   };
 
   const clearCategories = () => setCategories([]);

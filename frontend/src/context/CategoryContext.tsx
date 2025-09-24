@@ -1,5 +1,12 @@
-import { useCategoryAPi, type Category } from "@/hooks/useCategoryApi";
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useCategoryAPi } from "@/hooks/useCategoryApi";
+import type { Category } from "@/types";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
 type CategoryContextType = {
   categories: Category[];
@@ -26,7 +33,9 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
   const addCategory = async (newCategory: Omit<Category, "id">) => {
     try {
       const saved = await createCategory("/api/v1/category/", newCategory);
-      setCategories((prev) => [saved, ...prev]);
+      if (saved) {
+        setCategories((prev) => [saved, ...prev]);
+      } // takes the previous categories array (prev), adds the new one (saved) at the beginning, and returns the updated array.
     } catch (err) {
       console.error("Failed to add category:", err);
     }
@@ -35,7 +44,9 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
   const clearCategories = () => setCategories([]);
 
   return (
-    <CategoryContext.Provider value={{ categories, addCategory, clearCategories }}>
+    <CategoryContext.Provider
+      value={{ categories, addCategory, clearCategories }}
+    >
       {children}
     </CategoryContext.Provider>
   );

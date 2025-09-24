@@ -31,8 +31,8 @@ import {
 import type { Expense, PaymentMethod } from "@/types";
 import { toast } from "sonner";
 
-import CategorySelect from "@/components/CategorySelect";
-import CategoryDialog from "@/components/CategoryDialog";
+import CategorySelect from "@/components/dashboard/CategorySelect";
+import CategoryDialog from "@/components/dashboard/CategoryDialog";
 
 const defaultExpense: Expense = {
   id: "",
@@ -49,7 +49,7 @@ const defaultExpense: Expense = {
 
 export default function Expense() {
   const { expenses, addExpense } = useExpense();
-  const { categories, addCategory } = useCategory();
+  const { categories } = useCategory();
 
   const [showCategoryDialog, setShowCategoryDialog] = useState(false);
 
@@ -252,36 +252,10 @@ export default function Expense() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select
-                value={newExpense.categoryId}
-                onValueChange={(val) =>
-                  setNewExpense({ ...newExpense, categoryId: val })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                {/* <SelectContent>
-                  {categories.length === 0 ? (
-                    <SelectItem value="uncategorized" disabled>
-                      {" "}
-                      Loading categories...
-                    </SelectItem>
-                  ) : (
-                    categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.title}
-                      </SelectItem>
-                    ))
-                  )}
-                  <SelectItem value="uncategorized">Uncategorized</SelectItem>
-                  <SelectItem value="__ADD_NEW__">+ Add new category</SelectItem>
-                </SelectContent> */}
-              </Select>
 
               <CategorySelect
                 value={newExpense.categoryId}
-                onChange={(val:any) =>
+                onChange={(val: any) =>
                   setNewExpense({ ...newExpense, categoryId: val })
                 }
                 onAddNew={() => setShowCategoryDialog(true)}
@@ -290,7 +264,7 @@ export default function Expense() {
               {showCategoryDialog && (
                 <CategoryDialog
                   triggerLabel="Hidden"
-                  onCreated={(cat:any) => {
+                  onCreated={(cat: any) => {
                     setNewExpense((p) => ({ ...p, categoryId: cat.id }));
                     setShowCategoryDialog(false);
                   }}
@@ -333,7 +307,12 @@ export default function Expense() {
         {/* Expense List */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Recent Expenses</h2>
-          {expenses.length === 0 ? (
+          
+          {/* console.log("expenses raw:", expenses); console.log("categories raw:",
+          categories); */}
+
+
+          {(!expenses || expenses.length) === 0 ? (
             <p className="text-gray-500">No expenses yet. Add one above 👆</p>
           ) : (
             expenses.map((expense) => (

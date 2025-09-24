@@ -29,7 +29,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { Expense, PaymentMethod } from "@/types";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
 const defaultExpense: Expense = {
   id: "",
@@ -51,6 +51,7 @@ export default function Expense() {
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState<Expense>(defaultExpense);
   const [tagsInput, setTagsInput] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const currentMonthTotal = useMemo(() => {
     const now = new Date();
@@ -80,6 +81,16 @@ export default function Expense() {
   }, [expenses]);
 
   const handleSaveExpense = async () => {
+    if (!newExpense.title.trim()) {
+      toast.error("Please enter a title");
+      return;
+    }
+
+    if (!newExpense.amount || newExpense.amount <= 0) {
+      toast.error("Enter a valid amount");
+    }
+    setSaving(true);
+    
     try {
       const finalExpense: Expense = {
         ...newExpense,
@@ -192,7 +203,7 @@ export default function Expense() {
               <Input
                 type="number"
                 placeholder="Amount"
-                value={newExpense.amount || ""}
+                value={newExpense.amount ?? ""}
                 onChange={(e) =>
                   setNewExpense({
                     ...newExpense,

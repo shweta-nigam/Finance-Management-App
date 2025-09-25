@@ -5,7 +5,7 @@ export type Expense = {
   id: string;
   title: string;
   description: string;
-  amount: number;
+  amount: number | "";
   currency: string;
   categoryId: string;
   paymentMethod: PaymentMethod;

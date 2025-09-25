@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -48,15 +48,28 @@ const defaultExpense: Expense = {
 };
 
 export default function Expense() {
+useEffect(() => {
+  console.log("Expense component mounted", { expensesLength: expenses.length });
+}, []);
+
+
   const { expenses, addExpense } = useExpense();
   const { categories } = useCategory();
-
+ const [loading, setLoading] = useState(true);
   const [showCategoryDialog, setShowCategoryDialog] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState<Expense>(defaultExpense);
   const [tagsInput, setTagsInput] = useState("");
   const [saving, setSaving] = useState(false);
+
+  useEffect(()=> {
+if(expenses){
+  setLoading(false)
+}
+  },[expenses])
+
+  if (!expenses) return <p>Loading...</p>;
 
   const currentMonthTotal = useMemo(() => {
     const now = new Date();
@@ -91,8 +104,9 @@ export default function Expense() {
       return;
     }
 
-    if (!newExpense.amount || newExpense.amount <= 0) {
+    if (!newExpense.amount || Number(newExpense.amount) <= 0) {
       toast.error("Enter a valid amount");
+      return;
     }
     setSaving(true);
 
@@ -117,12 +131,16 @@ export default function Expense() {
       setNewExpense(defaultExpense);
       setTagsInput("");
     } catch (error: any) {
+      console.error("handleSaveExpense error:", error)
       toast.error("Failed to Save Expense", {
         description:
           error?.message || "Something went wrong. Please try again.",
       });
+    } finally{
+      setSaving(false)
     }
   };
+
 
   return (
     <div className="p-6 space-y-10">

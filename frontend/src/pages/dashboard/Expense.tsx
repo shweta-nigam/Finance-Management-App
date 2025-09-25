@@ -69,7 +69,7 @@ export default function Expense() {
           d.getFullYear() === now.getFullYear()
         );
       })
-      .reduce((sum, e) => sum + e.amount, 0);
+      .reduce((sum, e) => sum + Number(e.amount), 0);
   }, [expenses]);
 
   const chartData = useMemo(() => {
@@ -80,7 +80,7 @@ export default function Expense() {
         day: "2-digit",
         month: "short",
       });
-      grouped[d] = (grouped[d] || 0) + e.amount;
+      grouped[d] = (grouped[d] || 0) + Number(e.amount);
     });
     return Object.entries(grouped).map(([date, total]) => ({ date, total }));
   }, [expenses]);
@@ -208,11 +208,11 @@ export default function Expense() {
               <Input
                 type="number"
                 placeholder="Amount"
-                value={newExpense.amount ?? ""}
+                value={newExpense.amount === "" ? "" : newExpense.amount}
                 onChange={(e) =>
                   setNewExpense({
                     ...newExpense,
-                    amount: Number(e.target.value),
+                    amount: e.target.value === "" ? "" : Number(e.target.value),
                   })
                 }
               />
@@ -307,38 +307,43 @@ export default function Expense() {
         {/* Expense List */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Recent Expenses</h2>
-          
-          {/* console.log("expenses raw:", expenses); console.log("categories raw:",
-          categories); */}
 
-
-          {(!expenses || expenses.length) === 0 ? (
+          {!expenses || expenses.length === 0 ? (
             <p className="text-gray-500">No expenses yet. Add one above 👆</p>
           ) : (
-            expenses.map((expense) => (
-              <Card key={expense.id} className="shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-base font-medium">
-                    {expense.title}
-                  </CardTitle>
-                  <span className="text-green-600 font-semibold">
-                    ₹{expense.amount}
-                  </span>
-                </CardHeader>
-                <CardContent className="text-sm text-gray-500">
-                  Category:{" "}
-                  {categories?.find((c) => c.id === expense.categoryId)
-                    ?.title || "Uncategorized"}
-                  <br />
-                  Payment: {expense.paymentMethod}
-                  <br />
-                  Recurring: {expense.isRecurring ? "Yes" : "No"}
-                  <br />
-                  Tags:{" "}
-                  {expense.tags.length > 0 ? expense.tags.join(", ") : "None"}
-                </CardContent>
-              </Card>
-            ))
+            expenses.filter(Boolean).map((expense) => {
+
+              if(!expense) return null;
+
+              console.log("expense:", expense); // 👈 log here
+              const category = categories.find(
+                (c) => c.id === expense.categoryId
+              );
+              console.log("matched category:", category); // 👈 log here
+
+              return (
+                <Card key={expense.id} className="shadow-sm">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-base font-medium">
+                      {expense.title}
+                    </CardTitle>
+                    <span className="text-green-600 font-semibold">
+                      ₹{expense.amount}
+                    </span>
+                  </CardHeader>
+                  <CardContent className="text-sm text-gray-500">
+                    Category: {category ? category.title : "Uncategorized"}
+                    <br />
+                    Payment: {expense.paymentMethod}
+                    <br />
+                    Recurring: {expense.isRecurring ? "Yes" : "No"}
+                    <br />
+                    Tags:{" "}
+                    {expense.tags.length > 0 ? expense.tags.join(", ") : "None"}
+                  </CardContent>
+                </Card>
+              );
+            })
           )}
         </div>
       </div>

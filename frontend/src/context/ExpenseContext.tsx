@@ -19,21 +19,19 @@ export const ExpenseContext = createContext<ExpenseContextType | undefined>(
 );
 
 export function ExpenseProvider({ children }: { children: ReactNode }) {
-
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const { response, getAllExpenses, createExpense } = useExpenseApi();
 
   // fetch all expenses on mount and save directly to state
   useEffect(() => {
-    (async() => {
+    (async () => {
       try {
-        const all =  await getAllExpenses("/api/v1/expense/");
-        setExpenses(all)
+        const all = await getAllExpenses("/api/v1/expense/");
+        if (Array.isArray(all)) setExpenses(all);
       } catch (error) {
         console.error("Failed to fetch expenses:", error);
       }
-    })()
-  
+    })();
   }, []);
 
   useEffect(() => {
@@ -42,22 +40,16 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
         "Expense API response:(from expense context code file",
         response
       );
-      if (Array.isArray(response)) {
-        setExpenses(response);
-      } else if (typeof response === "object") {
-        // add single object
+
+      if (response && !Array.isArray(response)) {
         setExpenses((prev) => {
-          const exists = prev.find((e) => e.id === (response as Expense).id);
+          const prevArr = Array.isArray(prev) ? prev : [];
+          const exists = prevArr.find((e) => e.id === response.id);
           if (exists) {
-            return prev.map((e) =>
-              e.id === (response as Expense).id ? (response as Expense) : e
-            );
+            return prevArr.map((e) => (e.id === response.id ? response : e));
           }
-          return [response as Expense, ...prev];
+          return [response, ...prevArr];
         });
-      } else {
-        console.warn("Expense API returned non-array response:", response);
-        setExpenses([]);
       }
     }
   }, [response]);
@@ -70,7 +62,10 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
 
       console.log("createExpense returned:", saved);
 
-      setExpenses((prev) => [saved, ...prev]);
+      setExpenses((prev) => {
+        const prevArr = Array.isArray(prev) ? prev : [];
+        return [saved, ...prevArr];
+      });
 
       return saved;
     } catch (err) {

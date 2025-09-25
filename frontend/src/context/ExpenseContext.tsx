@@ -34,25 +34,31 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
     })();
   }, []);
 
-  useEffect(() => {
-    if (response) {
-      console.log(
-        "Expense API response:(from expense context code file",
-        response
-      );
+useEffect(() => {
+  if (!response) return;
 
-      if (response && !Array.isArray(response)) {
-        setExpenses((prev) => {
-          const prevArr = Array.isArray(prev) ? prev : [];
-          const exists = prevArr.find((e) => e.id === response.id);
-          if (exists) {
-            return prevArr.map((e) => (e.id === response.id ? response : e));
-          }
-          return [response, ...prevArr];
-        });
+  console.log("Expense API response (from context):", response);
+
+  if (Array.isArray(response)) {
+    // overwrite with fresh list
+    setExpenses(response);
+  } else if (typeof response === "object") {
+    // merge a single expense object
+    setExpenses((prev) => {
+      const prevArr = Array.isArray(prev) ? prev : [];
+      const exists = prevArr.find((e) => e.id === (response as Expense).id);
+      if (exists) {
+        return prevArr.map((e) =>
+          e.id === (response as Expense).id ? (response as Expense) : e
+        );
       }
-    }
-  }, [response]);
+      return [response as Expense, ...prevArr];
+    });
+  } else {
+    console.warn("Expense API returned unexpected response:", response);
+  }
+}, [response]);
+
 
   const addExpense = async (newExpense: Omit<Expense, "id">) => {
     try {

@@ -26,7 +26,7 @@ export const createExpense = async (req: RequestWithUser, res: Response, next: N
 
 
         res.status(201).json(new ApiResponse(201, {
-            express: {
+            expense: {
                 id: expense.id,
                 title: expense.title,
                 description: expense.description,

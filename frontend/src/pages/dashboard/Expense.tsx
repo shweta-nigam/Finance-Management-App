@@ -65,7 +65,9 @@ export default function Expense() {
   }, []);
 
   useEffect(() => {
-    if (expenses) setLoading(false);
+    if (expenses.length > 0) {
+      setLoading(false);
+    }
   }, [expenses]);
 
   const currentMonthTotal = useMemo(() => {

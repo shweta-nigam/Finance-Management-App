@@ -27,8 +27,14 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (response && Array.isArray(response)) {
-      setExpenses(response);
+    if (response) {
+       console.log("Expense API response:(from expense context code file", response);
+      if (Array.isArray(response)) {
+        setExpenses(response);
+      } else {
+        console.warn("Expense API returned non-array response:", response);
+        setExpenses([]);
+      }
     }
   }, [response]);
 

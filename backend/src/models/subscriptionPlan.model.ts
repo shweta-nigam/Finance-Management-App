@@ -14,7 +14,7 @@ export interface ISubscriptionPlan extends Document {
     cancelledAt: Date,
     startedAt: Date,
     expiredAt: Date,
-    payment: Schema.Types.ObjectId,
+    payment?: Schema.Types.ObjectId,
     user: Schema.Types.ObjectId,
 }
 

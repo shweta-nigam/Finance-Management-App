@@ -11,7 +11,7 @@ import useAuth from "@/context/AuthContext";
 import { useState } from "react";
 
 export function Navbar() {
-  const { user, logout } = useAuth();
+   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
@@ -66,11 +66,17 @@ export function Navbar() {
         {/* User section */}
         {user ? (
           <div className="hidden md:flex items-center gap-3">
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="w-10 h-10 rounded-full border-2 border-white object-cover"
-            />
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt="user avatar"
+                className="w-16 h-16 rounded-full mx-auto mb-2"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center text-white text-xl mx-auto mb-2">
+                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+              </div>
+            )}
             <button
               onClick={logout}
               className="px-5 py-3 rounded bg-blue-500 text-white hover:bg-blue-600"

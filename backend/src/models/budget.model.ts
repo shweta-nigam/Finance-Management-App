@@ -61,11 +61,11 @@ const budgetSchema: Schema<IBudget> = new Schema({
     },
     expense: {
         type: Schema.Types.ObjectId,
-        //   ref:"Expense"
+          ref:"Expense"
     },
     category: {
         type: Schema.Types.ObjectId,
-        //   ref:"Category"
+          ref:"Category"
     }
 },
     { timestamps: true }

@@ -366,7 +366,7 @@ export default function Expense() {
                         Recurring: {expense.isRecurring ? "Yes" : "No"}
                         <br />
                         Tags:{" "}
-                        {expense.tags.length > 0
+                        {expense.tags?.length > 0
                           ? expense.tags.join(", ")
                           : "None"}
                       </CardContent>

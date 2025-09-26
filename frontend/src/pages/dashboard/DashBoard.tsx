@@ -1,3 +1,4 @@
+import useAuth from "@/context/AuthContext";
 import { User, Wallet, BarChart, Target, Settings, BarChart3 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 
@@ -47,6 +48,12 @@ const menuItems = [
 ];
 
 export default function Dashboard() {
+  const {user} = useAuth()
+
+    if (!user) {
+    return <p className="text-xl text-white">Please log in to view your profile</p>;
+  }
+  
   return (
     <>
       {/* hero section */}
@@ -59,7 +66,7 @@ export default function Dashboard() {
               alt="user avatar"
               className="w-16 h-16 rounded-full mx-auto mb-2"
             />
-            <h2 className="text-lg font-semibold">John Doe</h2>
+            <h2 className="text-lg font-semibold">{user.name}</h2>
             <p className="text-sm text-gray-300">Balance: ₹45,200</p>
           </div>
           {/* navigation */}

@@ -7,6 +7,21 @@ export const registerUserSchema = z.object({
     username: z.string().min(3, "Username must be at least 3 characters").optional(),
     email: z.email("Invalid email formate"),
     password: z.string().regex(passwordRegex, "Password must contain uppercase, lowercase, number, and special character"),
+    role: z.enum(["User", "Admin"]).optional(),
+    isPlanActive: z.boolean().optional(),
+    avatar: z.preprocess(
+        (val) => {
+            if (typeof val !== "string") return undefined;
+            const clean = val.trim().toLowerCase();
+
+            if (clean === "" || clean === "null" || clean === "undefined") {
+                return undefined;
+            }
+
+            return val;
+        },
+        z.string().regex(/^https?:\/\/.+/i, "Invalid URL").optional()
+    ),
 })
 
 export const loginUserSchema = z.object({
@@ -22,11 +37,4 @@ export const googleUserSchema = z.object({
     picture: z.url().optional(),
 });
 
-// for future case:
-export const updateUserSchema = z.object({
-    name: z.string().min(2).optional(),
-    username: z.string().min(3).optional(),
-    avatar: z.string().url().optional(),
-    role: z.enum(["User", "Admin"]).optional(),
-    isPlanActive: z.boolean().optional(),
-});
+export const updateUserSchema = registerUserSchema.partial()

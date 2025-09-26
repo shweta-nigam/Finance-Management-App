@@ -28,7 +28,6 @@ const userSchema: Schema<IUser> = new Schema({
         type: String,
         lowercase: true,
         trim: true,
-        unique: true
     },
     password: {
         type: String,
@@ -74,6 +73,7 @@ const userSchema: Schema<IUser> = new Schema({
     { timestamps: true }
 )
 
+userSchema.index({ username: 1 }, { unique: true, sparse: true })
 
 userSchema.pre("save", async function (next) {
 

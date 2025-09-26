@@ -147,7 +147,7 @@ export default function Expense() {
       ) : (
         <>
           {/* ===== Expense Chart ===== */}
-          <Card className="bg-D-blue shadow-md">
+          <Card className="bg-D-blue shadow-md text-white">
             <CardHeader>
               <CardTitle className="text-lg font-semibold">
                 Expenses Overview
@@ -172,7 +172,7 @@ export default function Expense() {
           </Card>
 
           {/* ===== Current Month Total ===== */}
-          <Card className="bg-green-50 border-green-200 text-center shadow-sm">
+          <Card className="bg-green-50 border-green-200 text-center shadow-sm bg-D-blue">
             <CardHeader>
               <CardTitle className="text-xl font-bold text-green-700">
                 This Month’s Spending
@@ -331,7 +331,7 @@ export default function Expense() {
             </Dialog>
 
             {/* Expense List */}
-            <div className="space-y-4">
+            <div className="space-y-4 text-white">
               <h2 className="text-lg font-semibold">Recent Expenses</h2>
 
               {!expenses || expenses.length === 0 ? (
@@ -349,7 +349,7 @@ export default function Expense() {
                   console.log("matched category:", category);
 
                   return (
-                    <Card key={expense.id} className="shadow-sm">
+                    <Card key={expense.id} className="shadow-sm bg-D-blue text-white">
                       <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-base font-medium">
                           {expense.title}

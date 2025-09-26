@@ -56,7 +56,8 @@ const userSchema: Schema<IUser> = new Schema({
         default: "User"
     },
     avatar: {
-        type: String
+        type: String,
+        set: (val: string) => (val && val.trim() !== "" ? val : null)
     },
     googleId: {
         type: String

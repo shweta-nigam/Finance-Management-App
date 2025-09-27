@@ -1,6 +1,16 @@
 import useAuth from "@/context/AuthContext";
-import { User, Wallet, BarChart, Target, Settings, BarChart3 } from "lucide-react";
+import useBudget from "@/context/BudgetContext";
+import useExpense from "@/context/ExpenseContext";
+import {
+  User,
+  Wallet,
+  BarChart,
+  Target,
+  Settings,
+  BarChart3,
+} from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
+import { Lock } from "lucide-react";
 
 const menuItems = [
   {
@@ -48,12 +58,28 @@ const menuItems = [
 ];
 
 export default function Dashboard() {
-  const {user} = useAuth()
+  const { user } = useAuth();
+  const { budget } = useBudget();
+  const { expenses } = useExpense();
 
-    if (!user) {
-    return <p className="text-xl text-white">Please log in to view your profile</p>;
+  if (!user) {
+    return (
+      <div className="w-full h-screen flex flex-col items-center justify-center bg text-white space-y-4">
+        <p className="text-xl">Please log in to view your profile</p>
+        <Lock className="w-10 h-10 text-red-400 animate-bounce" />
+      </div>
+    );
   }
-  
+
+  console.log("Avatar value:", user.avatar);
+
+  const calBalance = () => {
+    const totalBudget = budget?.amount || 0;
+    const totalExpense = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totalBalance = totalBudget - totalExpense;
+    return totalBalance;
+  };
+
   return (
     <>
       {/* hero section */}
@@ -61,13 +87,20 @@ export default function Dashboard() {
         {/* sidebar */}
         <div className="w-64 bg text-white flex flex-col p-4">
           <div className="mb-6 text-center">
-            <img
-              src="https://i.pravatar.cc/100"
-              alt="user avatar"
-              className="w-16 h-16 rounded-full mx-auto mb-2"
-            />
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt="user avatar"
+                className="w-16 h-16 rounded-full mx-auto mb-2"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center text-white text-xl mx-auto mb-2">
+                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+              </div>
+            )}
+
             <h2 className="text-lg font-semibold">{user.name}</h2>
-            <p className="text-sm text-gray-300">Balance: ₹45,200</p>
+            <p className="text-sm text-gray-300">{calBalance()}</p>
           </div>
           {/* navigation */}
           <nav className="flex-1">
@@ -78,8 +111,8 @@ export default function Dashboard() {
                     to={item.path}
                     className="flex items-center w-full px-3 py-2 rounded-lg hover:bg-indigo-500"
                   >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.label}
+                    <span className="mr-2">{item.icon}</span>
+                    {item.label}
                   </Link>
                 </li>
               ))}

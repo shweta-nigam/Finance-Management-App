@@ -4,7 +4,7 @@ import { useBudgetApi } from "@/hooks/useBudgetApi";
 
 type BudgetContextType = {
   budget: Budget | null;
-  addBudget: (budget: Budget)=> Promise<Budget>;
+   addBudget: (budget: Omit<Budget, "id">) => Promise<Budget>;
   clearBudget:() => void
 };
 
@@ -38,10 +38,10 @@ try {
     })();
   }, [getBudget]);
 
-const addBudget = async (newBudget:Budget) => {
+const addBudget = async (newBudget: Omit <Budget, "id">) => {
   try {
     const saved = await createBudget("/api/v1/budget", newBudget)
-    setBudget(saved)
+     setBudget(saved);
     return saved
   } catch (err) {
     console.error("Failed to add budget(in provider)", err);

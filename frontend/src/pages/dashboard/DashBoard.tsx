@@ -72,7 +72,7 @@ export default function Dashboard() {
     );
   }
 
-  console.log("Avatar value:", user.avatar);
+  // console.log("Avatar value:", user.avatar);
 
   const calBalance = () => {
     const totalBudget = budget?.amount || 0;

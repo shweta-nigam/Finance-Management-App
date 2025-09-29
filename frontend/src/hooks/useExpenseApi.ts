@@ -13,7 +13,7 @@ export function useExpenseApi() {
             const res = await axios.post(urlPath, data)
             const expense: Expense = res.data.data.expense
             setResponse(expense)
-            console.log("createExpense raw response:", res.data);
+            // console.log("createExpense raw response:", res.data);
             return expense
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while creating expense")
@@ -63,8 +63,8 @@ export function useExpenseApi() {
             const payload = res.data
             const expenses: Expense[] = payload?.data ?? payload;
             setResponse(expenses);
-            console.log("expenses from api (expenseAPi): expenses", expenses);
-            console.log("expenses from api (expenseAPi): res.data", res.data);
+            // console.log("expenses from api (expenseAPi): expenses", expenses);
+            // console.log("expenses from api (expenseAPi): res.data", res.data);
             return expenses;
             
         } catch (error: any) {

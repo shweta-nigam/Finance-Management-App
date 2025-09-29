@@ -37,7 +37,7 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
 useEffect(() => {
   if (!response) return;
 
-  console.log("Expense API response (from context):", response);
+  // console.log("Expense API response (from context):", response);
 
   if (Array.isArray(response)) {
     // overwrite with fresh list

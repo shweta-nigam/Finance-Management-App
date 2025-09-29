@@ -1,69 +1,126 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  type ReactNode,
+} from "react";
 import type { Budget } from "@/types";
 import { useBudgetApi } from "@/hooks/useBudgetApi";
 
 type BudgetContextType = {
-  budget: Budget | null;
-   addBudget: (budget: Omit<Budget, "id">) => Promise<Budget>;
-  clearBudget:() => void
+  budgets: Budget[];
+  loading: boolean;
+  error: string | null;
+  addBudget: (budget: Omit<Budget, "id">) => Promise<Budget>;
+  updateBudget: (id: string, updated: Partial<Budget>) => Promise<Budget>;
+  deleteBudget: (id: string) => Promise<void>;
+  clearBudgets: () => void;
 };
 
 export const BudgetContext = createContext<BudgetContextType | undefined>(
   undefined
 );
 
+export function BudgetProvider({ children }: { children: ReactNode }) {
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export function BudgetProvider({children}: {children: ReactNode }) {
-  const [budget, setBudget] = useState<Budget | null>(null);
-const { getBudget,  createBudget} = useBudgetApi()
+  const { getAllBudgets, createBudget, updateBudget, deleteBudget } = useBudgetApi();
 
-useEffect(()=>{
-(async()=>{
-try {
-  const budget = await getBudget("/api/v1/budget/")
-} catch (error) {
-  console.error("Failed to fetch budget:", error);
-}
-})()
-}, [])
-// Load initial budget
+  // Load initial budgets
   useEffect(() => {
     (async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const data = await getBudget("/api/v1/budget/");
-        setBudget(data);
-      } catch (error) {
-        console.error("Failed to fetch budget:", error);
+        const data = await getAllBudgets("/api/v1/budget");
+        setBudgets(data || []);
+        console.log("initial budgets:", data);
+      } catch (err: any) {
+        setError("Failed to fetch budgets");
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     })();
-  }, [getBudget]);
+  }, []);
 
-const addBudget = async (newBudget: Omit <Budget, "id">) => {
-  try {
-    const saved = await createBudget("/api/v1/budget", newBudget)
-     setBudget(saved);
-    return saved
-  } catch (err) {
-    console.error("Failed to add budget(in provider)", err);
+  const addBudget = async (newBudget: Omit<Budget, "id">) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const saved = await createBudget("/api/v1/budget", newBudget);
+      setBudgets((prev) => [...prev, saved]);
+      return saved;
+    } catch (err: any) {
+      setError("Failed to add budget");
       throw err;
-  }
-}
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const clearBudget = ()=>{
-    setBudget(null)
-}
+  const updateBudgetHandler = async (id: string, updated: Partial<Budget>) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const saved = await updateBudget(`/api/v1/budget/${id}`, updated);
+      setBudgets((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, ...saved } : b))
+      );
+      return saved;
+    } catch (err: any) {
+      setError("Failed to update budget");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteBudgetHandler = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteBudget(`/api/v1/budget/${id}`);
+      setBudgets((prev) => prev.filter((b) => b.id !== id));
+    } catch (err: any) {
+      setError("Failed to delete budget");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearBudgets = () => {
+    setBudgets([]);
+  };
+
+  const value = useMemo(
+    () => ({
+      budgets,
+      loading,
+      error,
+      addBudget,
+      updateBudget: updateBudgetHandler,
+      deleteBudget: deleteBudgetHandler,
+      clearBudgets,
+    }),
+    [budgets, loading, error]
+  );
+
   return (
-    <BudgetContext.Provider value={{ budget, addBudget, clearBudget }}>
-      {children}
-    </BudgetContext.Provider>
+    <BudgetContext.Provider value={value}>{children}</BudgetContext.Provider>
   );
 }
 
 export default function useBudget() {
   const context = useContext(BudgetContext);
-
   if (!context) {
-    throw new Error("useBudget must be used within an BudgetProvider ");
+    throw new Error("useBudget must be used within a BudgetProvider");
   }
   return context;
 }
+

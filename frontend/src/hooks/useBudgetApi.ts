@@ -1,106 +1,124 @@
-import axios from "axios"
-import { useState } from "react"
+import axios from "axios";
+import { useState } from "react";
 import type { Budget } from "@/types";
 
-type ChartData = { day: number; amount: number };
-
 export function useBudgetApi() {
-    const [response, setResponse] = useState<any>(null)
-    const [error, setError] = useState<null | string>(null)
-    const [chartData, setChartData] = useState<any[]>([])
-    const [month, setMonth] = useState<any>("")
+  const [response, setResponse] = useState<any>(null);
+  const [error, setError] = useState<null | string>(null);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [month, setMonth] = useState<string>("");
 
-
-    const createBudget = async (urlPath: string, data: any) => {
-        try {
-            setError(null)
-            const res = await axios.post(urlPath, data)
-            setResponse(res.data.data.budget)
-            return res.data.data.budget
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while creating budget")
-        }
+  // Create new budget
+  const createBudget = async (urlPath: string, data: Omit<Budget, "id">) => {
+    try {
+      setError(null);
+      const res = await axios.post(urlPath, data);
+      const budget = res.data.data.budget;
+      setResponse(budget);
+      return budget;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Error creating budget");
+      throw err;
     }
-    const updateBudget = async (urlPath: string, data: any) => {
-        try {
-            setError(null)
-            const res = await axios.patch(urlPath, data)
-            setResponse(res.data.data.budget)
-            return res.data.data.budget
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while updating budget")
-        }
-    }
-    const getBudget = async (urlPath: string) => {
-        try {
-            setError(null)
-            const res = await axios.get(urlPath)
-            setResponse(res.data.data)
+  };
 
-            // transform to chart data
-            if (res.data.data?.date && res.data.data?.amount) {
-                setChartData([
-                    {
-                        day: new Date(res.data.data.date).getDate(),
-                        amount: res.data.data.amount,
-                    }
-                ])
-            }
-            return res.data.data
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while fetching budget details")
-        }
+  // Update budget
+  const updateBudget = async (urlPath: string, data: Partial<Budget>) => {
+    try {
+      setError(null);
+      const res = await axios.patch(urlPath, data);
+      const budget = res.data.data.budget;
+      setResponse(budget);
+      return budget;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Error updating budget");
+      throw err;
     }
-    const getAllBudgets = async (urlPath: string) => {
-        try {
-            setError(null)
-            const res = await axios.get(urlPath)
-            const budgets = res.data.data.budgets
+  };
 
-            setResponse(budgets)
+  // Get all budgets
+  const getAllBudgets = async (urlPath: string) => {
+    try {
+      setError(null);
+      const res = await axios.get(urlPath);
+      const budgets = res.data.data.budgets;
+      setResponse(budgets);
 
-            // convert to chart data
-            const transformed = res.data.data.budgets.map((b: any) => ({
-                day: new Date(b.date).getDate(),
-                amount: b.amount,
-            }))
-            setChartData(transformed)
+      // chart data
+      const transformed = budgets.map((b: any) => ({
+        day: new Date(b.date).getDate(),
+        amount: b.amount,
+      }));
+      setChartData(transformed);
 
-            if (budgets.length > 0) {
-                const monthName = new Date(budgets[0].date).toLocaleDateString("default", {
-                    month: "long"
-                })
-                setMonth(monthName)
-            }
-            return res.data.data.budgets
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while fetching budgets details")
-        }
+      if (budgets.length > 0) {
+        const monthName = new Date(budgets[0].date).toLocaleDateString("default", {
+          month: "long",
+        });
+        setMonth(monthName);
+      }
+
+      return budgets;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Error fetching budgets");
+      throw err;
     }
-    const deleteBudget = async (urlPath: string) => {
-        try {
-            setError(null)
-            const res = await axios.delete(urlPath)
-            setResponse(res.data.data.budget)
-            return res.data.data.budget
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while deleting budget")
-        }
-    }
-    const deleteAllBudgets = async (urlPath: string) => {
-        try {
-            setError(null)
-            const res = await axios.delete(urlPath)
-            setResponse(res.data.data)                    // as data is null in backend
-            // setResponse(res.data.message)     // to show a msg
-            res.data.data
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while deleting budgets")
-        }
-    }
+  };
 
-    return { response, chartData, month, error, createBudget, updateBudget, getBudget, getAllBudgets, deleteBudget, deleteAllBudgets }
+  // Get single budget
+  const getBudgetById = async (urlPath: string) => {
+    try {
+      setError(null);
+      const res = await axios.get(urlPath);
+      const budget = res.data.data;
+      setResponse(budget);
+      return budget;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Error fetching budget");
+      throw err;
+    }
+  };
+
+  // Delete single budget
+  const deleteBudget = async (urlPath: string) => {
+    try {
+      setError(null);
+      const res = await axios.delete(urlPath);
+      setResponse(res.data.message || "Budget deleted");
+      return res.data;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Error deleting budget");
+      throw err;
+    }
+  };
+
+  // Delete all budgets
+  const deleteAllBudgets = async (urlPath: string) => {
+    try {
+      setError(null);
+      const res = await axios.delete(urlPath);
+      setResponse(res.data.message || "All budgets deleted");
+      return res.data;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Error deleting all budgets");
+      throw err;
+    }
+  };
+
+  return {
+    response,
+    chartData,
+    month,
+    error,
+    createBudget,
+    updateBudget,
+    getBudgetById,
+    getAllBudgets,
+    deleteBudget,
+    deleteAllBudgets,
+  };
 }
+
 
 //Note:-
 //-- res.data is always the actual JSON body returned by the backend.

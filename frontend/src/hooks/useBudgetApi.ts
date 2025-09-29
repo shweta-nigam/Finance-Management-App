@@ -1,5 +1,8 @@
 import axios from "axios"
 import { useState } from "react"
+import type { Budget } from "@/types";
+
+type ChartData = { day: number; amount: number };
 
 export function useBudgetApi() {
     const [response, setResponse] = useState<any>(null)
@@ -13,6 +16,7 @@ export function useBudgetApi() {
             setError(null)
             const res = await axios.post(urlPath, data)
             setResponse(res.data.data.budget)
+            return res.data.data.budget
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while creating budget")
         }
@@ -22,6 +26,7 @@ export function useBudgetApi() {
             setError(null)
             const res = await axios.patch(urlPath, data)
             setResponse(res.data.data.budget)
+            return res.data.data.budget
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while updating budget")
         }
@@ -41,7 +46,7 @@ export function useBudgetApi() {
                     }
                 ])
             }
-
+            return res.data.data
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while fetching budget details")
         }
@@ -61,13 +66,13 @@ export function useBudgetApi() {
             }))
             setChartData(transformed)
 
-            if(budgets.length >0){
+            if (budgets.length > 0) {
                 const monthName = new Date(budgets[0].date).toLocaleDateString("default", {
                     month: "long"
-                }) 
+                })
                 setMonth(monthName)
             }
-
+            return res.data.data.budgets
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while fetching budgets details")
         }
@@ -77,6 +82,7 @@ export function useBudgetApi() {
             setError(null)
             const res = await axios.delete(urlPath)
             setResponse(res.data.data.budget)
+            return res.data.data.budget
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while deleting budget")
         }
@@ -87,6 +93,7 @@ export function useBudgetApi() {
             const res = await axios.delete(urlPath)
             setResponse(res.data.data)                    // as data is null in backend
             // setResponse(res.data.message)     // to show a msg
+            res.data.data
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while deleting budgets")
         }

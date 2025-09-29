@@ -1,36 +1,46 @@
 # 📊 FinEase – Personal Finance Tracker
 
-FinEase is a full-stack personal finance tracker that helps users manage their budgets, expenses, and categories. It comes with a Node.js + Express + MongoDB backend and a React + TypeScript frontend.
+**FinEase** is a full-stack personal finance tracker that helps users manage their budgets, expenses, and categories.  
+It comes with a **Node.js + Express + MongoDB backend** and a **React + TypeScript frontend**.
+
+---
 
 ## ✨ Features
 
-🔐 User Authentication (Signup, Login, JWT-based sessions, Google OAuth)
-💸 Budget Management – Add, update, and track budgets
-🧾 Expense Tracking – Record expenses with categories & dates
-📊 Dashboard – Visualize spending with charts & summaries
-📬 Email Verification – Secure signup with token-based email verification
-🎨 Modern UI – Built with React, TailwindCSS, and ShadCN components
+- 🔐 **User Authentication** – Signup, Login, JWT-based sessions, Google OAuth
+- 💸 **Budget Management** – Add, update, and track budgets
+- 🧾 **Expense Tracking** – Record expenses with categories & dates
+- 📊 **Dashboard** – Visualize spending with charts & summaries
+- 📬 **Email Verification** – Secure signup with token-based email verification
+- 🎨 **Modern UI** – Built with React, TailwindCSS, and ShadCN components
 
-## Tech Stack
+---
 
-### Frontend
-React + TypeScript
-TailwindCSS + ShadCN UI
-Context API for state management
-React Router for navigation
+## 🛠 Tech Stack
 
-### Backend
-Node.js + Express
-MongoDB + Mongoose
-JWT Authentication
-bcrypt for password hashing
-Nodemailer for email verification
-zod verification 
+### ⚛️ Frontend
+- React + TypeScript  
+- TailwindCSS + ShadCN UI  
+- Context API for state management  
+- React Router for navigation  
 
-## ⚙️ Installation
-1️⃣ Clone the repository
+### 🔧 Backend
+- Node.js + Express  
+- MongoDB + Mongoose  
+- JWT Authentication  
+- bcrypt for password hashing  
+- Nodemailer for email verification  
+- Zod for schema validation  
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/your-username/FinEase.git
 cd FinEase
+
 
 2️⃣ Backend Setup
 cd backend

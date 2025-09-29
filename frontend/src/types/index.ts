@@ -26,8 +26,8 @@ export type Category = {
 };
 
 export type Budget = {
-   id: string;
-  amount: number;
-  date: Date;
-  frequency: string[];
+  id: string;
+  categoryId: string; // link to CategoryContext
+  limit: number;
+  perDay: number;
 }

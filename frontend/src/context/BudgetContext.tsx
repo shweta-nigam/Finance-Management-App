@@ -4,7 +4,7 @@ import { useBudgetApi } from "@/hooks/useBudgetApi";
 
 type BudgetContextType = {
   budget: Budget | null;
-  addBudget: (budget: Budget)=> void;
+  addBudget: (budget: Budget)=> Promise<Budget>;
   clearBudget:() => void
 };
 
@@ -15,7 +15,7 @@ export const BudgetContext = createContext<BudgetContextType | undefined>(
 
 export function BudgetProvider({children}: {children: ReactNode }) {
   const [budget, setBudget] = useState<Budget | null>(null);
-const {response , getAllBudgets, getBudget,  createBudget} = useBudgetApi()
+const { getBudget,  createBudget} = useBudgetApi()
 
 useEffect(()=>{
 (async()=>{
@@ -26,25 +26,22 @@ try {
 }
 })()
 }, [])
-
-useEffect(()=>{
-  if(!response) return;
-
-  if(response){
-    setBudget(response);
-  }else {
-   console.warn("Budget API returned unexpected response:", response);
-   
-    
-  }
-},[response])
+// Load initial budget
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getBudget("/api/v1/budget/");
+        setBudget(data);
+      } catch (error) {
+        console.error("Failed to fetch budget:", error);
+      }
+    })();
+  }, [getBudget]);
 
 const addBudget = async (newBudget:Budget) => {
   try {
     const saved = await createBudget("/api/v1/budget", newBudget)
-
-    setBudget(newBudget)
-
+    setBudget(saved)
     return saved
   } catch (err) {
     console.error("Failed to add budget(in provider)", err);

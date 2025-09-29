@@ -5,7 +5,7 @@ export default function Profile() {
   const { user } = useAuth();
 
   if (!user) {
-    return <p className="text-xl text-white">Please log in to view your profile</p>;
+    return <p className="text-xl bg text-white">Please log in to view your profile</p>;
   }
 
   return (
@@ -14,7 +14,7 @@ export default function Profile() {
       <div className="relative bg-D-blue rounded-2xl shadow-lg">
         <div className="flex flex-col md:flex-row items-center md:items-end gap-6 p-8">
           <img
-            src="https://i.pravatar.cc/150?img=3"
+            src={user.avatar}
             alt="User Avatar"
             className="w-32 h-32 rounded-full border-4 border-white shadow-md"
           />

@@ -24,3 +24,10 @@ export type Category = {
   color?: string;
   isDefault?: boolean;
 };
+
+export type Budget = {
+   id: string;
+  amount: number;
+  date: Date;
+  frequency: string[];
+}

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import { Lock } from "lucide-react";
+import UserAvatar from "@/components/UserAvatar";
 
 const menuItems = [
   {
@@ -86,19 +87,8 @@ export default function Dashboard() {
       <div className="flex h-auto bg">
         {/* sidebar */}
         <div className="w-64 bg text-white flex flex-col p-4">
-          <div className="mb-6 text-center">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt="user avatar"
-                className="w-16 h-16 rounded-full mx-auto mb-2"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center text-white text-xl mx-auto mb-2">
-                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-              </div>
-            )}
-
+          <div className="mb-6 text-center flex flex-col items-center">
+            <UserAvatar size="w-12 h-12 text-lg" />
             <h2 className="text-lg font-semibold">{user.name}</h2>
             <p className="text-sm text-gray-300">{calBalance()}</p>
           </div>

@@ -31,6 +31,7 @@ export type Budget = {
   limit: number;
   amount: number;
   currency: string;
+  frequency?: string | number;
   date: Date | string;      // optional
   title: string;
   perDay?: number;
@@ -39,4 +40,5 @@ export type Budget = {
   description?: string;
   createdAt?: string;        // optional
   updatedAt?: string;
+  isRecurring?: boolean
 };

@@ -26,7 +26,6 @@ import useBudget from "@/context/BudgetContext";
 import CategorySelect from "@/components/dashboard/CategorySelect";
 import CategoryDialog from "@/components/dashboard/CategoryDialog";
 
-
 export default function Budget() {
   const { budgets, addBudget, updateBudget, deleteBudget, loading } = useBudget();
   const [title, setTitle] = useState("");
@@ -39,30 +38,30 @@ export default function Budget() {
     if (!title || !amount || !categoryId) return;
 
     if (selectedBudget) {
-      // update existing
       await updateBudget(selectedBudget, {
         title,
         amount: parseFloat(amount),
         categoryId,
       });
     } else {
-      // create new
       await addBudget({
         title,
         amount: parseFloat(amount),
+        limit: parseFloat(amount),
         categoryId,
-        currency: "INR", // default, adjust as per user
+        currency: "INR",
         date: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       });
-    }
 
-    setTitle("");
-    setAmount("");
-    setCategoryId("");
-    setSelectedBudget(null);
+      setTitle("");
+      setAmount("");
+      setCategoryId("");
+      setSelectedBudget(null);
+    }
   };
 
-  // Chart Data
+  // prepare chartData outside so it re-renders correctly
   const chartData = budgets.map((b) => ({
     name: new Date(b.date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -71,6 +70,7 @@ export default function Budget() {
     amount: b.amount,
   }));
 
+  // ✅ actual component return
   return (
     <div className="p-6 space-y-8">
       <div className="flex justify-between items-center">
@@ -141,7 +141,7 @@ export default function Budget() {
                     <p className="text-sm text-muted-foreground">
                       {new Date(b.date).toLocaleDateString()} • {b.currency}
                     </p>
-                    <Progress value={70} /> {/* TODO: calculate from expenses */}
+                    <Progress value={70} />
                     <p className="font-medium">₹ {b.amount}</p>
                   </CardContent>
                 </Card>
@@ -165,14 +165,6 @@ export default function Budget() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
 
 
 // export default function Budget() {

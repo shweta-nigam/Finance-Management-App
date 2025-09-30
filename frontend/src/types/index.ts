@@ -25,14 +25,18 @@ export type Category = {
   isDefault?: boolean;
 };
 
-export type Budget = { 
-  id: string;                
-  categoryId: string;        // link to CategoryContext (the category this budget belongs to)
-  limit: number;             
-  perDay?: number;         
-  spent?: number;           
-  remaining?: number;        
-  description?: string;     
-  createdAt: string;        
-  updatedAt?: string;       
+export type Budget = {
+  id: string;
+  categoryId: string;
+  limit: number;
+  amount: number;
+  currency: string;
+  date: Date | string;      // optional
+  title: string;
+  perDay?: number;
+  spent?: number;
+  remaining?: number;
+  description?: string;
+  createdAt?: string;        // optional
+  updatedAt?: string;
 };

@@ -1,67 +1,90 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar, ArrowLeft, Plus } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogDescription,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import useBudget from "@/context/BudgetContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import { Plus } from "lucide-react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 import CategorySelect from "@/components/dashboard/CategorySelect";
-import CategoryDialog from "@/components/dashboard/CategoryDialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import useBudget from "@/context/BudgetContext";
 
 export default function Budget() {
-  const { budgets, addBudget, updateBudget, deleteBudget, loading } = useBudget();
+  const { budgets, addBudget, updateBudget, deleteBudget, loading } =
+    useBudget();
+
+  // form state
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [description, setDescription] = useState("");
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [frequency, setFrequency] = useState("Monthly");
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
 
-  // Submit new or updated budget
+  // handle create / update
   const handleSave = async () => {
     if (!title || !amount || !categoryId) return;
 
     if (selectedBudget) {
       await updateBudget(selectedBudget, {
         title,
+        description,
         amount: parseFloat(amount),
         categoryId,
+        isRecurring,
+        frequency,
       });
     } else {
       await addBudget({
         title,
+        description,
         amount: parseFloat(amount),
         limit: parseFloat(amount),
         categoryId,
         currency: "INR",
         date: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        isRecurring,
+        frequency,
       });
-
-      setTitle("");
-      setAmount("");
-      setCategoryId("");
-      setSelectedBudget(null);
     }
+
+    // reset form
+    setTitle("");
+    setAmount("");
+    setCategoryId("");
+    setDescription("");
+    setIsRecurring(false);
+    setFrequency("Monthly");
+    setSelectedBudget(null);
   };
 
-  // prepare chartData outside so it re-renders correctly
+  // chart data
   const chartData = budgets.map((b) => ({
     name: new Date(b.date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -70,7 +93,7 @@ export default function Budget() {
     amount: b.amount,
   }));
 
-  // ✅ actual component return
+  // render
   return (
     <div className="p-6 space-y-8">
       <div className="flex justify-between items-center">
@@ -97,12 +120,38 @@ export default function Budget() {
                 onChange={(e) => setTitle(e.target.value)}
               />
               <Input
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <Input
                 type="number"
                 placeholder="Amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
               <CategorySelect value={categoryId} onChange={setCategoryId} />
+
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={isRecurring}
+                  onCheckedChange={(val) => setIsRecurring(val as boolean)}
+                />
+                <label>Recurring Budget?</label>
+              </div>
+
+              <Select value={frequency} onValueChange={setFrequency}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select frequency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Daily">Daily</SelectItem>
+                  <SelectItem value="Weekly">Weekly</SelectItem>
+                  <SelectItem value="Monthly">Monthly</SelectItem>
+                  <SelectItem value="Yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Button onClick={handleSave}>
                 {selectedBudget ? "Update" : "Save"}
               </Button>
@@ -111,61 +160,64 @@ export default function Budget() {
         </Dialog>
       </div>
 
-      <Tabs defaultValue="list" className="w-full">
-        <TabsList>
-          <TabsTrigger value="list">List</TabsTrigger>
-          <TabsTrigger value="chart">Chart</TabsTrigger>
-        </TabsList>
+      {loading ? (
+        <p>Loading Budgets...</p>
+      ) : (
+        <Tabs defaultValue="list" className="w-full">
+          <TabsList>
+            <TabsTrigger value="list">List</TabsTrigger>
+            <TabsTrigger value="chart">Chart</TabsTrigger>
+          </TabsList>
 
-        {/* List View */}
-        <TabsContent value="list">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {budgets.map((b) => (
-              <motion.div
-                key={b.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <Card>
-                  <CardContent className="p-4 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-semibold">{b.title}</h3>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => deleteBudget(b.id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(b.date).toLocaleDateString()} • {b.currency}
-                    </p>
-                    <Progress value={70} />
-                    <p className="font-medium">₹ {b.amount}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </TabsContent>
+          {/* List View */}
+          <TabsContent value="list">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {budgets.map((b) => (
+                <motion.div
+                  key={b.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <Card>
+                    <CardContent className="p-4 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-semibold">{b.title}</h3>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => deleteBudget(b.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(b.date).toLocaleDateString()} • {b.currency}
+                      </p>
+                      <Progress value={70} />
+                      <p className="font-medium">₹ {b.amount}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
 
-        {/* Chart View */}
-        <TabsContent value="chart">
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="amount" stroke="#8884d8" />
-            </LineChart>
-          </ResponsiveContainer>
-        </TabsContent>
-      </Tabs>
+          {/* Chart View */}
+          <TabsContent value="chart">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="amount" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }
-
 
 // export default function Budget() {
 //   const { budgets, addBudget } = useBudget();

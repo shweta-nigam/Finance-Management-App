@@ -1,6 +1,6 @@
 import { NextFunction } from "express";
 import { ApiError } from "../utils/apiError";
-import { Budget } from "../models/budget.model";
+import { Budget, IBudget } from "../models/budget.model";
 import { ApiResponse } from "../utils/apiResponse";
 import { budgetCreateSchema, budgetUpdateSchema } from "../validators/budget.validator";
 import { toBudgetResponse } from "../responses/toBudgetResponse";
@@ -38,7 +38,6 @@ export const updateBudget = async (req: any, res: any, next: NextFunction) => {
 
     const user = req.user
     const { BudgetId } = req.params ?? req.query
-    // console.log("logged user---------------->>>>> ", user);
 
     if (!user) {
         return next(new ApiError(404, "User not found."))
@@ -86,7 +85,7 @@ export const getAllBudgets = async (req: any, res: any, next: NextFunction) => {
     }
 
     try {
-        const budgets = await Budget.find({ user: user._id }).select("id title amount currency date").lean()
+        const budgets: IBudget[] = await Budget.find({ user: user._id }).select("id title amount currency date").lean<IBudget[]>();
 
         if (!budgets) {
             return next(new ApiError(404, "Budget(s) not found."))
@@ -96,7 +95,7 @@ export const getAllBudgets = async (req: any, res: any, next: NextFunction) => {
             return res.status(200).json(new ApiResponse(200, { budgets: [] }, "No budgets yet"))
         }
 
-        res.status(200).json(new ApiResponse(200, { budgets }, " Fetched Budget(s) successfully!"))
+        res.status(200).json(new ApiResponse(200, { budgets: toBudgetResponse(budgets) }, " Fetched Budget(s) successfully!"))
 
     } catch (error) {
         next(error)
@@ -121,7 +120,7 @@ export const getBudgetById = async (req: any, res: any, next: NextFunction) => {
             return next(new ApiError(404, "Budget not found."))
         }
 
-        res.status(200).json(new ApiResponse(200, budget, "Budget found successfully!"))
+        res.status(200).json(new ApiResponse(200, {budget:toBudgetResponse(budget)}, "Budget found successfully!"))
 
 
     } catch (error) {
@@ -142,23 +141,14 @@ export const deleteBudget = async (req: any, res: any, next: NextFunction) => {
             { _id: BudgetId, user: user._id },
             { $set: { isDeleted: true } },  // ---update this document and mark its isDeleted flag as true 
             { new: true } // --- return updated doc,because Mongoose returns the old/original document (the one before the update).
-        )
+        ).lean<IBudget>();
 
 
         if (!budget) {
             return next(new ApiError(404, "Budget not found."))
         }
 
-        res.status(200).json(new ApiResponse(200, {
-            budget: {
-                id: budget.id,
-                title: budget.title,
-                description: budget.description,
-                amount: budget.amount,
-                date: budget.date,
-                isDeleted: budget.isDeleted
-            }
-        }, "Budget deleted successfully!"))
+        res.status(200).json(new ApiResponse(200,{budget:toBudgetResponse(budget)}, "Budget deleted successfully!"))
 
     } catch (error) {
         next(error)
@@ -175,7 +165,7 @@ export const deleteALlBudgets = async (req: any, res: any, next: NextFunction) =
     }
 
     try {
-        const budgets = await Budget.updateMany(
+        const budgets : IBudget[] = await Budget.updateMany(
             { user: user._id },
             { $set: { isDeleted: true } }
         )
@@ -184,7 +174,7 @@ export const deleteALlBudgets = async (req: any, res: any, next: NextFunction) =
             return next(new ApiError(404, "Budget(s) not found."))
         }
 
-        res.status(200).json(new ApiResponse(200, null, "Budget(S) deleted successfully!"))
+        res.status(200).json(new ApiResponse(200,{budgets:toBudgetResponse(budgets)}, "Budget(S) deleted successfully!"))
 
     } catch (error) {
         next(error)

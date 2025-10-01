@@ -69,13 +69,7 @@ export const updateBudget = async (req: any, res: any, next: NextFunction) => {
         }
 
         res.status(200).json(new ApiResponse(200, {
-            budget: {
-                id: budget.id,
-                title: budget.title,
-                description: budget.description,
-                amount: budget.amount,
-                date: budget.date
-            }
+            budget: toBudgetResponse(budget)
         }, "Budget updated successfully"))
 
     } catch (error: unknown) {

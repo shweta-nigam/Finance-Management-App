@@ -70,7 +70,7 @@ export function useBudgetApi() {
     try {
       setError(null);
       const res = await axios.get(urlPath);
-      const budget = res.data.data;
+      const budget = res.data.data.budget;
       setResponse(budget);
       return budget;
     } catch (err: any) {
@@ -84,8 +84,9 @@ export function useBudgetApi() {
     try {
       setError(null);
       const res = await axios.delete(urlPath);
-      setResponse(res.data.message || "Budget deleted");
-      return res.data;
+      const budget = res.data.data.budget;
+      setResponse(budget);
+      return budget;
     } catch (err: any) {
       setError(err.response?.data?.message || "Error deleting budget");
       throw err;
@@ -97,8 +98,9 @@ export function useBudgetApi() {
     try {
       setError(null);
       const res = await axios.delete(urlPath);
-      setResponse(res.data.message || "All budgets deleted");
-      return res.data;
+      const budgets = res.data.data.budgets;
+      setResponse(budgets);
+      return budgets
     } catch (err: any) {
       setError(err.response?.data?.message || "Error deleting all budgets");
       throw err;

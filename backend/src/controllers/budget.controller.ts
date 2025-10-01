@@ -165,16 +165,18 @@ export const deleteALlBudgets = async (req: any, res: any, next: NextFunction) =
     }
 
     try {
-        const budgets : IBudget[] = await Budget.updateMany(
-            { user: user._id },
+        await Budget.updateMany(
+            { user: user._id, isDeleted:false },
             { $set: { isDeleted: true } }
         )
+
+        const budgets : IBudget[] = await Budget.find({user:user._id}).lean<IBudget[]>()
 
         if (!budgets) {
             return next(new ApiError(404, "Budget(s) not found."))
         }
 
-        res.status(200).json(new ApiResponse(200,{budgets:toBudgetResponse(budgets)}, "Budget(S) deleted successfully!"))
+        res.status(200).json(new ApiResponse(200,{budgets:toBudgetResponse(budgets)},    "All budgets deleted successfully!"))
 
     } catch (error) {
         next(error)

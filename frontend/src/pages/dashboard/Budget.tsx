@@ -46,46 +46,54 @@ export default function Budget() {
   const [frequency, setFrequency] = useState("Monthly");
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // handle create / update
   const handleSave = async () => {
     if (!title || !amount || !categoryId) return;
 
-    if (selectedBudget) {
-      await updateBudget(selectedBudget, {
-        title,
-        description,
-        amount: parseFloat(amount),
-        categoryId,
-        isRecurring,
-        frequency,
-      });
-    } else {
-      await addBudget({
-        title,
-        description,
-        amount: parseFloat(amount),
-        limit: parseFloat(amount),
-        categoryId,
-        currency: "INR",
-        date: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        isRecurring,
-        frequency,
-      });
+    setSaving(true);
+    try {
+      if (selectedBudget) {
+        await updateBudget(selectedBudget, {
+          title,
+          description,
+          amount: parseFloat(amount),
+          categoryId,
+          isRecurring,
+          frequency,
+        });
+      } else {
+        await addBudget({
+          title,
+          description,
+          amount: parseFloat(amount),
+          limit: parseFloat(amount),
+          categoryId,
+          currency: "INR",
+          date: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          isRecurring,
+          frequency,
+        });
+      }
+
+      setOpen(false);
+
+      // reset form
+      setTitle("");
+      setAmount("");
+      setCategoryId("");
+      setDescription("");
+      setIsRecurring(false);
+      setFrequency("Monthly");
+      setSelectedBudget(null);
+    } catch (err) {
+      console.error("Error saving budget:", err);
+    } finally {
+      setSaving(false);
     }
-
-    setOpen(false)
-
-    // reset form
-    setTitle("");
-    setAmount("");
-    setCategoryId("");
-    setDescription("");
-    setIsRecurring(false);
-    setFrequency("Monthly");
-    setSelectedBudget(null);
   };
 
   // chart data
@@ -108,7 +116,7 @@ export default function Budget() {
               <Plus size={16} /> Add Budget
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="z-99">
             <DialogHeader>
               <DialogTitle>
                 {selectedBudget ? "Update Budget" : "Create Budget"}
@@ -156,8 +164,8 @@ export default function Budget() {
                 </SelectContent>
               </Select>
 
-              <Button onClick={handleSave}>
-                {selectedBudget ? "Update" : "Save"}
+              <Button onClick={handleSave} disabled={saving}>
+                {saving ? "Saving..." : selectedBudget ? "Update" : "Save"}
               </Button>
             </div>
           </DialogContent>
@@ -222,4 +230,3 @@ export default function Budget() {
     </div>
   );
 }
-

@@ -12,8 +12,15 @@ export type BudgetResponse = {
   isDeleted?: boolean;
 };
 
-export const toBudgetResponse = (budget: IBudget): BudgetResponse => {
-  // Mongoose docs may have `id` or `_id`, and `date` may be a Date or string
+
+export function toBudgetResponse(budget: IBudget): BudgetResponse;  // type declarations for the same function.
+export function toBudgetResponse(budgets: IBudget[]): BudgetResponse[]; // type declarations for the same function.
+export function toBudgetResponse(budgetOrBudgets: IBudget | IBudget[]): BudgetResponse | BudgetResponse[] {
+  if (Array.isArray(budgetOrBudgets)) {
+    return budgetOrBudgets.map((b) => toBudgetResponse(b));
+  }
+
+  const budget = budgetOrBudgets;
   const id = (budget as any).id ?? String((budget as any)._id ?? "");
   const date = budget.date ? new Date(budget.date).toISOString() : undefined;
 
@@ -28,11 +35,7 @@ export const toBudgetResponse = (budget: IBudget): BudgetResponse => {
     frequency: (budget as any).frequency ?? undefined,
     isDeleted: !!(budget as any).isDeleted,
   };
-};
-
-export const toBudgetsResponse = (budgets: IBudget[]): BudgetResponse[] =>
-  budgets.map(toBudgetResponse);
-
+}
 
 // notes:
 // recursion = a function solving a big problem by breaking it into smaller versions of the same problem, until it’s simple enough.

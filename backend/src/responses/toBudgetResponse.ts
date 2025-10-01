@@ -1,12 +1,38 @@
-import type {IBudget } from "../models/budget.model";
+import type { IBudget } from "../models/budget.model";
 
-export const toBudgetResponse = (budget: IBudget) => ({
-  id: budget.id,                
-  title: budget.title,
-  description: budget.description,
-  amount: budget.amount,
-  currency: budget.currency,
-  date: budget.date,
-  isRecurring: budget.isRecurring || false,
-  frequency: budget.frequency || "Monthly",
-});
+export type BudgetResponse = {
+  id: string;
+  title: string;
+  description?: string;
+  amount: number;
+  currency?: string;
+  date?: string;
+  isRecurring?: boolean;
+  frequency?: string;
+  isDeleted?: boolean;
+};
+
+export const toBudgetResponse = (budget: IBudget): BudgetResponse => {
+  // Mongoose docs may have `id` or `_id`, and `date` may be a Date or string
+  const id = (budget as any).id ?? String((budget as any)._id ?? "");
+  const date = budget.date ? new Date(budget.date).toISOString() : undefined;
+
+  return {
+    id,
+    title: budget.title,
+    description: budget.description,
+    amount: budget.amount,
+    currency: budget.currency,
+    date,
+    isRecurring: !!(budget as any).isRecurring,
+    frequency: (budget as any).frequency ?? undefined,
+    isDeleted: !!(budget as any).isDeleted,
+  };
+};
+
+export const toBudgetsResponse = (budgets: IBudget[]): BudgetResponse[] =>
+  budgets.map(toBudgetResponse);
+
+
+// notes:
+// recursion = a function solving a big problem by breaking it into smaller versions of the same problem, until it’s simple enough.

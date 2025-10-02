@@ -34,7 +34,7 @@ import {
 import useBudget from "@/context/BudgetContext";
 
 export default function Budget() {
-  const { budgets, addBudget, updateBudget, deleteBudget, loading } =
+  const { budgets, addBudget, updateBudget, removeBudget, loading } =
     useBudget();
 
   // form state
@@ -197,7 +197,7 @@ export default function Budget() {
                         <Button
                           size="sm"
                           variant="destructive"
-                          onClick={() => deleteBudget(b.id)}
+                          onClick={() => removeBudget(b.id)}
                         >
                           Delete
                         </Button>

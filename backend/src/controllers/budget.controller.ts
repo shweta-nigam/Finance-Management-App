@@ -49,10 +49,8 @@ export const updateBudget = async (req: any, res: any, next: NextFunction) => {
     const validatedData = budgetUpdateSchema.parse(req.body)
 
     try {
-        const budget = await Budget.findOneAndUpdate({
-            _id: BudgetId,
-            user: user._id
-        },
+        const budget = await Budget.findOneAndUpdate(
+            { _id: BudgetId, user: user._id },
             { $set: validatedData },
             { new: true, runValidators: true }
         )

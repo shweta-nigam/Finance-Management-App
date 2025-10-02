@@ -3,7 +3,7 @@ import { RequestWithUser } from "./auth.controller";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { categoryCreateSchema, categoryUpdateSchema } from "../validators/category.validator";
-import { Category } from "../models/category.model";
+import { Category, ICategory } from "../models/category.model";
 import { toCategoryResponse } from "../responses/toCategoryResponse";
 
 
@@ -83,8 +83,9 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
     try {
         const category = await Category.findOne({
             _id: categoryId,
-            user: user._id
-        })
+            user: user._id,
+            isDeleted:false
+        }).select("id title description note type icon color date isDefault")
 
         if (!category) {
             return next(new ApiError(404, "Category not found"))
@@ -106,15 +107,15 @@ export const getAllCategories = async (req: RequestWithUser, res: Response, next
     }
 
     try {
-        const categories = await Category.find({
+        const categories :ICategory[] = await Category.find({
             user: user._id
-        }).select("title description note type icon color isDefault")
+        }).select("id title description note type icon color date isDefault").lean<ICategory>()
 
-        if (!categories.length) {
-            return res.status(200).json(new ApiResponse(200, [], "No categories found"))
+        if (categories.length === 0) {
+            return res.status(200).json(new ApiResponse(200, {categories:[]}, "No categories yet"))
         }
 
-        res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(categories) }, "Fetched categories successfully."))
+        res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(categories) }, "Fetched categories successfully!"))
 
     } catch (error) {
         next(error)
@@ -139,7 +140,7 @@ export const deleteCategory = async (req: RequestWithUser, res: Response, next: 
             { _id: categoryId, user: user._id },
             { $set: { isDeleted: true } },
             { new: true }
-        )
+        ).lean<ICategory>()
 
         if (!category) {
             return next(new ApiError(400, "Category not found"))
@@ -161,16 +162,21 @@ export const deleteAllCategory = async (req: RequestWithUser, res: Response, nex
     }
 
     try {
-        const categories = await Category.updateMany(
-            { user: user._id },
+        const result = await Category.updateMany(
+            { user: user._id , isDeleted:false},
             { $set: { isDeleted: true } }
         )
 
-        if (!categories) {
-            return next(new ApiError(404, "Categories not found"))
+        const deletedCategories: ICategory[] = await Category.find({user : user._id, isDeleted: true}).select("id title description note type icon color date isDefault").lean<ICategory>()
+
+       if (deletedCategories.length === 0) {
+            return res
+                .status(200)
+                .json(new ApiResponse(200, { categories: [] }, "No categories to delete."));
         }
 
-        res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(categories) }, "Deleted categories successfully."))
+
+        res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(deletedCategories) }, "All categories deleted successfully!"))
 
     } catch (error) {
         next(error)

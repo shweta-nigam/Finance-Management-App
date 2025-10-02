@@ -1,4 +1,4 @@
-import { useCategoryAPi } from "@/hooks/useCategoryApi";
+import { useCategoryApi } from "@/hooks/useCategoryApi";
 import type { Category } from "@/types";
 import {
   createContext,
@@ -18,10 +18,13 @@ const CategoryContext = createContext<CategoryContextType | null>(null);
 
 export function CategoryProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
-  const { response, getAllCategories, createCategory } = useCategoryAPi();
+  const { response, getAllCategories, createCategory } = useCategoryApi();
 
   useEffect(() => {
-    getAllCategories("/api/v1/category/");
+    (async () => {
+      const data = await getAllCategories("/api/v1/category/");
+      if (data) setCategories(data);
+    })();
   }, []);
 
   useEffect(() => {

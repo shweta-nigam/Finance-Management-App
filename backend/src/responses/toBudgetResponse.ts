@@ -16,6 +16,7 @@ export type BudgetResponse = {
 export function toBudgetResponse(budget: IBudget): BudgetResponse;  // type declarations for the same function.
 export function toBudgetResponse(budgets: IBudget[]): BudgetResponse[]; // type declarations for the same function.
 export function toBudgetResponse(budgetOrBudgets: IBudget | IBudget[]): BudgetResponse | BudgetResponse[] {
+  
   if (Array.isArray(budgetOrBudgets)) {
     return budgetOrBudgets.map((b) => toBudgetResponse(b));
   }

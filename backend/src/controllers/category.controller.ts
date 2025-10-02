@@ -6,7 +6,7 @@ import { categoryCreateSchema, categoryUpdateSchema } from "../validators/catego
 import { Category, ICategory } from "../models/category.model";
 import { toCategoryResponse } from "../responses/toCategoryResponse";
 
-
+const BASE_SELECT = "_id title description note type icon color date isDefault isDeleted";
 
 export const createCategory = async (req: RequestWithUser, res: Response, next: NextFunction) => {
 
@@ -24,8 +24,10 @@ export const createCategory = async (req: RequestWithUser, res: Response, next: 
             user: user._id
         })
 
+        // Convert to plain object for stable mapping
+        const categoryObj = (category as any).toObject ? (category as any).toObject() : category;
 
-        res.status(201).json(new ApiResponse(201, { category: toCategoryResponse(category) }, "Created category successfully!"))
+        res.status(201).json(new ApiResponse(201, { category: toCategoryResponse(categoryObj) }, "Created category successfully!"))
 
     } catch (error) {
         next(error)
@@ -85,7 +87,7 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
             _id: categoryId,
             user: user._id,
             isDeleted: false
-        }).select("id title description note type icon color date isDefault")
+        }).select("_id title description note type icon color date isDefault")
 
         if (!category) {
             return next(new ApiError(404, "Category not found"))

@@ -13,9 +13,12 @@ type BudgetContextType = {
   budgets: Budget[];
   loading: boolean;
   error: string | null;
+  chartData: any[];
+  month: string;
   addBudget: (budget: Omit<Budget, "id">) => Promise<Budget>;
   updateBudget: (id: string, updated: Partial<Budget>) => Promise<Budget>;
-  deleteBudget: (id: string) => Promise<void>;
+  removeBudget: (id: string) => Promise<void>;
+  removeAllBudgets: () => Promise<void>;
   clearBudgets: () => void;
 };
 
@@ -28,7 +31,15 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { getAllBudgets, createBudget, updateBudget, deleteBudget } = useBudgetApi();
+  const {
+    getAllBudgets,
+    createBudget,
+    updateBudget,
+    deleteBudget,
+    deleteAllBudgets,
+    chartData,
+    month,
+  } = useBudgetApi();
 
   // Load initial budgets
   useEffect(() => {
@@ -48,6 +59,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     })();
   }, []);
 
+  // Add new budget
   const addBudget = async (newBudget: Omit<Budget, "id">) => {
     setLoading(true);
     setError(null);
@@ -63,7 +75,8 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateBudgetHandler = async (id: string, updated: Partial<Budget>) => {
+  // Update existing budget
+  const updateBudgetById = async (id: string, updated: Partial<Budget>) => {
     setLoading(true);
     setError(null);
     try {
@@ -80,7 +93,8 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const deleteBudgetHandler = async (id: string) => {
+  // Delete single budget
+  const removeBudget = async (id: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -94,6 +108,22 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Delete all budgets
+  const removeAllBudgets = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteAllBudgets("/api/v1/budget");
+      setBudgets([]);
+    } catch (err: any) {
+      setError("Failed to delete all budgets");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Clear budgets locally
   const clearBudgets = () => {
     setBudgets([]);
   };
@@ -103,12 +133,15 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
       budgets,
       loading,
       error,
+      chartData,
+      month,
       addBudget,
-      updateBudget: updateBudgetHandler,
-      deleteBudget: deleteBudgetHandler,
+      updateBudget: updateBudgetById,
+      removeBudget,
+      removeAllBudgets,
       clearBudgets,
     }),
-    [budgets, loading, error]
+    [budgets, loading, error, chartData, month]
   );
 
   return (
@@ -123,4 +156,5 @@ export default function useBudget() {
   }
   return context;
 }
+
 

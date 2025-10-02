@@ -2,7 +2,7 @@ import axios from "axios"
 import { useState } from "react"
 import type { Category } from "@/types"
 
-export function useCategoryAPi() {
+export function useCategoryApi() {
     const [response, setResponse] = useState<Category | Category[] | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [date, setDate] = useState<Date | string>("")
@@ -12,13 +12,13 @@ export function useCategoryAPi() {
         try {
             setError(null)
             const res = await axios.post(urlPath, data)
-            const category: Category = res.data.data.category
+            const category = res.data.data.category
             setResponse(category)
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while creating category");
-            return null
+            return category
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Something went wrong while creating category");
+            throw err;
         }
-        return null
     }
 
     const updateCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category | null> => {
@@ -27,11 +27,11 @@ export function useCategoryAPi() {
             const res = await axios.patch(urlPath, data)
             const category: Category = res.data.data.category
             setResponse(category)
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while updating category");
-            return null
+            return category
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Something went wrong while updating category");
+            throw err
         }
-        return null
     }
 
     const getCategory = async (urlPath: string): Promise<Category | null> => {
@@ -40,11 +40,11 @@ export function useCategoryAPi() {
             const res = await axios.get(urlPath)
             const category: Category = res.data.data.category
             setResponse(category)
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while fetching category")
-            return null
+            return category
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Something went wrong while fetching category")
+            throw err
         }
-        return null
     }
 
     const getAllCategories = async (urlPath: string): Promise<Category | null> => {
@@ -53,11 +53,11 @@ export function useCategoryAPi() {
             const res = await axios.get(urlPath)
             const categories: Category[] = res.data.data.categories
             setResponse(categories)
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while fetching categories")
-            return null
+            return categories
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Something went wrong while fetching categories")
+            throw err
         }
-        return null
     }
     const deleteCategory = async (urlPath: string): Promise<Category | null> => {
         try {
@@ -65,11 +65,11 @@ export function useCategoryAPi() {
             const res = await axios.delete(urlPath)
             const category: Category = res.data.data.category
             setResponse(category)
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while deleting category")
-            return null
+            return category
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Something went wrong while deleting category")
+            throw err
         }
-        return null
     }
     const deleteAllCategories = async (urlPath: string): Promise<Category | null> => {
         try {
@@ -77,11 +77,11 @@ export function useCategoryAPi() {
             const res = await axios.delete(urlPath)
             const category: Category = res.data.data.categories
             setResponse(category)
-        } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while deleting all categories")
-            return null
+            return category
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Something went wrong while deleting all categories")
+            throw err
         }
-        return null
     }
 
     return { response, error, date, createCategory, updateCategory, getCategory, getAllCategories, deleteCategory, deleteAllCategories }

@@ -9,6 +9,7 @@ export interface ICategory extends Document {
     color?: string,
     isDeleted: boolean,
     isDefault: boolean,                      //Mark if it's an app-provided default category
+    date?: Date,
     user: Schema.Types.ObjectId,
     budget: Schema.Types.ObjectId,
 }
@@ -47,6 +48,9 @@ const categorySchema: Schema<ICategory> = new Schema({
         type: Boolean,
         default: false,
         index: true
+    },
+    date: {
+        type: Date
     },
     user: {
         type: Schema.Types.ObjectId,

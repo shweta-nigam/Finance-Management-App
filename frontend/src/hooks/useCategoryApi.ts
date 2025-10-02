@@ -5,8 +5,6 @@ import type { Category } from "@/types"
 export function useCategoryApi() {
     const [response, setResponse] = useState<Category | Category[] | null>(null)
     const [error, setError] = useState<string | null>(null)
-    const [date, setDate] = useState<Date | string>("")
-
 
     const createCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category | null> => {
         try {
@@ -47,7 +45,7 @@ export function useCategoryApi() {
         }
     }
 
-    const getAllCategories = async (urlPath: string): Promise<Category | null> => {
+    const getAllCategories = async (urlPath: string): Promise<Category[] | null> => {
         try {
             setError(null)
             const res = await axios.get(urlPath)
@@ -71,18 +69,18 @@ export function useCategoryApi() {
             throw err
         }
     }
-    const deleteAllCategories = async (urlPath: string): Promise<Category | null> => {
+    const deleteAllCategories = async (urlPath: string): Promise<Category[] | null> => {
         try {
             setError(null)
             const res = await axios.delete(urlPath)
-            const category: Category = res.data.data.categories
-            setResponse(category)
-            return category
+            const categories: Category[] = res.data.data.categories
+            setResponse(categories)
+            return categories
         } catch (err: any) {
             setError(err.response?.data?.message || "Something went wrong while deleting all categories")
             throw err
         }
     }
 
-    return { response, error, date, createCategory, updateCategory, getCategory, getAllCategories, deleteCategory, deleteAllCategories }
+    return { response, error, createCategory, updateCategory, getCategory, getAllCategories, deleteCategory, deleteAllCategories }
 }

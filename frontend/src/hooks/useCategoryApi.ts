@@ -51,7 +51,7 @@ export function useCategoryAPi() {
         try {
             setError(null)
             const res = await axios.get(urlPath)
-            const categories: Category[] = res.data.data
+            const categories: Category[] = res.data.data.categories
             setResponse(categories)
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while fetching categories")
@@ -75,7 +75,7 @@ export function useCategoryAPi() {
         try {
             setError(null)
             const res = await axios.delete(urlPath)
-            const category: Category = res.data.data.category
+            const category: Category = res.data.data.categories
             setResponse(category)
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while deleting all categories")

@@ -17,27 +17,35 @@ export function toCategoryResponse(category: ICategory): CategoryResponse;
 export function toCategoryResponse(category: ICategory[]): CategoryResponse[];
 export function toCategoryResponse(categoryOrCategories: ICategory | ICategory[]): CategoryResponse | CategoryResponse[] {
 
+      if (!categoryOrCategories) {
+    return Array.isArray(categoryOrCategories) ? [] : ({} as CategoryResponse);
+  }
+
     if (Array.isArray(categoryOrCategories)) {
         return categoryOrCategories.map((c) => toCategoryResponse(c))
     }
 
-    const category = categoryOrCategories
-    const id = (category as any).id ?? String((category as any)._id ?? "")
-    const date = category.date ? new Date(category.date).toISOString() : undefined;
+    const c = categoryOrCategories
+ // If it's a Mongoose Document, prefer `id` (string), fallback to `_id`
+    const id = (c as any).id ?? (c._id ? String(c._id) : "");
+    // safe date conversion 
+     const date =
+    c.date instanceof Date && !Number.isNaN(c.date.getTime())
+      ? c.date.toISOString()
+      : undefined;
 
-    return {
-        id,
-        title: category.title,
-        description: category.description,
-        note: category.note,
-        type: category.type,
-        icon: category.icon,
-        color: category.color,
-        date,
-        isDeleted: !!(category as any).isDeleted,
-        isDefault: !!(category as any).isDefault,
-    }
-
+     return {
+    id,
+    title: c.title,
+    description: c.description ?? "",
+    note: c.note ?? undefined,
+    type: c.type === "Income" ? "Income" : "Expense", // defensive default
+    icon: c.icon ?? undefined,
+    color: c.color ?? undefined,
+    date,
+    isDeleted: Boolean((c as any).isDeleted),
+    isDefault: Boolean((c as any).isDefault),
+  };
 }
 
 

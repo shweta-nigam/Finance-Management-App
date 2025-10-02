@@ -39,7 +39,7 @@ export const updateCategory = async (req: RequestWithUser, res: Response, next: 
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { categoryId } = req.params ?? req.query
+    const categoryId = req.params?.categoryId ?? req.query?.categoryId;
 
     if (!categoryId) {
         return next(new ApiError(400, "category Id is required."))
@@ -74,7 +74,7 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { categoryId } = req.params ?? req.query
+    const categoryId = req.params?.categoryId ?? req.query?.categoryId;
 
     if (!categoryId) {
         return next(new ApiError(400, "Category Id is required."))
@@ -84,7 +84,7 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
         const category = await Category.findOne({
             _id: categoryId,
             user: user._id,
-            isDeleted:false
+            isDeleted: false
         }).select("id title description note type icon color date isDefault")
 
         if (!category) {
@@ -107,12 +107,12 @@ export const getAllCategories = async (req: RequestWithUser, res: Response, next
     }
 
     try {
-        const categories :ICategory[] = await Category.find({
+        const categories: ICategory[] = await Category.find({
             user: user._id
-        }).select("id title description note type icon color date isDefault").lean<ICategory>()
+        }).select("_id title description note type icon color date isDefault isDeleted").lean<ICategory[]>()
 
         if (categories.length === 0) {
-            return res.status(200).json(new ApiResponse(200, {categories:[]}, "No categories yet"))
+            return res.status(200).json(new ApiResponse(200, { categories: [] }, "No categories yet"))
         }
 
         res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(categories) }, "Fetched categories successfully!"))
@@ -129,7 +129,7 @@ export const deleteCategory = async (req: RequestWithUser, res: Response, next: 
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { categoryId } = req.params ?? req.query
+    const categoryId = req.params?.categoryId ?? req.query?.categoryId;
 
     if (!categoryId) {
         return next(new ApiError(400, "Category Id is required."))
@@ -143,7 +143,7 @@ export const deleteCategory = async (req: RequestWithUser, res: Response, next: 
         ).lean<ICategory>()
 
         if (!category) {
-            return next(new ApiError(400, "Category not found"))
+            return next(new ApiError(404, "Category not found"))
         }
 
 
@@ -154,7 +154,7 @@ export const deleteCategory = async (req: RequestWithUser, res: Response, next: 
     }
 }
 
-export const deleteAllCategory = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const deleteAllCategories = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user
 
     if (!user) {
@@ -163,13 +163,13 @@ export const deleteAllCategory = async (req: RequestWithUser, res: Response, nex
 
     try {
         const result = await Category.updateMany(
-            { user: user._id , isDeleted:false},
+            { user: user._id, isDeleted: false },
             { $set: { isDeleted: true } }
         )
 
-        const deletedCategories: ICategory[] = await Category.find({user : user._id, isDeleted: true}).select("id title description note type icon color date isDefault").lean<ICategory>()
+        const deletedCategories: ICategory[] = await Category.find({ user: user._id, isDeleted: true }).select("_id title description note type icon color date isDefault isDeleted").lean<ICategory[]>()
 
-       if (deletedCategories.length === 0) {
+        if (deletedCategories.length === 0) {
             return res
                 .status(200)
                 .json(new ApiResponse(200, { categories: [] }, "No categories to delete."));

@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/apiResponse";
 import { categoryCreateSchema, categoryUpdateSchema } from "../validators/category.validator";
 import { Category, ICategory } from "../models/category.model";
 import { toCategoryResponse } from "../responses/toCategoryResponse";
+import mongoose from "mongoose";
 
 const BASE_SELECT = "_id title description note type icon color date isDefault isDeleted";
 
@@ -46,6 +47,7 @@ export const updateCategory = async (req: RequestWithUser, res: Response, next: 
     if (!categoryId) {
         return next(new ApiError(400, "category Id is required."))
     }
+    if (!mongoose.Types.ObjectId.isValid(String(categoryId))) return next(new ApiError(400, "Invalid Category Id."));
 
     try {
 
@@ -56,13 +58,15 @@ export const updateCategory = async (req: RequestWithUser, res: Response, next: 
             { $set: validatedData },
             { new: true, runValidators: true }
         )
+            .select(BASE_SELECT)
+            .lean<ICategory | null>();
 
         if (!category) {
             return next(new ApiError(404, "Category not found"));
         }
 
 
-        res.status(200).json(new ApiResponse(200, { category: toCategoryResponse(category) }, "Updated category successfully."))
+        return res.status(200).json(new ApiResponse(200, { category: toCategoryResponse(category) }, "Updated category successfully."))
 
     } catch (error) {
         next(error)
@@ -81,13 +85,17 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
     if (!categoryId) {
         return next(new ApiError(400, "Category Id is required."))
     }
+    if (!mongoose.Types.ObjectId.isValid(String(categoryId))) return next(new ApiError(400, "Invalid Category Id."));
 
     try {
         const category = await Category.findOne({
             _id: categoryId,
             user: user._id,
             isDeleted: false
-        }).select("_id title description note type icon color date isDefault")
+        })
+            .select(BASE_SELECT)
+            .lean<ICategory | null>();
+
 
         if (!category) {
             return next(new ApiError(404, "Category not found"))
@@ -111,7 +119,7 @@ export const getAllCategories = async (req: RequestWithUser, res: Response, next
     try {
         const categories: ICategory[] = await Category.find({
             user: user._id
-        }).select("_id title description note type icon color date isDefault isDeleted").lean<ICategory[]>()
+        }).select(BASE_SELECT).lean<ICategory[]>()
 
         if (categories.length === 0) {
             return res.status(200).json(new ApiResponse(200, { categories: [] }, "No categories yet"))
@@ -136,13 +144,16 @@ export const deleteCategory = async (req: RequestWithUser, res: Response, next: 
     if (!categoryId) {
         return next(new ApiError(400, "Category Id is required."))
     }
+    if (!mongoose.Types.ObjectId.isValid(String(categoryId))) return next(new ApiError(400, "Invalid Category Id."));
 
     try {
         const category = await Category.findOneAndUpdate(
             { _id: categoryId, user: user._id },
             { $set: { isDeleted: true } },
             { new: true }
-        ).lean<ICategory>()
+        )
+            .select(BASE_SELECT)
+            .lean<ICategory | null>();
 
         if (!category) {
             return next(new ApiError(404, "Category not found"))
@@ -169,7 +180,8 @@ export const deleteAllCategories = async (req: RequestWithUser, res: Response, n
             { $set: { isDeleted: true } }
         )
 
-        const deletedCategories: ICategory[] = await Category.find({ user: user._id, isDeleted: true }).select("_id title description note type icon color date isDefault isDeleted").lean<ICategory[]>()
+        const deletedCategories: ICategory[] = await Category.find({ user: user._id, isDeleted: true })
+            .select(BASE_SELECT).lean<ICategory[]>()
 
         if (deletedCategories.length === 0) {
             return res

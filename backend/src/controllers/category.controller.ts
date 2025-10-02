@@ -4,6 +4,7 @@ import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { categoryCreateSchema, categoryUpdateSchema } from "../validators/category.validator";
 import { Category } from "../models/category.model";
+import { toCategoryResponse } from "../responses/toCategoryResponse";
 
 
 
@@ -24,18 +25,7 @@ export const createCategory = async (req: RequestWithUser, res: Response, next: 
         })
 
 
-        res.status(201).json(new ApiResponse(201, {
-            category: {
-                id: category.id,
-                title: category.title,
-                description: category.description,
-                type: category.type,
-                note: category.note,
-                icon: category.icon,
-                color: category.color,
-                isDefault: category.isDefault
-            }
-        }, "Created category successfully!"))
+        res.status(201).json(new ApiResponse(201, { category: toCategoryResponse(category) }, "Created category successfully!"))
 
     } catch (error) {
         next(error)
@@ -70,18 +60,7 @@ export const updateCategory = async (req: RequestWithUser, res: Response, next: 
         }
 
 
-        res.status(200).json(new ApiResponse(200, {
-            category: {
-                id: category.id,
-                title: category.title,
-                description: category.description,
-                type: category.type,
-                note: category.note,
-                icon: category.icon,
-                color: category.color,
-                isDefault: category.isDefault
-            }
-        }, "Updated category successfully."))
+        res.status(200).json(new ApiResponse(200, { category: toCategoryResponse(category) }, "Updated category successfully."))
 
     } catch (error) {
         next(error)
@@ -112,18 +91,7 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
         }
 
 
-        return res.status(200).json(new ApiResponse(200, {
-            category: {
-                id: category.id,
-                title: category.title,
-                description: category.description,
-                type: category.type,
-                note: category.note,
-                icon: category.icon,
-                color: category.color,
-                isDefault: category.isDefault
-            }
-        }, "Fetched category successfully."))
+        return res.status(200).json(new ApiResponse(200, { category: toCategoryResponse(category) }, "Fetched category successfully."))
 
     } catch (error) {
         next(error)
@@ -146,7 +114,7 @@ export const getAllCategories = async (req: RequestWithUser, res: Response, next
             return res.status(200).json(new ApiResponse(200, [], "No categories found"))
         }
 
-        res.status(200).json(new ApiResponse(200, categories, "Fetched categories successfully."))
+        res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(categories) }, "Fetched categories successfully."))
 
     } catch (error) {
         next(error)
@@ -178,18 +146,7 @@ export const deleteCategory = async (req: RequestWithUser, res: Response, next: 
         }
 
 
-        res.status(200).json(new ApiResponse(200, {
-            category: {
-                id: category.id,
-                title: category.title,
-                description: category.description,
-                type: category.type,
-                note: category.note,
-                icon: category.icon,
-                color: category.color,
-                isDefault: category.isDefault
-            }
-        }, "Deleted category successfully."))
+        res.status(200).json(new ApiResponse(200, { category: toCategoryResponse(category) }, "Deleted category successfully."))
 
     } catch (error) {
         next(error)
@@ -213,7 +170,7 @@ export const deleteAllCategory = async (req: RequestWithUser, res: Response, nex
             return next(new ApiError(404, "Categories not found"))
         }
 
-        res.status(200).json(new ApiResponse(200, categories, "Deleted categories successfully."))
+        res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(categories) }, "Deleted categories successfully."))
 
     } catch (error) {
         next(error)

@@ -53,8 +53,8 @@ export default function CategorySelect({
             </SelectItem>
           ))
         ) : (
-          <SelectItem key="loading" value="__loading__" disabled>
-            Loading categories…
+          <SelectItem key="empty" value="__empty__" disabled>
+            No categories yet
           </SelectItem>
         )}
 
@@ -71,5 +71,3 @@ export default function CategorySelect({
     </Select>
   );
 }
-
-

@@ -51,7 +51,10 @@ export default function Budget() {
 
   // handle create / update
   const handleSave = async () => {
+    console.log({ title, amount, categoryId, isRecurring, frequency, selectedBudget });
+    console.log("title", title, "amount :", amount, "categoryId", categoryId);
     if (!title || !amount || !categoryId) return;
+    
 
     setSaving(true);
     try {
@@ -116,7 +119,7 @@ export default function Budget() {
               <Plus size={16} /> Add Budget
             </Button>
           </DialogTrigger>
-          <DialogContent className="z-99">
+          <DialogContent className="z-[9999]">
             <DialogHeader>
               <DialogTitle>
                 {selectedBudget ? "Update Budget" : "Create Budget"}
@@ -125,7 +128,12 @@ export default function Budget() {
                 Assign a budget to a specific category.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 mt-4">
+            <form className="space-y-4 mt-4"
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSave()
+            }}
+            >
               <Input
                 placeholder="Budget Title"
                 value={title}
@@ -164,10 +172,10 @@ export default function Budget() {
                 </SelectContent>
               </Select>
 
-              <Button onClick={handleSave} disabled={saving}>
+              <Button type="submit" disabled={saving }>
                 {saving ? "Saving..." : selectedBudget ? "Update" : "Save"}
               </Button>
-            </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>

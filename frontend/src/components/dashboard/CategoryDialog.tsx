@@ -14,15 +14,24 @@ import { toast } from "sonner";
 
 type CategoryDialogProps = {
   triggerLabel?: string;
-  onCreated?: () => void; 
+  onCreated?: () => void;
+  open?: boolean; // controlled
+  onOpenChange?: (open: boolean) => void; // controlled
 };
 
 export default function CategoryDialog({
   triggerLabel = "+ Add Category",
   onCreated,
+  open: controlledOpen,
+  onOpenChange,
 }: CategoryDialogProps) {
   const { addCategory } = useCategory();
-  const [open, setOpen] = useState(false);
+
+  // if not controlled → use our own state
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
+
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,8 +46,8 @@ export default function CategoryDialog({
       await addCategory({ title: name });
       toast.success("Category created");
       setTitle("");
-      setOpen(false);
-      onCreated?.(); // just notify parent if needed
+      setOpen(false); // works for both controlled and uncontrolled
+      onCreated?.();
     } catch (err) {
       console.error(err);
       toast.error("Failed to create category");
@@ -71,4 +80,3 @@ export default function CategoryDialog({
     </Dialog>
   );
 }
-

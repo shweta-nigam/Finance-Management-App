@@ -6,9 +6,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import useCategory from "@/context/CategoryContext";
-import type { Category } from "@/types";
 
-type Props = {
+type CategorySelectProps = {
   value: string;
   onChange: (val: string) => void;
   onAddNew?: () => void;
@@ -20,16 +19,16 @@ export default function CategorySelect({
   onChange,
   onAddNew,
   includeUncategorized = true,
-}: Props) {
+}: CategorySelectProps) {
   const { categories } = useCategory();
-
-  // console.log("CategorySelect categories:", categories);
 
   const uniqueCategories = Array.isArray(categories)
     ? Array.from(new Map(categories.map((c) => [c.id, c])).values())
     : [];
 
-  const hasUncategorized = uniqueCategories.some((c) => c.id === "uncategorized");
+  const hasUncategorized = uniqueCategories.some(
+    (c) => c.id === "uncategorized"
+  );
 
   return (
     <Select
@@ -54,13 +53,11 @@ export default function CategorySelect({
             </SelectItem>
           ))
         ) : (
-          
           <SelectItem key="loading" value="__loading__" disabled>
             Loading categories…
           </SelectItem>
         )}
 
-       
         {!hasUncategorized && includeUncategorized && (
           <SelectItem key="uncategorized-default" value="uncategorized">
             Uncategorized
@@ -74,4 +71,5 @@ export default function CategorySelect({
     </Select>
   );
 }
+
 

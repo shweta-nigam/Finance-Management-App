@@ -53,10 +53,16 @@ export default function Budget() {
 
   // handle create / update
   const handleSave = async () => {
-    console.log({ title, amount, categoryId, isRecurring, frequency, selectedBudget });
+    console.log({
+      title,
+      amount,
+      categoryId,
+      isRecurring,
+      frequency,
+      selectedBudget,
+    });
     console.log("title", title, "amount :", amount, "categoryId", categoryId);
     if (!title || !amount || !categoryId) return;
-    
 
     setSaving(true);
     try {
@@ -130,11 +136,12 @@ export default function Budget() {
                 Assign a budget to a specific category.
               </DialogDescription>
             </DialogHeader>
-            <form className="space-y-4 mt-4"
-            onSubmit={(e) => {
-              e.preventDefault()
-              handleSave()
-            }}
+            <form
+              className="space-y-4 mt-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSave();
+              }}
             >
               <Input
                 placeholder="Budget Title"
@@ -152,8 +159,10 @@ export default function Budget() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-              <CategorySelect value={categoryId} onChange={setCategoryId} 
-              onAddNew={()= setOpenCategoryDialog(true)}
+              <CategorySelect
+                value={categoryId}
+                onChange={setCategoryId}
+                onAddNew={() => setOpenCategoryDialog(true)}
               />
 
               <div className="flex items-center gap-2">
@@ -176,7 +185,7 @@ export default function Budget() {
                 </SelectContent>
               </Select>
 
-              <Button type="submit" disabled={saving }>
+              <Button type="submit" disabled={saving}>
                 {saving ? "Saving..." : selectedBudget ? "Update" : "Save"}
               </Button>
             </form>
@@ -184,14 +193,15 @@ export default function Budget() {
         </Dialog>
       </div>
 
-{openCategoryDialog && (
-  <CategoryDialog 
-  triggerLabel=""
-  // onCreated={()=>{
-  //   setOpenCategoryDialog(false)
-  // }}
-  />
-)}
+      {openCategoryDialog && (
+        <CategoryDialog
+          open={openCategoryDialog}
+          onOpenChange={setOpenCategoryDialog}
+          onCreated={() => {
+            setOpenCategoryDialog(false);
+          }}
+        />
+      )}
 
       {loading ? (
         <p>Loading Budgets...</p>

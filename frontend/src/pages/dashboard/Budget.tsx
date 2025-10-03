@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from "recharts";
 import CategorySelect from "@/components/dashboard/CategorySelect";
+import CategoryDialog from "@/components/dashboard/CategoryDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -46,7 +47,8 @@ export default function Budget() {
   const [frequency, setFrequency] = useState("Monthly");
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
 
-  const [open, setOpen] = useState(false);
+  const [openBudgetDialog, setOpenBudgetDialog] = useState(false);
+  const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [saving, setSaving] = useState(false);
 
   // handle create / update
@@ -82,7 +84,7 @@ export default function Budget() {
         });
       }
 
-      setOpen(false);
+      setOpenBudgetDialog(false);
 
       // reset form
       setTitle("");
@@ -113,7 +115,7 @@ export default function Budget() {
     <div className="p-6 space-y-8">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Budgets</h2>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={openBudgetDialog} onOpenChange={setOpenBudgetDialog}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-2">
               <Plus size={16} /> Add Budget
@@ -150,7 +152,9 @@ export default function Budget() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-              <CategorySelect value={categoryId} onChange={setCategoryId} />
+              <CategorySelect value={categoryId} onChange={setCategoryId} 
+              onAddNew={()= setOpenCategoryDialog(true)}
+              />
 
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -179,6 +183,15 @@ export default function Budget() {
           </DialogContent>
         </Dialog>
       </div>
+
+{openCategoryDialog && (
+  <CategoryDialog 
+  triggerLabel=""
+  // onCreated={()=>{
+  //   setOpenCategoryDialog(false)
+  // }}
+  />
+)}
 
       {loading ? (
         <p>Loading Budgets...</p>

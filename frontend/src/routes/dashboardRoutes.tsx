@@ -15,9 +15,9 @@ export default function DashboardRoutes() {
       <Route
         path="/dashboard"
         element={
-         <DashboardProvider>
-              <Dashboard />
-           </DashboardProvider>
+          <DashboardProvider>
+            <Dashboard />
+          </DashboardProvider>
         }
       >
         {/*Absolute path */}

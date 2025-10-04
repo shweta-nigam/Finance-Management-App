@@ -56,6 +56,8 @@ export default function CategoryDialog({
     }
   }
 
+  console.log("categoryDialog component loaded...")
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

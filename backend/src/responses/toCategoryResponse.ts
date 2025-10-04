@@ -5,7 +5,7 @@ export type CategoryResponse = {
     title: string,
     description: string,
     note?: string,
-    type: "Income" | "Expense";
+    type: "Income" | "Expense" | "Transfer"; 
     icon?: string,
     color?: string,
     date?: string;

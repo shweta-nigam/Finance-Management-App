@@ -4,7 +4,7 @@ export interface ICategory extends Document {
     title: string,
     description: string,
     note?: string,
-    type: "Income" | "Expense";
+    type: "Income" | "Expense" | "Transfer"; 
     icon?: string,
     color?: string,
     isDeleted: boolean,

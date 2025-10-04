@@ -22,8 +22,6 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import CategorySelect from "@/components/dashboard/CategorySelect";
-import CategoryDialog from "@/components/dashboard/CategoryDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -33,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useBudget from "@/context/BudgetContext";
+import CategoryManager from "@/components/dashboard/CategoryManager";
 
 export default function Budget() {
   const { budgets, addBudget, updateBudget, removeBudget, loading } =
@@ -48,7 +47,6 @@ export default function Budget() {
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
 
   const [openBudgetDialog, setOpenBudgetDialog] = useState(false);
-  const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [saving, setSaving] = useState(false);
 
   // handle create / update
@@ -159,11 +157,7 @@ export default function Budget() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-              <CategorySelect
-                value={categoryId}
-                onChange={setCategoryId}
-                onAddNew={() => setOpenCategoryDialog(true)}
-              />
+              <CategoryManager value={categoryId} onChange={setCategoryId} />
 
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -192,16 +186,6 @@ export default function Budget() {
           </DialogContent>
         </Dialog>
       </div>
-
-      {openCategoryDialog && (
-        <CategoryDialog
-          open={openCategoryDialog}
-          onOpenChange={setOpenCategoryDialog}
-          onCreated={() => {
-            setOpenCategoryDialog(false);
-          }}
-        />
-      )}
 
       {loading ? (
         <p>Loading Budgets...</p>

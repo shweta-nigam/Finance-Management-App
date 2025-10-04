@@ -2,25 +2,26 @@ import { useState } from "react";
 import CategorySelect from "./CategorySelect";
 import CategoryDialog from "./CategoryDialog";
 
-export default function CategoryManager() {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+type CategoryManagerProps = {
+  value: string;
+  onChange: (val: string) => void;
+};
+
+export default function CategoryManager({ value, onChange }: CategoryManagerProps) {
+  const [openDialog, setOpenDialog] = useState(false);
 
   return (
-    <div>
+    <>
       <CategorySelect
-        value={selectedCategory}
-        onChange={setSelectedCategory}
-        onAddNew={() => setIsDialogOpen(true)} 
+        value={value}
+        onChange={onChange}
+        onAddNew={() => setOpenDialog(true)}
       />
-
       <CategoryDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen} 
-        onCreated={() => {
-          setIsDialogOpen(false);
-        }}
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        onCreated={() => setOpenDialog(false)}
       />
-    </div>
+    </>
   );
 }

@@ -30,6 +30,9 @@ export default function CategorySelect({
     (c) => c.id === "uncategorized"
   );
 
+  console.log("categorySelect component loaded...")
+  console.log("categories inside CategorySelect:", categories);
+
   return (
     <Select
       value={value}

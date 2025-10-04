@@ -127,7 +127,7 @@ export default function Budget() {
               <Plus size={16} /> Add Budget
             </Button>
           </DialogTrigger>
-          <DialogContent className="z-[9999]">
+          <DialogContent className="z-[99]">
             <DialogHeader>
               <DialogTitle>
                 {selectedBudget ? "Update Budget" : "Create Budget"}

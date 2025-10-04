@@ -63,7 +63,7 @@ export default function CategoryDialog({
       <DialogTrigger asChild>
         <Button>{triggerLabel}</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-sm z-[999]">
         <DialogHeader>
           <DialogTitle>Create Category</DialogTitle>
           <DialogDescription>Give this category a name</DialogDescription>

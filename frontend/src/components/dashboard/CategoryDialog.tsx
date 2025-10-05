@@ -33,6 +33,9 @@ export default function CategoryDialog({
   const setOpen = onOpenChange ?? setUncontrolledOpen;
 
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState<"Income" | "Expense">("Expense");
+
   const [loading, setLoading] = useState(false);
 
   async function handleCreate() {
@@ -41,12 +44,17 @@ export default function CategoryDialog({
       toast.error("Enter category name");
       return;
     }
+    if (!description.trim()) {
+      toast.error("Enter category description");
+      return;
+    }
     setLoading(true);
     try {
-      await addCategory({ title: name });
+      await addCategory({ title: name, description: description.trim(), type });
       toast.success("Category created");
-      setTitle("");
-      setOpen(false); // works for both controlled and uncontrolled
+      setDescription("");
+      setType("Expense");
+      setOpen(false);
       onCreated?.();
     } catch (err) {
       console.error(err);
@@ -56,7 +64,7 @@ export default function CategoryDialog({
     }
   }
 
-  console.log("categoryDialog component loaded...")
+  console.log("categoryDialog component loaded...");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -68,12 +76,25 @@ export default function CategoryDialog({
           <DialogTitle>Create Category</DialogTitle>
           <DialogDescription>Give this category a name</DialogDescription>
         </DialogHeader>
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-col gap-3">
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Category name"
           />
+          <Input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Category description"
+          />
+          <select
+            className="border rounded p-2"
+            value={type}
+            onChange={(e) => setType(e.target.value as "Income" | "Expense")}
+          >
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
+          </select>
           <Button onClick={handleCreate} disabled={loading}>
             {loading ? "Creating…" : "Create"}
           </Button>

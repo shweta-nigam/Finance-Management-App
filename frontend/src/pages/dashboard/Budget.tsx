@@ -40,7 +40,7 @@ export default function Budget() {
   // form state
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState("uncategorized");
   const [description, setDescription] = useState("");
   const [isRecurring, setIsRecurring] = useState(false);
   const [frequency, setFrequency] = useState("Monthly");
@@ -113,6 +113,8 @@ export default function Budget() {
     }),
     amount: b.amount,
   }));
+
+  console.log("categoryId in Budget:", categoryId);
 
   // render
   return (

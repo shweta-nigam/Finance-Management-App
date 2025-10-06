@@ -11,10 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useCategory from "@/context/CategoryContext";
 import { toast } from "sonner";
+import type { Category } from "@/types";
 
 type CategoryDialogProps = {
   triggerLabel?: string;
-  onCreated?: () => void;
+  onCreated?: (category: Category) => void;
   open?: boolean; // controlled
   onOpenChange?: (open: boolean) => void; // controlled
 };
@@ -50,12 +51,18 @@ export default function CategoryDialog({
     }
     setLoading(true);
     try {
-      await addCategory({ title: name, description: description.trim(), type });
+      const saved = await addCategory({
+        title: name,
+        description: description.trim(),
+        type,
+      });
+
       toast.success("Category created");
       setDescription("");
       setType("Expense");
       setOpen(false);
-      onCreated?.();
+      
+      onCreated?.(saved);
     } catch (err) {
       console.error(err);
       toast.error("Failed to create category");
@@ -64,7 +71,8 @@ export default function CategoryDialog({
     }
   }
 
-  console.log("categoryDialog component loaded...");
+  // console.log("categoryDialog component loaded...");
+  console.log("Creating category:", { title, description, type });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

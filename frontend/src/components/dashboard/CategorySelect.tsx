@@ -30,8 +30,9 @@ export default function CategorySelect({
     (c) => c.id === "uncategorized"
   );
 
-  console.log("categorySelect component loaded...")
-  console.log("categories inside CategorySelect:", categories);
+  // console.log("uniqueCategories:", uniqueCategories);
+  // console.log("CategorySelect value prop:", value);
+  // uniqueCategories.forEach((c) => console.log(c.id, c.title));
 
   return (
     <Select
@@ -61,7 +62,7 @@ export default function CategorySelect({
           </SelectItem>
         )}
 
-        {!hasUncategorized && includeUncategorized && (
+        {uniqueCategories.length === 0 && (
           <SelectItem key="uncategorized-default" value="uncategorized">
             Uncategorized
           </SelectItem>

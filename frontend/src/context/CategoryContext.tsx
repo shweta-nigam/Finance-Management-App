@@ -39,6 +39,7 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
     const saved = await createCategory("/api/v1/category/", newCategory);
     if (!saved) throw new Error("Failed to create category");
     setCategories((prev) => [saved, ...prev]);
+    console.log("Category created:", saved);
     return saved;
   };
 

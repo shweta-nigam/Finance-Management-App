@@ -245,7 +245,7 @@ export default function Expense() {
                     <SelectTrigger>
                       <SelectValue placeholder="Currency" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[9999]">
                       {["INR", "USD", "EUR"].map((c) => (
                         <SelectItem key={c} value={c}>
                           {c}
@@ -263,7 +263,7 @@ export default function Expense() {
                     <SelectTrigger>
                       <SelectValue placeholder="Payment Method" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[9999]">
                       {["Cash", "Card", "UPI", "Bank Transfer"].map(
                         (method) => (
                           <SelectItem key={method} value={method}>

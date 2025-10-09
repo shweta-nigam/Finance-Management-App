@@ -33,6 +33,7 @@ import { toast } from "sonner";
 
 import CategorySelect from "@/components/dashboard/CategorySelect";
 import CategoryDialog from "@/components/dashboard/CategoryDialog";
+import CategoryManager from "@/components/dashboard/CategoryManager";
 
 const defaultExpense: Expense = {
   id: "",
@@ -52,17 +53,16 @@ export default function Expense() {
   const { categories } = useCategory();
 
   const [loading, setLoading] = useState(true);
-  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState<Expense>(defaultExpense);
   const [tagsInput, setTagsInput] = useState("");
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    console.log("Expense component mounted", {
-      expensesLength: expenses.length,
-    });
-  }, []);
+  // useEffect(() => {
+  //   console.log("Expense component mounted", {
+  //     expensesLength: expenses.length,
+  //   });
+  // }, []);
 
   useEffect(() => {
     setLoading(false);
@@ -232,7 +232,10 @@ export default function Expense() {
                     placeholder="Amount"
                     value={newExpense.amount === "" ? "" : newExpense.amount}
                     onChange={(e) =>
-                      setNewExpense({ ...newExpense, amount: e.target.value as number | "" })
+                      setNewExpense({
+                        ...newExpense,
+                        amount: e.target.value as number | "",
+                      })
                     }
                   />
 
@@ -274,23 +277,12 @@ export default function Expense() {
                     </SelectContent>
                   </Select>
 
-                  <CategorySelect
+                  <CategoryManager
                     value={newExpense.categoryId}
-                    onChange={(val: any) =>
+                    onChange={(val) =>
                       setNewExpense({ ...newExpense, categoryId: val })
                     }
-                    onAddNew={() => setShowCategoryDialog(true)}
                   />
-
-                  {showCategoryDialog && (
-                    <CategoryDialog
-                      triggerLabel="Hidden"
-                      onCreated={(cat: any) => {
-                        setNewExpense((p) => ({ ...p, categoryId: cat.id }));
-                        setShowCategoryDialog(false);
-                      }}
-                    />
-                  )}
 
                   {/*  Recurring Checkbox */}
                   <label className="flex items-center gap-2 text-sm">
@@ -337,7 +329,7 @@ export default function Expense() {
                 expenses.filter(Boolean).map((expense) => {
                   if (!expense) return null;
 
-                  console.log("expense:", expense);
+                  // console.log("expense:", expense);
                   const category = categories.find(
                     (c) => c.id === expense.categoryId
                   );

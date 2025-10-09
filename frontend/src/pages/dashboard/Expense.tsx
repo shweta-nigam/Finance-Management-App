@@ -65,9 +65,7 @@ export default function Expense() {
   }, []);
 
   useEffect(() => {
-    if (expenses.length > 0) {
       setLoading(false);
-    }
   }, [expenses]);
 
   const currentMonthTotal = useMemo(() => {
@@ -143,8 +141,7 @@ export default function Expense() {
   return (
     <div className="p-6 space-y-10">
       {loading ? (
-        <p>Loading Expenses...</p>
-      ) : (
+        <p>Loading Expenses...</p>      ) : (
         <>
           {/* ===== Expense Chart ===== */}
           <Card className="bg-D-blue shadow-md text-white">

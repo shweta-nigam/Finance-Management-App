@@ -38,7 +38,7 @@ const defaultExpense: Expense = {
   id: "",
   title: "",
   description: "",
-  amount: 0,
+  amount: "",
   currency: "INR",
   categoryId: "uncategorized",
   paymentMethod: "Cash",
@@ -65,7 +65,7 @@ export default function Expense() {
   }, []);
 
   useEffect(() => {
-      setLoading(false);
+    setLoading(false);
   }, [expenses]);
 
   const currentMonthTotal = useMemo(() => {
@@ -110,6 +110,7 @@ export default function Expense() {
     try {
       const finalExpense: Expense = {
         ...newExpense,
+        amount: Number(newExpense.amount) || 0,
         tags: tagsInput
           .split(",")
           .map((t) => t.trim())
@@ -141,7 +142,8 @@ export default function Expense() {
   return (
     <div className="p-6 space-y-10">
       {loading ? (
-        <p>Loading Expenses...</p>      ) : (
+        <p>Loading Expenses...</p>
+      ) : (
         <>
           {/* ===== Expense Chart ===== */}
           <Card className="bg-D-blue shadow-md text-white">
@@ -230,11 +232,7 @@ export default function Expense() {
                     placeholder="Amount"
                     value={newExpense.amount === "" ? "" : newExpense.amount}
                     onChange={(e) =>
-                      setNewExpense({
-                        ...newExpense,
-                        amount:
-                          e.target.value === "" ? "" : Number(e.target.value),
-                      })
+                      setNewExpense({ ...newExpense, amount: e.target.value as number | "" })
                     }
                   />
 
@@ -346,7 +344,10 @@ export default function Expense() {
                   console.log("matched category:", category);
 
                   return (
-                    <Card key={expense.id} className="shadow-sm bg-D-blue text-white">
+                    <Card
+                      key={expense.id}
+                      className="shadow-sm bg-D-blue text-white"
+                    >
                       <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-base font-medium">
                           {expense.title}

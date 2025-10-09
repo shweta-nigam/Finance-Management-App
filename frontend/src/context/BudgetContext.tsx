@@ -49,7 +49,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
       try {
         const data = await getAllBudgets("/api/v1/budget");
         setBudgets(data || []);
-        console.log("initial budgets:", data);
+        // console.log("initial budgets:", data);
       } catch (err: any) {
         setError("Failed to fetch budgets");
         console.error(err);

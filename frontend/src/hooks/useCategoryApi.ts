@@ -51,12 +51,13 @@ export function useCategoryApi() {
             const res = await axios.get(urlPath)
             const categories: Category[] = res.data.data.categories
             setResponse(categories)
+            // console.log("categories (useCategoryApi) : -----", categories)
             return categories
         } catch (err: any) {
             setError(err.response?.data?.message || "Something went wrong while fetching categories")
             throw err
         }
-    }
+    } 
     const deleteCategory = async (urlPath: string): Promise<Category | null> => {
         try {
             setError(null)

@@ -40,7 +40,7 @@ export default function Budget() {
   // form state
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [categoryId, setCategoryId] = useState("uncategorized");
+  const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
   const [isRecurring, setIsRecurring] = useState(false);
   const [frequency, setFrequency] = useState("Monthly");
@@ -159,6 +159,7 @@ export default function Budget() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
+
               <CategoryManager value={categoryId} onChange={setCategoryId} />
 
               <div className="flex items-center gap-2">

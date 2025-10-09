@@ -72,7 +72,7 @@ export default function CategoryDialog({
   }
 
   // console.log("categoryDialog component loaded...");
-  console.log("Creating category:", { title, description, type });
+  // console.log("Creating category:", { title, description, type });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

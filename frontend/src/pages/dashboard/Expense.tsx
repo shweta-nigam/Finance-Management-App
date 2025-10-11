@@ -41,7 +41,7 @@ const defaultExpense: Expense = {
   description: "",
   amount: "",
   currency: "INR",
-  categoryId: "uncategorized",
+  categoryId: "",
   paymentMethod: "Cash",
   isRecurring: false,
   tags: [],

@@ -10,13 +10,14 @@ export type BudgetResponse = {
   isRecurring?: boolean;
   frequency?: string;
   isDeleted?: boolean;
+  categoryId?: string;
 };
 
 
 export function toBudgetResponse(budget: IBudget): BudgetResponse;  // type declarations for the same function.
 export function toBudgetResponse(budgets: IBudget[]): BudgetResponse[]; // type declarations for the same function.
 export function toBudgetResponse(budgetOrBudgets: IBudget | IBudget[]): BudgetResponse | BudgetResponse[] {
-  
+
   if (Array.isArray(budgetOrBudgets)) {
     return budgetOrBudgets.map((b) => toBudgetResponse(b));
   }
@@ -35,6 +36,7 @@ export function toBudgetResponse(budgetOrBudgets: IBudget | IBudget[]): BudgetRe
     isRecurring: !!(budget as any).isRecurring,
     frequency: (budget as any).frequency ?? undefined,
     isDeleted: !!(budget as any).isDeleted,
+    categoryId: budget.category ? String(budget.category) : undefined
   };
 }
 

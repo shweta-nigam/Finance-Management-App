@@ -5,8 +5,9 @@ import { Expense } from "../models/expense.model";
 import { ApiResponse } from "../utils/apiResponse";
 import { expenseCreateSchema, expenseUpdateSChema } from "../validators/expense.validator";
 import { toExpenseResponse } from "../responses/toExpenseResponse";
-
-
+import mongoose from "mongoose";
+import type { IExpense } from "../models/expense.model";
+const BASE_SELECT = "_id title description amount date note currency paymentMethod isRecurring frequency receiptUrl location tags isDeleted"
 
 
 export const createExpense = async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -36,16 +37,19 @@ export const createExpense = async (req: RequestWithUser, res: Response, next: N
 }
 
 export const updateExpense = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+   
     const user = req.user
-
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { expenseId } = req.params ?? req.query
+    const expenseId = req.params?.categoryId ?? req.query?.categoryId;
 
     if (!expenseId) {
         return next(new ApiError(400, "Expense Id is required."))
+    }
+    if(!mongoose.Types.ObjectId.isValid(String(expenseId))){
+        return next(new ApiError(400, "Invalid expense Id"))
     }
 
     try {
@@ -57,6 +61,8 @@ export const updateExpense = async (req: RequestWithUser, res: Response, next: N
             { $set: validatedData },
             { new: true, runValidators: true }
         )
+        .select(BASE_SELECT)
+        .lean<Expense | null>()
 
         if (!expense) {
             return next(new ApiError(404, "Expense not found"))

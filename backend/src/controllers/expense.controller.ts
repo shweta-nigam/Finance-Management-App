@@ -4,6 +4,7 @@ import { ApiError } from "../utils/apiError";
 import { Expense } from "../models/expense.model";
 import { ApiResponse } from "../utils/apiResponse";
 import { expenseCreateSchema, expenseUpdateSChema } from "../validators/expense.validator";
+import { toExpenseResponse } from "../responses/toExpenseResponse";
 
 
 
@@ -25,24 +26,9 @@ export const createExpense = async (req: RequestWithUser, res: Response, next: N
         })
 
 
-        res.status(201).json(new ApiResponse(201, {
-            expense: {
-                id: expense.id,
-                title: expense.title,
-                description: expense.description,
-                amount: expense.amount,
-                date: expense.date,
-                currency: expense.currency,
-                frequency: expense.frequency,
-                paymentMethod: expense.paymentMethod,
-                note: expense.note,
-                tags: expense.tags,
-                location: expense.location,
-                category: expense.category,
-                budget: expense.budget,
-                isRecurring: expense.isRecurring
-            }
-        }, "Created expense successfully!"))
+        return res.status(201).json(new ApiResponse(201,
+            { expense: toExpenseResponse(expense) },
+            "Created expense successfully!"))
 
     } catch (error) {
         next(error)

@@ -49,7 +49,7 @@ export default function CategorySelect({
         <SelectValue placeholder="Select Category" />
       </SelectTrigger>
 
-      <SelectContent>
+      <SelectContent className="z-[9999]">
         {uniqueCategories.length > 0 ? (
           uniqueCategories.map((cat) => (
             <SelectItem key={cat.id} value={cat.id}>

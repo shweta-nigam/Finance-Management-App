@@ -27,9 +27,13 @@ export const createExpense = async (req: RequestWithUser, res: Response, next: N
         })
 
 
-        return res.status(201).json(new ApiResponse(201,
-            { expense: toExpenseResponse(expense) },
-            "Created expense successfully!"))
+        return res.status(201).json(
+            new ApiResponse(
+                201,
+                { expense: toExpenseResponse(expense) },
+                "Created expense successfully!"
+            )
+        );
 
     } catch (error) {
         next(error)
@@ -37,7 +41,7 @@ export const createExpense = async (req: RequestWithUser, res: Response, next: N
 }
 
 export const updateExpense = async (req: RequestWithUser, res: Response, next: NextFunction) => {
-   
+
     const user = req.user
     if (!user) {
         return next(new ApiError(401, "Unauthorized"))
@@ -48,7 +52,7 @@ export const updateExpense = async (req: RequestWithUser, res: Response, next: N
     if (!expenseId) {
         return next(new ApiError(400, "Expense Id is required."))
     }
-    if(!mongoose.Types.ObjectId.isValid(String(expenseId))){
+    if (!mongoose.Types.ObjectId.isValid(String(expenseId))) {
         return next(new ApiError(400, "Invalid expense Id"))
     }
 
@@ -61,31 +65,20 @@ export const updateExpense = async (req: RequestWithUser, res: Response, next: N
             { $set: validatedData },
             { new: true, runValidators: true }
         )
-        .select(BASE_SELECT)
-        .lean<Expense | null>()
+            .select(BASE_SELECT)
+            .lean<IExpense | null>()
 
         if (!expense) {
             return next(new ApiError(404, "Expense not found"))
         }
 
-        res.status(200).json(new ApiResponse(200, {
-            expense: {
-                id: expense.id,
-                title: expense.title,
-                description: expense.description,
-                amount: expense.amount,
-                date: expense.date,
-                currency: expense.currency,
-                frequency: expense.frequency,
-                paymentMethod: expense.paymentMethod,
-                note: expense.note,
-                tags: expense.tags,
-                location: expense.location,
-                category: expense.category,
-                budget: expense.budget,
-                isRecurring: expense.isRecurring
-            }
-        }, "Updated expense successfully."))
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                { expense: toExpenseResponse(expense) },
+                "Updated expense successfully."
+            )
+        )
 
     } catch (error) {
         next(error)
@@ -99,11 +92,12 @@ export const getExpense = async (req: RequestWithUser, res: Response, next: Next
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { expenseId } = req.params ?? req.query
+    const expenseId = req.params?.expenseId ?? req.query?.expenseId
 
     if (!expenseId) {
         return next(new ApiError(400, "Expense Id is required."))
     }
+    if (!mongoose.Types.ObjectId.isValid(String(expenseId))) return next(new ApiError(400, "Invalid expense Id."));
 
     try {
         const expense = await Expense.findOne({
@@ -116,24 +110,12 @@ export const getExpense = async (req: RequestWithUser, res: Response, next: Next
         }
 
 
-        res.status(200).json(new ApiResponse(200, {
-            expense: {
-                id: expense.id,
-                title: expense.title,
-                description: expense.description,
-                amount: expense.amount,
-                date: expense.date,
-                currency: expense.currency,
-                frequency: expense.frequency,
-                paymentMethod: expense.paymentMethod,
-                note: expense.note,
-                tags: expense.tags,
-                location: expense.location,
-                category: expense.category,
-                budget: expense.budget,
-                isRecurring: expense.isRecurring
-            }
-        }, "Fetched expense  successfully."))
+        return res.status(200).json(
+            new ApiResponse(
+                200, { expense: toExpenseResponse(expense) },
+                "Fetched expense  successfully."
+            )
+        )
 
     } catch (error) {
         next(error)
@@ -150,13 +132,24 @@ export const getAllExpenses = async (req: RequestWithUser, res: Response, next: 
     try {
         const expenses = await Expense.find({
             user: user._id
-        }).select(" id title  description amount date currency frequency paymentMethod note tags location category budget isRecurring ")
+        })
+            .select(BASE_SELECT)
+            .lean<IExpense[]>()
 
-        if (!expenses) {
-            return next(new ApiError(404, "Expense(s) not found"))
+        if (expenses.length === 0) {
+            return res.status(200).json(
+                new ApiResponse(200, { expenses: [] }, "No expenses yet.")
+            );
         }
 
-        res.status(200).json(new ApiResponse(200, expenses, "Fetched expense(s) successfully."))
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                { expenses: toExpenseResponse(expenses) },
+                "Fetched expenses successfully."
+            )
+        )
 
     } catch (error) {
         next(error)
@@ -170,7 +163,7 @@ export const deleteExpense = async (req: RequestWithUser, res: Response, next: N
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { expenseId } = req.params ?? req.query
+    const expenseId = req.params?.expenseId ?? req.query?.expenseId
 
     if (!expenseId) {
         return next(new ApiError(400, "Expense Id is required."))
@@ -182,23 +175,21 @@ export const deleteExpense = async (req: RequestWithUser, res: Response, next: N
             { isDeleted: true },
             { new: true }
         )
+            .select(BASE_SELECT)
+            .lean<IExpense | null>()
 
         if (!expense) {
             return next(new ApiError(400, "Expense not found"))
         }
 
 
-        res.status(200).json(new ApiResponse(200, {
-            expense: {
-                id: expense._id,
-                title: expense.title,
-                amount: expense.amount,
-                date: expense.date,
-                currency: expense.currency,
-                paymentMethod: expense.paymentMethod,
-                isDeleted: expense.isDeleted
-            }
-        }, "Deleted expense successfully."))
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                { expense: toExpenseResponse(expense) },
+                "Deleted expense successfully."
+            )
+        )
 
     } catch (error) {
         next(error)
@@ -213,16 +204,23 @@ export const deleteAllExpenses = async (req: RequestWithUser, res: Response, nex
     }
 
     try {
-        const expenses = await Expense.updateMany(
-            { user: user._id },
-            { $Set: { isDeleted: true } }
+        const result = await Expense.updateMany(
+            { user: user._id, isDeleted: false },
+            { $set: { isDeleted: true } }
         )
 
-        if (!expenses) {
-            return next(new ApiError(404, "Expense(s) not found"))
+        const deletedExpenses: IExpense[] = await Expense.find(
+            { user: user._id, isDeleted: true })
+            .select(BASE_SELECT)
+            .lean<IExpense[]>()
+
+        if (deletedExpenses.length === 0) {
+            return res
+                .status(200)
+                .json(new ApiResponse(200, { categories: [] }, "No expense to delete."));
         }
 
-        res.status(200).json(new ApiResponse(200, expenses, "Deleted expense(s) successfully."))
+        res.status(200).json(new ApiResponse(200, { expenses: toExpenseResponse(deletedExpenses) }, "Deleted expense(s) successfully."))
 
     } catch (error) {
         next(error)

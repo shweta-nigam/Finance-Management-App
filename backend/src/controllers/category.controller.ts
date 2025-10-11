@@ -66,7 +66,12 @@ export const updateCategory = async (req: RequestWithUser, res: Response, next: 
         }
 
 
-        return res.status(200).json(new ApiResponse(200, { category: toCategoryResponse(category) }, "Updated category successfully."))
+        return res.status(200).json(
+            new ApiResponse(
+                200, { category: toCategoryResponse(category) },
+                "Updated category successfully."
+            )
+        )
 
     } catch (error) {
         next(error)
@@ -102,7 +107,13 @@ export const getCategory = async (req: RequestWithUser, res: Response, next: Nex
         }
 
 
-        return res.status(200).json(new ApiResponse(200, { category: toCategoryResponse(category) }, "Fetched category successfully."))
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                { category: toCategoryResponse(category) },
+                "Fetched category successfully."
+            )
+        )
 
     } catch (error) {
         next(error)
@@ -119,13 +130,26 @@ export const getAllCategories = async (req: RequestWithUser, res: Response, next
     try {
         const categories: ICategory[] = await Category.find({
             user: user._id
-        }).select(BASE_SELECT).lean<ICategory[]>()
+        })
+            .select(BASE_SELECT)
+            .lean<ICategory[]>()
 
         if (categories.length === 0) {
-            return res.status(200).json(new ApiResponse(200, { categories: [] }, "No categories yet"))
+            return res.status(200).json(
+                new ApiResponse(200,
+                    { categories: [] },
+                    "No categories yet"
+                )
+            )
         }
 
-        res.status(200).json(new ApiResponse(200, { categories: toCategoryResponse(categories) }, "Fetched categories successfully!"))
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                { categories: toCategoryResponse(categories) },
+                "Fetched categories successfully!"
+            )
+        )
 
     } catch (error) {
         next(error)

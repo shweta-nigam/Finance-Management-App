@@ -5,12 +5,12 @@ export type ExpenseResponse = {
     title: string;
     description: string
     amount: number
-    date: Date
+    date?: string
     note?: string
     currency: string
     receiptUrl?: string
     location?: string
-    tags?: string
+    tags?: string[]
     isDeleted: boolean
     isRecurring: boolean
     paymentMethod: string

@@ -12,6 +12,7 @@ export interface ICategory extends Document {
     date?: Date,
     user: Schema.Types.ObjectId,
     budget: Schema.Types.ObjectId,
+    expense: Schema.Types.ObjectId,
 }
 
 const categorySchema: Schema<ICategory> = new Schema({
@@ -59,6 +60,10 @@ const categorySchema: Schema<ICategory> = new Schema({
     budget: {
         type: Schema.Types.ObjectId,
         ref: "Budget"
+    },
+    expense: {
+        type: Schema.Types.ObjectId,
+        ref: "Expense"
     }
 }, {
     timestamps: true

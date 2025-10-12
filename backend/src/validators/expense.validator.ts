@@ -15,6 +15,8 @@ export const expenseCreateSchema = z.object({
     location: z.string().optional(),
     tags: z.array(z.string().max(10, "Too many tags").optional()),
     isDeleted: z.boolean().optional(),
+    category: z.string().optional(),
+    budget: z.string().optional(),
 })
 
 export const expenseUpdateSChema = expenseCreateSchema.partial();

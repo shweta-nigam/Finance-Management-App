@@ -5,11 +5,12 @@ import type { Expense } from "@/types";
 export function useExpenseApi() {
     const [response, setResponse] = useState<Expense | Expense[] | null>(null)
     const [error, setError] = useState<null | string>(null)
-    const [date, setDate] = useState<Date | string>("")
+   const [loading, setLoading] = useState(false);
 
     const createExpense = async (urlPath: string, data: Omit<Expense, "id">): Promise<Expense> => {
         try {
             setError(null)
+            setLoading(true)
             const res = await axios.post(urlPath, data)
             const expense: Expense = res.data.data.expense
             setResponse(expense)
@@ -17,6 +18,8 @@ export function useExpenseApi() {
             return expense
         } catch (error: any) {
             setError(error.response?.data?.message || "Something went wrong while creating expense")
+        }finally{
+            setLoading(false)
         }
         throw error
     }
@@ -60,11 +63,8 @@ export function useExpenseApi() {
         try {
             setError(null);
             const res = await axios.get(urlPath);
-            const payload = res.data
-            const expenses: Expense[] = payload?.data ?? payload;
+            const expenses: Expense[] = res.data.data.expenses ?? [];
             setResponse(expenses);
-            // console.log("expenses from api (expenseAPi): expenses", expenses);
-            // console.log("expenses from api (expenseAPi): res.data", res.data);
             return expenses;
             
         } catch (error: any) {
@@ -96,7 +96,7 @@ export function useExpenseApi() {
         try {
             setError(null);
             const res = await axios.delete(urlPath);
-            const expenses: Expense[] = res.data.data.expenses;
+            const expenses: Expense[] = res.data.data.expenses ?? [];
             setResponse(expenses);
             return expenses;
         } catch (error: any) {
@@ -108,6 +108,6 @@ export function useExpenseApi() {
         }
     };
 
-    return { response, error, date, createExpense, updateExpense, getExpense, getAllExpenses, deleteExpense, deleteAllExpenses }
+    return { response, error, loading, createExpense, updateExpense, getExpense, getAllExpenses, deleteExpense, deleteAllExpenses }
 
 }

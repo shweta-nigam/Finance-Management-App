@@ -9,6 +9,9 @@ export const budgetCreateSchema = z.object({
     frequency: z.enum(["Daily", "Weekly", "Monthly", "Yearly"]),
     note: z.string().optional(),
     currency: z.string().min(1, "Currency is required"),
+    isDeleted: z.boolean().optional(),
+    category: z.string().optional(),
+    expense: z.string().optional(),
 })
 
 export const budgetUpdateSchema = budgetCreateSchema.partial();

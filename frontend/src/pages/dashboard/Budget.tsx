@@ -36,8 +36,8 @@ import CategoryManager from "@/components/dashboard/CategoryManager";
 export default function Budget() {
   const { budgets, addBudget, updateBudget, removeBudget, loading } =
     useBudget();
+console.log("budget single object------->>>>", budgets[0])
 
-  // form state
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -51,15 +51,9 @@ export default function Budget() {
 
   // handle create / update
   const handleSave = async () => {
-    console.log({
-      title,
-      amount,
-      categoryId,
-      isRecurring,
-      frequency,
-      selectedBudget,
-    });
-    console.log("title", title, "amount :", amount, "categoryId", categoryId);
+    
+    console.log({title,amount,categoryId,isRecurring,frequency, selectedBudget});
+
     if (!title || !amount || !categoryId) return;
 
     setSaving(true);
@@ -114,9 +108,6 @@ export default function Budget() {
     amount: b.amount,
   }));
 
-  console.log("categoryId in Budget:", categoryId);
-
-  // render
   return (
     <div className="p-6 space-y-8">
       <div className="flex justify-between items-center">

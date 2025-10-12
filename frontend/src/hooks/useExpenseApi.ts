@@ -5,7 +5,7 @@ import type { Expense } from "@/types";
 export function useExpenseApi() {
     const [response, setResponse] = useState<Expense | Expense[] | null>(null)
     const [error, setError] = useState<null | string>(null)
-   const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const createExpense = async (urlPath: string, data: Omit<Expense, "id">): Promise<Expense> => {
         try {
@@ -17,11 +17,14 @@ export function useExpenseApi() {
             // console.log("createExpense raw response:", res.data);
             return expense
         } catch (error: any) {
-            setError(error.response?.data?.message || "Something went wrong while creating expense")
-        }finally{
+            setError(
+                error.response?.data?.message || "Something went wrong while creating expense"
+            )
+            throw error
+        } finally {
             setLoading(false)
         }
-        throw error
+
     }
 
     const updateExpense = async (
@@ -29,6 +32,7 @@ export function useExpenseApi() {
         data: Partial<Expense>
     ): Promise<Expense> => {
         try {
+            setLoading(true)
             setError(null);
             const res = await axios.patch(urlPath, data);
             const expense: Expense = res.data.data.expense;
@@ -40,12 +44,16 @@ export function useExpenseApi() {
                 "Something went wrong while updating expense"
             );
             throw error;
+        } finally {
+            setLoading(false)
         }
+
     }
 
     const getExpense = async (urlPath: string): Promise<Expense> => {
         try {
             setError(null);
+            setLoading(true)
             const res = await axios.get(urlPath);
             const expense: Expense = res.data.data.expense;
             setResponse(expense);
@@ -56,29 +64,35 @@ export function useExpenseApi() {
                 "Something went wrong while fetching expense"
             );
             throw error;
+        } finally {
+            setLoading(false)
         }
     };
 
     const getAllExpenses = async (urlPath: string): Promise<Expense[]> => {
         try {
             setError(null);
+            setLoading(true)
             const res = await axios.get(urlPath);
             const expenses: Expense[] = res.data.data.expenses ?? [];
             setResponse(expenses);
             return expenses;
-            
+
         } catch (error: any) {
             setError(
                 error.response?.data?.message ||
                 "Something went wrong while fetching all expenses"
             );
             throw error;
+        } finally {
+            setLoading(false)
         }
     };
 
     const deleteExpense = async (urlPath: string): Promise<Expense> => {
         try {
             setError(null);
+            setLoading(true)
             const res = await axios.delete(urlPath);
             const expense: Expense = res.data.data.expense;
             setResponse(expense);
@@ -89,12 +103,15 @@ export function useExpenseApi() {
                 "Something went wrong while deleting expense"
             );
             throw error;
+        } finally {
+            setLoading(false)
         }
     };
 
     const deleteAllExpenses = async (urlPath: string): Promise<Expense[]> => {
         try {
             setError(null);
+            setLoading(true)
             const res = await axios.delete(urlPath);
             const expenses: Expense[] = res.data.data.expenses ?? [];
             setResponse(expenses);
@@ -105,6 +122,8 @@ export function useExpenseApi() {
                 "Something went wrong while deleting all expenses"
             );
             throw error;
+        } finally {
+            setLoading(false)
         }
     };
 

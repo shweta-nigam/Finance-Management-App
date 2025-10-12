@@ -47,7 +47,7 @@ export const updateExpense = async (req: RequestWithUser, res: Response, next: N
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const expenseId = req.params?.categoryId ?? req.query?.categoryId;
+    const expenseId = req.params?.expenseId ?? req.query?.expenseId;
 
     if (!expenseId) {
         return next(new ApiError(400, "Expense Id is required."))
@@ -106,14 +106,14 @@ export const getExpense = async (req: RequestWithUser, res: Response, next: Next
         })
 
         if (!expense) {
-            return next(new ApiError(400, "Expense not found"))
+            return next(new ApiError(404, "Expense not found"))
         }
 
 
         return res.status(200).json(
             new ApiResponse(
                 200, { expense: toExpenseResponse(expense) },
-                "Fetched expense  successfully."
+                "Fetched expense successfully."
             )
         )
 
@@ -179,7 +179,7 @@ export const deleteExpense = async (req: RequestWithUser, res: Response, next: N
             .lean<IExpense | null>()
 
         if (!expense) {
-            return next(new ApiError(400, "Expense not found"))
+            return next(new ApiError(404, "Expense not found"))
         }
 
 
@@ -217,10 +217,10 @@ export const deleteAllExpenses = async (req: RequestWithUser, res: Response, nex
         if (deletedExpenses.length === 0) {
             return res
                 .status(200)
-                .json(new ApiResponse(200, { categories: [] }, "No expense to delete."));
+                .json(new ApiResponse(200, { expenses: [] }, "No expense to delete."));
         }
 
-        res.status(200).json(new ApiResponse(200, { expenses: toExpenseResponse(deletedExpenses) }, "Deleted expense(s) successfully."))
+        res.status(200).json(new ApiResponse(200, { expenses: toExpenseResponse(deletedExpenses) }, "Deleted expenses successfully."))
 
     } catch (error) {
         next(error)

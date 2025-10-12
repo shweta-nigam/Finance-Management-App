@@ -8,6 +8,7 @@ export type Expense = {
   amount: number | "";
   currency: string;
   categoryId: string;
+  category?: string;
   paymentMethod: PaymentMethod;
   isRecurring: boolean;
   tags: string[];

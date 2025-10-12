@@ -51,18 +51,13 @@ const defaultExpense: Expense = {
 export default function Expense() {
   const { expenses, addExpense } = useExpense();
   const { categories } = useCategory();
+// console.log("sample expense object --->>>> ", expenses[0]);
 
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [newExpense, setNewExpense] = useState<Expense>(defaultExpense);
   const [tagsInput, setTagsInput] = useState("");
   const [saving, setSaving] = useState(false);
-
-  // useEffect(() => {
-  //   console.log("Expense component mounted", {
-  //     expensesLength: expenses.length,
-  //   });
-  // }, []);
 
   useEffect(() => {
     setLoading(false);
@@ -116,7 +111,7 @@ export default function Expense() {
           .map((t) => t.trim())
           .filter(Boolean),
         date: new Date().toISOString(),
-        categoryId: newExpense.categoryId || "uncategorized",
+        category: newExpense.categoryId || "uncategorized",
       };
 
       await addExpense(finalExpense);
@@ -333,7 +328,9 @@ export default function Expense() {
                   const category = categories.find(
                     (c) => c.id === expense.categoryId
                   );
-                  console.log("matched category:", category);
+                  // console.log("matched category:", category);
+                  // console.log("expense.categoryId:", expense.categoryId);
+                  // console.log("all categories:", categories);
 
                   return (
                     <Card

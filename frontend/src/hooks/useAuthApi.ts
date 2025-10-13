@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 import type { User } from "@/types"; 
-import { verify } from "crypto";
 
 export function useAuthApi() {
   const [response, setResponse] = useState<User | null>(null);
@@ -30,7 +29,7 @@ export function useAuthApi() {
     try {
       setError(null);
       setLoading(true);
-      const res = await axios.post(urlPath, data); // usually POST to /verify
+      const res = await axios.post(urlPath, data); 
       const user: User = res.data.data.user;
       setResponse(user);
       return user;

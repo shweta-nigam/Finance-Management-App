@@ -1,193 +1,174 @@
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"; 
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import dayjs from "dayjs"
-import useExpense from "@/context/ExpenseContext";
+import { useMemo } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts";
+import { motion } from "framer-motion";
 import useBudget from "@/context/BudgetContext";
+import useExpense from "@/context/ExpenseContext";
+import useCategory from "@/context/CategoryContext";
+import { useExpenseApi } from "@/hooks/useExpenseApi";
 
-function Overview() {
-  const { expenses} = useExpense()
-  const { budgets} = useBudget()
+export default function Overview() {
+  const { budgets, loading: budgetLoading } = useBudget();
+  const { expenses} = useExpense();
+  const {loading: expenseLoading} = useExpenseApi()
+  const { categories } = useCategory();
 
-const totalIncome = budgets
-.filter((b) => b.type === "Income")
-.reduce((sum,b) => sum + b.amount,0)
+  // Build category lookup map for faster access
+  const categoryMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    categories.forEach((c) => {
+      if (c.id && c.type) map[c.id] = c.type;
+    });
+    return map;
+  }, [categories]);
 
-const totalExpenses = expenses.reduce((sum,e)=> sum + e.amount,0 )
-const savings = totalIncome - totalExpenses;
-const totalTransactions = expenses.length
+  // ---- Compute Totals ----
+  const totalIncome = useMemo(() => {
+    return budgets
+      .filter((b) => categoryMap[b.categoryId] === "Income")
+      .reduce((sum, b) => sum + Number(b.amount || 0), 0);
+  }, [budgets, categoryMap]);
 
-const summaryCards = [
-  {
-    title: "Total Income",
-    value: `₹${totalIncome.toLocaleString()}`,
-    color: "text-green-600",
-  },
-  {
-    title: "Total Expenses",
-    value:`₹${totalExpenses.toLocaleString()}`,
-    color: "text-red-600",
-  },
-  {
-    title: "Savings",
-    value: `₹${savings.toLocaleString()}`,
-    color: "text-blue-600",
-  },
-  {
-    title: "Transactions",
-    value: `₹${totalTransactions.toLocaleString()}`,
-    color: "text-purple-600",
-  },
-];
+  const totalExpenses = useMemo(() => {
+    return (expenses || []).reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  }, [expenses]);
 
-const monthlyData = budgets.map((b)=> {
-  month: dayjs(b.date).format("MMM"),
-  income: budgets
-  .filter((x)=> x.type === "Income" && dayjs(x.date).formate("MMM") === dayjs(b.date).formate("MMM"))
-  .reduce((a,x) => a + x.amount, 0),
-  expenses: expenses
-  .filter((x)=> dayjs(x.date).format("MMM")=== dayjs(b.date).format("MMM"))
-  .reduce((a,x)=> a + x.amount, 0)
-})
+  const savings = totalIncome - totalExpenses;
 
-const categoryData = expenses.reduce((acc: any[], e) => {
-    const existing = acc.find((x) => x.name === e.category?.title);
-    if (existing) existing.value += e.amount;
-    else acc.push({ name: e.category?.title || "Others", value: e.amount });
-    return acc;
-  }, []);
+  // ---- Chart Data ----
+  const chartData = useMemo(() => {
+    const grouped: Record<string, number> = {};
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+    expenses.forEach((e) => {
+      if (!e.date) return;
+      const date = new Date(e.date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      });
+      grouped[date] = (grouped[date] || 0) + Number(e.amount);
+    });
 
- return (
-    <div className="p-6 space-y-6">
-      {/* Top Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+    budgets.forEach((b) => {
+      if (!b.date) return;
+      const date = new Date(b.date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      });
+      grouped[date] = (grouped[date] || 0) + Number(b.amount);
+    });
+
+    return Object.entries(grouped).map(([date, total]) => ({ date, total }));
+  }, [budgets, expenses]);
+
+  // ---- Summary Cards ----
+  const summaryCards = [
+    {
+      title: "Total Income",
+      value: `₹${totalIncome.toLocaleString()}`,
+      color: "text-green-600",
+      bg: "bg-green-50",
+    },
+    {
+      title: "Total Expenses",
+      value: `₹${totalExpenses.toLocaleString()}`,
+      color: "text-red-600",
+      bg: "bg-red-50",
+    },
+    {
+      title: "Savings",
+      value: `₹${savings.toLocaleString()}`,
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+    },
+    {
+      title: "Transactions",
+      value: `${expenses.length}`,
+      color: "text-purple-600",
+      bg: "bg-purple-50",
+    },
+  ];
+
+  if (budgetLoading || expenseLoading) {
+    return <p className="p-6">Loading Overview...</p>;
+  }
+
+  return (
+    <div className="p-6 space-y-10">
+      {/* ---- Summary Section ---- */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {summaryCards.map((card, i) => (
-          <Card key={i} className="shadow-md bg-D-blue">
-            <CardContent className="p-4">
-              <h2 className="text-sm text-gray-400">{card.title}</h2>
-              <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
-            </CardContent>
-          </Card>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <Card className={`${card.bg} shadow-sm`}>
+              <CardHeader>
+                <CardTitle className={`text-sm font-medium ${card.color}`}>
+                  {card.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className={`text-2xl font-semibold ${card.color}`}>
+                  {card.value}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-md bg-D-blue">
-          <CardContent className="p-4">
-            <h2 className="font-semibold mb-4 text-white">Income vs Expenses</h2>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={monthlyData}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="income" fill="#4CAF50" />
-                <Bar dataKey="expenses" fill="#F44336" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* ---- Combined Chart ---- */}
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Income & Expenses Trend</CardTitle>
+        </CardHeader>
+        <CardContent className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="total" stroke="#4f46e5" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
-        <Card className="shadow-md bg-D-blue">
-          <CardContent className="p-4">
-            <h2 className="font-semibold mb-4 text-white">Expenses by Category</h2>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie data={categoryData} dataKey="value" cx="50%" cy="50%" outerRadius={80} label>
-                  {categoryData.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+      {/* ---- Recent Expenses ---- */}
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Recent Expenses</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {expenses.length === 0 ? (
+            <p className="text-gray-500">No recent expenses.</p>
+          ) : (
+            expenses.slice(-5).reverse().map((expense) => {
+              const category = categories.find((c) => c.id === expense.categoryId);
+              return (
+                <div
+                  key={expense.id}
+                  className="flex justify-between items-center border-b pb-2 text-sm"
+                >
+                  <div>
+                    <p className="font-medium">{expense.title}</p>
+                    <p className="text-gray-500 text-xs">
+                      {category ? category.title : "Uncategorized"} •{" "}
+                      {new Date(expense.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <p className="font-semibold text-red-600">₹{expense.amount}</p>
+                </div>
+              );
+            })
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
-
-  // return (
-  //   <div className="p-6 space-y-6">
-      
-  //      {/* Top Section: Summary Cards */}
-  //     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-  //       {summaryCards.map((card, index) => (
-  //         <Card key={index} className="shadow-md bg-D-blue">
-  //           <CardContent className="p-4">
-  //             <h2 className="text-sm text-gray-500">{card.title}</h2>
-  //             <p className={`text-2xl font-bold ${card.color}`}>
-  //               {card.value}
-  //             </p>
-  //           </CardContent>
-  //         </Card>
-  //       ))}
-  //     </div>
-
-  //     {/* Middle Section: Charts */}
-  //     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
-  //       <Card className="shadow-md bg-D-blue">
-  //         <CardContent className="p-4">
-  //           <h2 className="font-semibold mb-4 text-white">Income vs Expenses</h2>
-  //           <ResponsiveContainer width="100%" height={250}>
-  //             <BarChart data={expensesIncome}>
-  //               <XAxis dataKey="month" />
-  //               <YAxis />
-  //               <Tooltip />
-  //               <Legend />
-  //               <Bar dataKey="income" fill="#4CAF50" />
-  //               <Bar dataKey="expenses" fill="#F44336" />
-  //             </BarChart>
-  //           </ResponsiveContainer>
-  //         </CardContent>
-  //       </Card>
-
-  //       <Card className="shadow-md bg-D-blue">
-  //         <CardContent className="p-4">
-  //           <h2 className="font-semibold mb-4 text-white">Expenses by Category</h2>
-  //           <ResponsiveContainer width="100%" height={250}>
-  //             <PieChart>
-  //               <Pie
-  //                 data={categoryData}
-  //                 cx="50%"
-  //                 cy="50%"
-  //                 labelLine={false}
-  //                 outerRadius={80}
-  //                 fill="#8884d8"
-  //                 dataKey="value"
-  //                 label
-  //               >
-  //                 {categoryData.map((entry, index) => (
-  //                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-  //                 ))}
-  //               </Pie>
-  //               <Tooltip />
-  //             </PieChart>
-  //           </ResponsiveContainer>
-  //         </CardContent>
-  //       </Card>
-  //     </div>
-
-  //     {/* Bottom Section: Trends */}
-  //     <Card className="shadow-md bg-D-blue">
-  //       <CardContent className="p-4">
-  //         <h2 className="font-semibold mb-4 text-white">Daily Spending Trend</h2>
-  //         <ResponsiveContainer width="100%" height={250}>
-  //           <LineChart data={expensesIncome}>
-  //             <XAxis dataKey="month" />
-  //             <YAxis />
-  //             <Tooltip />
-  //             <Line type="monotone" dataKey="expenses" stroke="#FF5733" />
-  //             <Line type="monotone" dataKey="income" stroke="#28A745" />
-  //           </LineChart>
-  //         </ResponsiveContainer>
-  //       </CardContent>
-  //     </Card>
-  //   </div>
-  // );
 }
 
-export default Overview;

@@ -51,7 +51,10 @@ export const register = async (req: RequestWithUser, res: Response, next: NextFu
       await newUser.save()
       await sendEmail(newUser.email, token)
 
-      res.status(201).json(new ApiResponse(201, { newUser: { id: newUser._id, name: newUser.name, email: newUser.email } }))
+      return res.status(201).json(
+         new ApiResponse(201, toAuthResponse(newUser), "User registered successfully!")
+      );
+
 
    } catch (error) {
       next(error)
@@ -85,8 +88,9 @@ export const verify = async (req: RequestWithUser, res: Response, next: NextFunc
 
       await user.save()
 
-
-      res.status(200).json(new ApiResponse(200, { user: { id: user._id, name: user.name, username: user.username, isVerified: user.isVerified } }, "User verified successfully!"))
+      return res.status(200).json(
+         new ApiResponse(200, toAuthResponse(user), "User verified successfully!")
+      );
 
    } catch (error) {
       console.error("User verification failed.", error);
@@ -146,7 +150,9 @@ export const login = async (req: RequestWithUser, res: Response, next: NextFunct
          maxAge: 1000 * 60 * 60 * 24 * 30
       })
 
-      res.status(200).json(new ApiResponse(200, { user: { id: user._id, email: user.email, name: user.name }, accessToken: token }))
+      return res.status(200).json(
+         new ApiResponse(200, toAuthResponse(user, token), "Login successful!")
+      );
 
    } catch (error) {
       next(error)
@@ -172,7 +178,10 @@ export const logout = async (req: RequestWithUser, res: Response, next: NextFunc
 
       res.clearCookie("refreshToken", cookieOptions)
 
-      return res.status(200).json(new ApiResponse(200, null, "User logged out successfully!"))
+      return res.status(200).json(
+         new ApiResponse(200, null, "User logout successfully!")
+      );
+
 
    } catch (error) {
       next(error)
@@ -248,9 +257,10 @@ export const googleAuth = async (req: RequestWithUser, res: Response, next: Next
          secure: process.env.NODE_ENV !== "development"
       })
 
-      res.status(200).json(new ApiResponse(200, {
-         user: { id: user._id, name: user.name, email: user.email, avatar: user.avatar }
-      }, accessToken))
+      return res.status(200).json(
+         new ApiResponse(200, toAuthResponse(user, accessToken), "Google login successful!")
+      );
+
 
    } catch (error) {
       next(error)

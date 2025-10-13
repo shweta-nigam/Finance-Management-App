@@ -36,7 +36,15 @@ export default function UserAvatar({
   const initials = getInitials(user?.name)
   const bgColor = getBgColor(user?.name)
 
-  if (!user) return null // no user, nothing to show
+  // if (!user) return null // no user, nothing to show
+  console.log("user in userAvatar:----->>>", user)
+if (!user) {
+  return (
+    <div className={`${size} flex items-center justify-center rounded-full bg-gray-500 text-white`}>
+      U
+    </div>
+  );
+}
 
   return user.avatar ? (
     <img

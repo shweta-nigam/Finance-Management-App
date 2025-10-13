@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import useAuth from "@/context/AuthContext";
 import { useState } from "react";
+import UserAvatar from "./UserAvatar";
 
 export function Navbar() {
    const { user, logout } = useAuth();
@@ -66,17 +67,7 @@ export function Navbar() {
         {/* User section */}
         {user ? (
           <div className="hidden md:flex items-center gap-3">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt="user avatar"
-                className="w-16 h-16 rounded-full mx-auto mb-2"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center text-white text-xl mx-auto mb-2">
-                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-              </div>
-            )}
+            <UserAvatar size="w-12 h-12 text-lg"/>
             <button
               onClick={logout}
               className="px-5 py-3 rounded bg-blue-500 text-white hover:bg-blue-600"

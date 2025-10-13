@@ -1,4 +1,15 @@
-// src/types/finance.ts
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  username?: string;
+  avatar?: string | null;
+  role: "User" | "Admin";
+  isVerified: boolean;
+  isPlanActive: boolean;
+  accessToken?: string;
+}
+
 export type PaymentMethod = "Cash" | "Card" | "UPI" | "Bank Transfer";
 
 export type Expense = {

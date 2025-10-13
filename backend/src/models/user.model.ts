@@ -17,6 +17,8 @@ export interface IUser extends Document {
     accessTokenExpiry?: Date,
     refreshToken?: string,
     refreshTokenExpiry?: Date
+    createdAt:string,
+    updatedAt:string
 }
 
 const userSchema: Schema<IUser> = new Schema({

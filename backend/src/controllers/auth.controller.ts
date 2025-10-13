@@ -261,7 +261,6 @@ export const googleAuth = async (req: RequestWithUser, res: Response, next: Next
          new ApiResponse(200, toAuthResponse(user, accessToken), "Google login successful!")
       );
 
-
    } catch (error) {
       next(error)
    }

@@ -15,7 +15,6 @@ export default function Overview() {
   const {loading: expenseLoading} = useExpenseApi()
   const { categories } = useCategory();
 
-  // Build category lookup map for faster access
   const categoryMap = useMemo(() => {
     const map: Record<string, string> = {};
     categories.forEach((c) => {
@@ -105,7 +104,7 @@ export default function Overview() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <Card className={`${card.bg} shadow-sm`}>
+            <Card className={`${card.bg} shadow-sm bg-D-blue`}>
               <CardHeader>
                 <CardTitle className={`text-sm font-medium ${card.color}`}>
                   {card.title}
@@ -122,9 +121,9 @@ export default function Overview() {
       </div>
 
       {/* ---- Combined Chart ---- */}
-      <Card className="shadow-md">
+      <Card className="shadow-md bg-D-blue">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Income & Expenses Trend</CardTitle>
+          <CardTitle className="text-lg font-semibold text-white">Income & Expenses Trend</CardTitle>
         </CardHeader>
         <CardContent className="h-80">
           <ResponsiveContainer width="100%" height="100%">
@@ -139,7 +138,7 @@ export default function Overview() {
       </Card>
 
       {/* ---- Recent Expenses ---- */}
-      <Card className="shadow-md">
+      <Card className="shadow-md bg-D-blue text-white">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Recent Expenses</CardTitle>
         </CardHeader>

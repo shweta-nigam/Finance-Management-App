@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto"
 import { OAuth2Client } from "google-auth-library"
 import { loginUserSchema, registerUserSchema } from "../validators/user.validator"
+import { toAuthResponse } from "../responses/toAuthResponse"
 
 // RequestWithUser = a request object that also carries the logged-in user’s details.
 export interface RequestWithUser extends Request {
@@ -206,8 +207,15 @@ export const googleAuth = async (req: RequestWithUser, res: Response, next: Next
       let user = await User.findOne({ email })
 
       if (user) {
-         return next(new ApiError(400, "User already exist"))
+         const accessToken = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET!, { expiresIn: "15m" });
+         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET!, { expiresIn: "30d" });
+         res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== "development",
+         });
+         return res.status(200).json(new ApiResponse(200, toAuthResponse(user, accessToken), "Login successful via Google"));
       }
+
 
       user = await User.create({
          name,

@@ -19,18 +19,29 @@ export function SignupPage() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
-  const { registerUser, loading, error } = useAuth(); 
+  const { registerUser, loading, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await registerUser({ name, email, password }); 
+      await registerUser({ name, email, password });
       toast.success("Signup successful! Please verify your email.");
       navigate("/login");
     } catch (err: any) {
-      toast.error("Something went wrong during signup.");
-      console.error("Signup error:", err);
+      const msg = err?.response?.data?.message || err.message || "";
+
+      if (msg.includes("duplicate key") || msg.includes("E11000")) {
+        toast.error("This email is already registered.");
+      } else if (msg.toLowerCase().includes("password")) {
+        toast.error("Password must be at least 6 characters long.");
+      } else if (msg.toLowerCase().includes("validation")) {
+        toast.error("Please check your inputs and try again.");
+      } else {
+        toast.error("Something went wrong during signup.");
+      }
+
+      console.error("Signup error:", msg);
     }
   };
 
@@ -119,4 +130,3 @@ export function SignupPage() {
     </div>
   );
 }
-

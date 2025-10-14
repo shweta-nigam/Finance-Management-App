@@ -23,7 +23,7 @@ const cardData: Card[] = [
     title: "Track Expenses",
     description:
       "Easily record and monitor your daily spending to stay on top of your finances.",
-    route: "/expenses",
+    route: "/dashboard/expense",
     icon: Wallet,
     borderColor: "border-red-400",
     textColor: "text-red-500",
@@ -33,7 +33,7 @@ const cardData: Card[] = [
     title: "Manage Budget",
     description:
       "Set your monthly budget and track your progress throughout the month.",
-    route: "/budget",
+    route: "/dashboard/budget",
     icon: Settings,
     borderColor: "border-yellow-400",
     textColor: "text-yellow-500",
@@ -43,7 +43,7 @@ const cardData: Card[] = [
     title: "Check Charts",
     description:
       "Visualize your income, expenses, and savings with interactive charts.",
-    route: "/charts",
+    route: "/dashboard/overview",
     icon: PieChart,
     borderColor: "border-blue-400",
     textColor: "text-blue-500",
@@ -53,7 +53,7 @@ const cardData: Card[] = [
     title: "Analyze Reports",
     description:
       "Get detailed reports to understand your spending patterns better.",
-    route: "/reports",
+    route: "/dashboard/report",
     icon: BarChart3,
     borderColor: "border-green-400",
     textColor: "text-green-500",
@@ -63,7 +63,7 @@ const cardData: Card[] = [
     title: "Set Goals",
     description:
       "Define savings or investment goals and track your journey towards achieving them.",
-    route: "/goals",
+    route: "/dashboard/goal",
     icon: Target,
     borderColor: "border-purple-400",
     textColor: "text-purple-500",
@@ -73,7 +73,7 @@ const cardData: Card[] = [
     title: "View Insights",
     description:
       "Discover personalized tips and insights to improve your financial habits.",
-    route: "/insights",
+    route: "/dashboard/overview",
     icon: Lightbulb,
     borderColor: "border-indigo-400",
     textColor: "text-indigo-500",

@@ -12,7 +12,7 @@ import { useState } from "react";
 import UserAvatar from "./UserAvatar";
 
 export function Navbar() {
-   const { user, logoutUser } = useAuth();
+  const { user, logoutUser } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
@@ -67,7 +67,9 @@ export function Navbar() {
         {/* User section */}
         {user ? (
           <div className="hidden md:flex items-center gap-3">
-            <UserAvatar size="w-12 h-12 text-lg"/>
+            <Link to="/dashboard/profile">
+              <UserAvatar size="w-12 h-12 text-lg" />
+            </Link>
             <button
               onClick={logoutUser}
               className="px-5 py-3 rounded bg-blue-500 text-white hover:bg-blue-600"

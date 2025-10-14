@@ -52,7 +52,7 @@ export const register = async (req: RequestWithUser, res: Response, next: NextFu
       await sendEmail(newUser.email, token)
 
       return res.status(201).json(
-         new ApiResponse(201, toAuthResponse(newUser), "User registered successfully!")
+         new ApiResponse(201, { user: toAuthResponse(newUser) }, "User registered successfully!")
       );
 
 
@@ -89,7 +89,7 @@ export const verify = async (req: RequestWithUser, res: Response, next: NextFunc
       await user.save()
 
       return res.status(200).json(
-         new ApiResponse(200, toAuthResponse(user), "User verified successfully!")
+         new ApiResponse(200, { user: toAuthResponse(user) }, "User verified successfully!")
       );
 
    } catch (error) {
@@ -151,7 +151,7 @@ export const login = async (req: RequestWithUser, res: Response, next: NextFunct
       })
 
       return res.status(200).json(
-         new ApiResponse(200, toAuthResponse(user, token), "Login successful!")
+         new ApiResponse(200, { user: toAuthResponse(user, token) }, "Login successful!")
       );
 
    } catch (error) {
@@ -258,7 +258,7 @@ export const googleAuth = async (req: RequestWithUser, res: Response, next: Next
       })
 
       return res.status(200).json(
-         new ApiResponse(200, toAuthResponse(user, accessToken), "Google login successful!")
+         new ApiResponse(200, { user: toAuthResponse(user) }, "Google login successful!")
       );
 
    } catch (error) {

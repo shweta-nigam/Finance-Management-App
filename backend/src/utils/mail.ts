@@ -20,17 +20,17 @@ export const sendEmail = async (user: string, token: string): Promise<void> => {
 
 
 
-  const info = await transporter.sendMail({
-    from: '"Finance Management App - FinEase " <no-reply@finease.com>',
-    to: user,
-    subject: "Email Verification",
-    // text: `Hii there , please verify your email ${process.env.BASE_URL}/verify/${token}`, // plain‑text body
-    text: `Hi there, please verify your email by clicking this link: http://localhost:8080/api/v1/verify/${token}`,
-    html: `<h1>Hello there!<h1>
+const info = await transporter.sendMail({
+  from: '"Finance Management App - FinEase" <no-reply@finease.com>',
+  to: user,
+  subject: "Email Verification",
+  text: `Hi there, please verify your email by clicking this link: ${process.env.BASE_URL}verify?token=${token}`,
+  html: `
+    <h4>Hello there!</h4>
     <p>Please verify your email by clicking the link below:</p>
-    <a href = "http://localhost:8080/api/v1/verify/${token}">Verify Email </a> 
-    `,
-  });
+    <a href="${process.env.BASE_URL}verify?token=${token}">Verify Email</a>
+  `,
+});
 
   console.log("Message sent:", info.messageId);
 };

@@ -9,8 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { useLogin } from "../../hooks/useAuthApi.ts";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "@/context/AuthContext.tsx";
@@ -18,38 +16,19 @@ import useAuth from "@/context/AuthContext.tsx";
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [login, response, error, loading] = useLogin();
-  const { login: setAuthUser } = useAuth();
+  const { loginUser, loading, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("handleSubmit called");
-
     e.preventDefault();
-    const res = await login("/api/v1/auth/login", { email, password });
 
-    const user = res?.data?.user;
-    const token = res?.data?.accessToken;
-
-    if (user && token) {
-      console.log("User found:----", user);
-      setAuthUser({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar || "/profile.jpg",
-      });
-
-      localStorage.setItem("token", token);
-      console.log("Navigating now...");
+    try {
+      await loginUser(email, password);
       navigate("/");
+    } catch (err) {
+      console.error("Login failed:", err);
     }
   };
-
-  if (error) {
-    return <p>Something went wrong</p>;
-  }
 
   return (
     <div className="bg flex flex-col items-center p-6">
@@ -104,10 +83,11 @@ export function LoginPage() {
                 />
               </div>
             </div>
-            {response?.success && (
-              <p className="text-green-600"> Login successful</p>
-            )}
+
             {error && <p className="text-red-500"> Error: {error}</p>}
+            {!error && loading && (
+              <p className="text-gray-500 mt-2">Logging in...</p>
+            )}
 
             <CardFooter className="flex-col gap-2">
               <Button type="submit" className="w-full">

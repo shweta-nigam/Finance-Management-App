@@ -35,9 +35,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const registerUser = async (data: Record<string, any>) => {
-    const newUser = await register("/api/v1/auth/register", data);
-    if (newUser) {
-      console.log("Registration successful. Please verify your email.");
+    try {
+      const newUser = await register("/api/v1/auth/register", data);
+      if (newUser) {
+        console.log("Registration successful. Please verify your email.");
+      }
+    } catch (err: any) {
+      throw err;
     }
   };
 
@@ -79,4 +83,3 @@ export default function useAuth() {
   }
   return context;
 }
-

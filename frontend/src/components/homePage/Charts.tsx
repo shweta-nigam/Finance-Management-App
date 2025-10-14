@@ -58,7 +58,7 @@ export default function Charts() {
           spending patterns.
         </p>
         <Link
-          to="/budget"
+          to="/dashboard/overview"
           className="mt-6 transition btn-D-blue btn-D-blue:hover"
         >
           See charts

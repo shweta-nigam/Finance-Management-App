@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const verifyUserHandler = async (token: string) => {
-    const verifiedUser = await verifyUser("/api/v1/auth/verify", { token });
+    const verifiedUser = await verifyUser(`/api/v1/auth/verify/${token}`, {});
     if (verifiedUser) {
       setUser(verifiedUser);
       localStorage.setItem("user", JSON.stringify(verifiedUser));

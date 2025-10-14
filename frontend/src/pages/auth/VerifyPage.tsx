@@ -13,7 +13,6 @@ export default function VerifyPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Extract token once
   const token = searchParams.get("token");
 
   useEffect(() => {
@@ -29,7 +28,7 @@ export default function VerifyPage() {
     const verify = async () => {
       try {
         // Call backend endpoint
-        await verifyUser(`/api/v1/verify/${token}`);
+        await verifyUser(token);
         setStatus("success");
         if (!toastShown) {
           toast.success("Email verified successfully!");

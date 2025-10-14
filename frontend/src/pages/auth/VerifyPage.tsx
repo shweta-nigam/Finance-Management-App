@@ -5,36 +5,50 @@ import useAuth from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 
 export default function VerifyPage() {
-  const { verifyUser, loading, error } = useAuth();
+  const { verifyUser, loading } = useAuth();
   const [status, setStatus] = useState<"verifying" | "success" | "failed">(
     "verifying"
   );
+  const [toastShown, setToastShown] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  // Extract token once
+  const token = searchParams.get("token");
+
   useEffect(() => {
-    const token = searchParams.get("token");
     if (!token) {
-      toast.error("Invalid verification link.");
+      if (!toastShown) {
+        toast.error("Invalid verification link.");
+        setToastShown(true);
+      }
       setStatus("failed");
       return;
     }
 
     const verify = async () => {
       try {
-        await verifyUser(token);
+        // Call backend endpoint
+        await verifyUser(`/api/v1/verify/${token}`);
         setStatus("success");
-        toast.success("Email verified successfully!");
+        if (!toastShown) {
+          toast.success("Email verified successfully!");
+          setToastShown(true);
+        }
+        // Redirect to login page after short delay
         setTimeout(() => navigate("/login"), 2000);
       } catch (err) {
-        setStatus("failed");
-        toast.error("Verification failed. Please try again.");
         console.error("Verification error:", err);
+        setStatus("failed");
+        if (!toastShown) {
+          toast.error("Verification failed. Please try again.");
+          setToastShown(true);
+        }
       }
     };
 
     verify();
-  }, [searchParams, verifyUser, navigate]);
+  }, [token, verifyUser, navigate, toastShown]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
@@ -52,9 +66,7 @@ export default function VerifyPage() {
         </div>
       ) : (
         <div className="text-red-600">
-          <h2 className="text-2xl font-semibold mb-2">
-            Verification Failed!
-          </h2>
+          <h2 className="text-2xl font-semibold mb-2">Verification Failed!</h2>
           <p>
             The verification link might have expired or is invalid. Please
             register again.

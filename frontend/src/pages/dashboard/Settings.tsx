@@ -33,19 +33,19 @@ export default function Settings() {
     <div className="p-6 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-white bg-gradient-to-r from-[rgba(0,36,31,1)] via-[rgba(84,9,121,1)] to-[rgba(0,102,255,1)] px-4 py-2 rounded-md shadow-md">
+        <h1 className="text-3xl font-bold text-white px-4 py-2 rounded-md shadow-md">
           App Settings
         </h1>
         <Button
           onClick={handleSave}
-          className="bg-gradient-to-r from-[rgba(0,36,31,1)] via-[rgba(84,9,121,1)] to-[rgba(0,102,255,1)] text-white shadow-md hover:opacity-90 transition-all"
+          className="bg-D-blue text-white shadow-md hover:opacity-90 transition-all"
         >
           Save Settings
         </Button>
       </div>
 
       {/* Theme Preferences */}
-      <Card className="bg-[#0b1120] border border-gray-700 hover:shadow-lg transition-all rounded-xl">
+      <Card className="bg-D-blue border border-gray-700 hover:shadow-lg transition-all rounded-xl">
         <CardContent className="p-6 space-y-5">
           <div className="flex items-center gap-2">
             <Palette className="text-blue-400" />
@@ -61,7 +61,7 @@ export default function Settings() {
       </Card>
 
       {/* Dashboard Display */}
-      <Card className="bg-[#0b1120] border border-gray-700 hover:shadow-lg transition-all rounded-xl">
+      <Card className="bg-D-blue border border-gray-700 hover:shadow-lg transition-all rounded-xl">
         <CardContent className="p-6 space-y-5">
           <div className="flex items-center gap-2">
             <LayoutDashboard className="text-blue-400" />
@@ -103,7 +103,7 @@ export default function Settings() {
       </Card>
 
       {/* Notifications */}
-      <Card className="bg-[#0b1120] border border-gray-700 hover:shadow-lg transition-all rounded-xl">
+      <Card className="bg-D-blue border border-gray-700 hover:shadow-lg transition-all rounded-xl">
         <CardContent className="p-6 space-y-5">
           <div className="flex items-center gap-2">
             <Bell className="text-blue-400" />
@@ -117,7 +117,7 @@ export default function Settings() {
       </Card>
 
       {/* Data Preferences */}
-      <Card className="bg-[#0b1120] border border-gray-700 hover:shadow-lg transition-all rounded-xl">
+      <Card className="bg-D-blue border border-gray-700 hover:shadow-lg transition-all rounded-xl">
         <CardContent className="p-6 space-y-5">
           <div className="flex items-center gap-2">
             <Database className="text-blue-400" />

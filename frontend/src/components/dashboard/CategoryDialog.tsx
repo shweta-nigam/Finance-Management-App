@@ -21,7 +21,6 @@ type CategoryDialogProps = {
 };
 
 export default function CategoryDialog({
-  triggerLabel = "+ Add Category",
   onCreated,
   open: controlledOpen,
   onOpenChange,
@@ -61,7 +60,7 @@ export default function CategoryDialog({
       setDescription("");
       setType("Expense");
       setOpen(false);
-      
+
       onCreated?.(saved);
     } catch (err) {
       console.error(err);
@@ -76,9 +75,6 @@ export default function CategoryDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>{triggerLabel}</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-sm z-[99999]">
         <DialogHeader>
           <DialogTitle>Create Category</DialogTitle>

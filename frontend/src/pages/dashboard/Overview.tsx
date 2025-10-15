@@ -106,7 +106,7 @@ export default function Overview() {
           >
             <Card className={`${card.bg} shadow-sm bg-D-blue`}>
               <CardHeader>
-                <CardTitle className={`text-sm font-medium ${card.color}`}>
+                <CardTitle className={`text-lg font-medium ${card.color}`}>
                   {card.title}
                 </CardTitle>
               </CardHeader>

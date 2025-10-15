@@ -32,11 +32,12 @@ import {
 } from "@/components/ui/select";
 import useBudget from "@/context/BudgetContext";
 import CategoryManager from "@/components/dashboard/CategoryManager";
+import { toast } from "sonner";
 
 export default function Budget() {
   const { budgets, addBudget, updateBudget, removeBudget, loading } =
     useBudget();
-console.log("budget single object------->>>>", budgets[0])
+  console.log("budget single object------->>>>", budgets[0]);
 
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -51,10 +52,29 @@ console.log("budget single object------->>>>", budgets[0])
 
   // handle create / update
   const handleSave = async () => {
-    
-    console.log({title,amount,categoryId,isRecurring,frequency, selectedBudget});
+    console.log({
+      title,
+      amount,
+      categoryId,
+      isRecurring,
+      frequency,
+      selectedBudget,
+    });
 
-    if (!title || !amount || !categoryId) return;
+    if (!title.trim()) {
+      toast.error("Please enter a budget title.");
+      return;
+    }
+
+    if (!amount.trim() || isNaN(parseFloat(amount))) {
+      toast.error("Please enter a valid amount.");
+      return;
+    }
+
+    if (!categoryId) {
+      toast.error("Please select a category.");
+      return;
+    }
 
     setSaving(true);
     try {
@@ -67,6 +87,7 @@ console.log("budget single object------->>>>", budgets[0])
           isRecurring,
           frequency,
         });
+        toast.success("Budget updated successfully ✅");
       } else {
         await addBudget({
           title,
@@ -80,6 +101,7 @@ console.log("budget single object------->>>>", budgets[0])
           isRecurring,
           frequency,
         });
+        toast.success("Budget created successfully 🎉");
       }
 
       setOpenBudgetDialog(false);
@@ -94,6 +116,7 @@ console.log("budget single object------->>>>", budgets[0])
       setSelectedBudget(null);
     } catch (err) {
       console.error("Error saving budget:", err);
+      toast.error("Something went wrong. Please try again later.");
     } finally {
       setSaving(false);
     }
@@ -111,7 +134,7 @@ console.log("budget single object------->>>>", budgets[0])
   return (
     <div className="p-6 space-y-8">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Budgets</h2>
+        <h2 className="text-xl font-semibold text-white">Budget</h2>
         <Dialog open={openBudgetDialog} onOpenChange={setOpenBudgetDialog}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-2">
@@ -224,7 +247,7 @@ console.log("budget single object------->>>>", budgets[0])
           </TabsContent>
 
           {/* Chart View */}
-          <TabsContent value="chart">
+          <TabsContent value="chart" className="bg-D-blue p-4">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <XAxis dataKey="name" />

@@ -2,12 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   ResponsiveContainer,
   LineChart,
@@ -44,8 +39,7 @@ export default function Report() {
   );
 
   const totalExpenses = useMemo(
-    () =>
-      expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0),
+    () => expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0),
     [expenses]
   );
 
@@ -108,12 +102,29 @@ export default function Report() {
         <h1 className="text-3xl font-bold">Reports & Analytics</h1>
         <select
           value={view}
-          onChange={(e) => setView(e.target.value as "month" | "year" | "custom")}
-          className="bg-D-blue border border-gray-700 rounded-md px-4 py-2 text-sm focus:outline-none"
+          onChange={(e) =>
+            setView(e.target.value as "month" | "year" | "custom")
+          }
+          className="bg-D-blue border border-gray-700 rounded-md px-4 py-2 text-sm text-white focus:outline-none"
         >
-          <option value="month">This Month</option>
-          <option value="year">This Year</option>
-          <option value="custom">Custom Range</option>
+          <option
+            value="month"
+            style={{ backgroundColor: "#0a0f24", color: "white" }}
+          >
+            This Month
+          </option>
+          <option
+            value="year"
+            style={{ backgroundColor: "#0a0f24", color: "white" }}
+          >
+            This Year
+          </option>
+          <option
+            value="custom"
+            style={{ backgroundColor: "#0a0f24", color: "white" }}
+          >
+            Custom Range
+          </option>
         </select>
       </div>
 
@@ -229,34 +240,39 @@ export default function Report() {
                   </td>
                 </tr>
               ) : (
-                expenses.slice(-10).reverse().map((e) => {
-                  const category = categories.find(
-                    (c) => c.id === e.categoryId
-                  );
-                  return (
-                    <tr
-                      key={e.id}
-                      className="border-b border-gray-800 hover:bg-gray-800/40 transition"
-                    >
-                      <td className="p-2 text-gray-300">
-                        {new Date(e.date).toLocaleDateString()}
-                      </td>
-                      <td className="p-2">{category?.title || "Uncategorized"}</td>
-                      <td className="p-2 text-sm text-gray-400">
-                        {category?.type || "-"}
-                      </td>
-                      <td
-                        className={`p-2 font-semibold ${
-                          category?.type === "Income"
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }`}
+                expenses
+                  .slice(-10)
+                  .reverse()
+                  .map((e) => {
+                    const category = categories.find(
+                      (c) => c.id === e.categoryId
+                    );
+                    return (
+                      <tr
+                        key={e.id}
+                        className="border-b border-gray-800 hover:bg-gray-800/40 transition"
                       >
-                        {category?.type === "Income" ? "+" : "-"}₹{e.amount}
-                      </td>
-                    </tr>
-                  );
-                })
+                        <td className="p-2 text-gray-300">
+                          {new Date(e.date).toLocaleDateString()}
+                        </td>
+                        <td className="p-2">
+                          {category?.title || "Uncategorized"}
+                        </td>
+                        <td className="p-2 text-sm text-gray-400">
+                          {category?.type || "-"}
+                        </td>
+                        <td
+                          className={`p-2 font-semibold ${
+                            category?.type === "Income"
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }`}
+                        >
+                          {category?.type === "Income" ? "+" : "-"}₹{e.amount}
+                        </td>
+                      </tr>
+                    );
+                  })
               )}
             </tbody>
           </table>
@@ -281,4 +297,3 @@ export default function Report() {
     </div>
   );
 }
-

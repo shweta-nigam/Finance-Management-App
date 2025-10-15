@@ -255,7 +255,7 @@ export default function Report() {
                         <td className="p-2 text-gray-300">
                           {new Date(e.date).toLocaleDateString()}
                         </td>
-                        <td className="p-2">
+                        <td className="p-2 text-white">
                           {category?.title || "Uncategorized"}
                         </td>
                         <td className="p-2 text-sm text-gray-400">

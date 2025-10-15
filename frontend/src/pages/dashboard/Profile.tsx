@@ -1,3 +1,4 @@
+import UserAvatar from "@/components/UserAvatar";
 import useAuth from "@/context/AuthContext";
 import { Edit, Lock, Shield } from "lucide-react";
 
@@ -13,15 +14,10 @@ export default function Profile() {
       {/* Profile Header */}
       <div className="relative bg-D-blue rounded-2xl shadow-lg">
         <div className="flex flex-col md:flex-row items-center md:items-end gap-6 p-8">
-          <img
-            src={user.avatar}
-            alt="User Avatar"
-            className="w-32 h-32 rounded-full border-4 border-white shadow-md"
-          />
+          <UserAvatar size="w-12 h-12 text-lg" />
           <div className="flex-1 text-center md:text-left">
             <h2 className="text-3xl font-bold">{user.name} </h2>
             <p className="text-gray-200">{user.email}</p>
-            {/* <p className="text-gray-300 mt-1">{user.address}</p>  ------------> add address in backend */}
           </div>
           <button className="btn shadow-md mt-6 transition btn-L-blue btn-L-blue:hover">
             <Edit className="w-4 h-4 mr-2" /> Edit Profile

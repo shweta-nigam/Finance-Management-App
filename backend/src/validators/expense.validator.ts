@@ -13,7 +13,7 @@ export const expenseCreateSchema = z.object({
     frequency: z.enum(["Daily", "Weekly", "Monthly", "Yearly"]).optional(),
     receiptUrl: z.string().optional(),
     location: z.string().optional(),
-    tags: z.array(z.string().max(10, "Too many tags").optional()),
+    tags: z.array(z.string()).max(10, "Too many tags").optional(),
     isDeleted: z.boolean().optional(),
     category: z.string().optional(),
     budget: z.string().optional(),

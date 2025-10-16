@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useState } from "react";
 import type { User } from "@/types"; 
+import api from "@/axios/api";
 
 export function useAuthApi() {
   const [response, setResponse] = useState<User | null>(null);
@@ -11,7 +11,7 @@ export function useAuthApi() {
     try {
       setError(null);
       setLoading(true);
-      const res = await axios.post(urlPath, data);
+      const res = await api.post(urlPath, data);
       const user: User = res.data.data.user;
       setResponse(user);
       return user;
@@ -29,7 +29,7 @@ export function useAuthApi() {
     try {
       setError(null);
       setLoading(true);
-      const res = await axios.post(urlPath, data); 
+      const res = await api.post(urlPath, data); 
       const user: User = res.data.data.user;
       setResponse(user);
       return user;
@@ -48,7 +48,7 @@ export function useAuthApi() {
     try {
       setError(null);
       setLoading(true);
-      const res = await axios.post(urlPath, data);
+      const res = await api.post(urlPath, data);
       const user: User = res.data.data.user;
       setResponse(user);
       return user;
@@ -67,7 +67,7 @@ export function useAuthApi() {
     try {
       setError(null);
       setLoading(true);
-      const res = await axios.get(urlPath);
+      const res = await api.get(urlPath);
       const user: User = res.data.data.user;
       setResponse(user);
       return user;
@@ -86,7 +86,7 @@ export function useAuthApi() {
     try {
       setError(null);
       setLoading(true);
-      const res = await axios.post(urlPath);
+      const res = await api.post(urlPath);
       setResponse(null);
       return res.data.success || true;
     } catch (error: any) {

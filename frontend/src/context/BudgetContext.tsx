@@ -11,6 +11,8 @@ import { useBudgetApi } from "@/hooks/useBudgetApi";
 
 type BudgetContextType = {
   budgets: Budget[];
+  activeBudget: Budget | null;
+  setActiveBudget: (budget: Budget | null) => void;
   loading: boolean;
   error: string | null;
   chartData: any[];
@@ -30,6 +32,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeBudget, setActiveBudget] = useState<Budget | null>(null);
 
   const {
     getAllBudgets,
@@ -48,7 +51,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
       setError(null);
       try {
         const data = await getAllBudgets("/api/v1/budget");
-        setBudgets(data || []);
+        if (data && data.length > 0) setActiveBudget(data[0]);
         // console.log("initial budgets:", data);
       } catch (err: any) {
         setError("Failed to fetch budgets");
@@ -131,6 +134,8 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       budgets,
+      activeBudget,
+      setActiveBudget,
       loading,
       error,
       chartData,
@@ -156,5 +161,3 @@ export default function useBudget() {
   }
   return context;
 }
-
-

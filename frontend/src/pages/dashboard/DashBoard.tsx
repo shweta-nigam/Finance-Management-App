@@ -60,7 +60,7 @@ const menuItems = [
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { budget } = useBudget();
+  const { activeBudget } = useBudget();
   const { expenses } = useExpense();
 
   if (!user) {
@@ -72,10 +72,8 @@ export default function Dashboard() {
     );
   }
 
-  // console.log("Avatar value:", user.avatar);
-
   const calBalance = () => {
-    const totalBudget = budget?.amount || 0;
+    const totalBudget = activeBudget?.amount || 0;
     const totalExpense = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
     const totalBalance = totalBudget - totalExpense;
     return totalBalance;

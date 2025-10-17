@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useState } from "react";
 import type { Budget } from "@/types";
+import api from "@/axios/api";
 
 export function useBudgetApi() {
   const [response, setResponse] = useState<any>(null);
@@ -12,7 +12,7 @@ export function useBudgetApi() {
   const createBudget = async (urlPath: string, data: Omit<Budget, "id">) => {
     try {
       setError(null);
-      const res = await axios.post(urlPath, data);
+      const res = await api.post(urlPath, data);
       const budget = res.data.data.budget;
       setResponse(budget);
       return budget;
@@ -26,7 +26,7 @@ export function useBudgetApi() {
   const updateBudget = async (urlPath: string, data: Partial<Budget>) => {
     try {
       setError(null);
-      const res = await axios.patch(urlPath, data);
+      const res = await api.patch(urlPath, data);
       const budget = res.data.data.budget;
       setResponse(budget);
       return budget;
@@ -40,7 +40,7 @@ export function useBudgetApi() {
   const getAllBudgets = async (urlPath: string) => {
     try {
       setError(null);
-      const res = await axios.get(urlPath);
+      const res = await api.get(urlPath);
       const budgets = res.data.data.budgets;
       setResponse(budgets);
 
@@ -69,7 +69,7 @@ export function useBudgetApi() {
   const getBudgetById = async (urlPath: string) => {
     try {
       setError(null);
-      const res = await axios.get(urlPath);
+      const res = await api.get(urlPath);
       const budget = res.data.data.budget;
       setResponse(budget);
       return budget;
@@ -83,7 +83,7 @@ export function useBudgetApi() {
   const deleteBudget = async (urlPath: string) => {
     try {
       setError(null);
-      const res = await axios.delete(urlPath);
+      const res = await api.delete(urlPath);
       const budget = res.data.data.budget;
       setResponse(budget);
       return budget;
@@ -97,7 +97,7 @@ export function useBudgetApi() {
   const deleteAllBudgets = async (urlPath: string) => {
     try {
       setError(null);
-      const res = await axios.delete(urlPath);
+      const res = await api.delete(urlPath);
       const budgets = res.data.data.budgets;
       setResponse(budgets);
       return budgets

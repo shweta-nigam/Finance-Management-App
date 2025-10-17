@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "@/context/AuthContext.tsx";
 
 export function LoginPage() {
@@ -38,12 +38,11 @@ export function LoginPage() {
           <CardDescription>
             <p>
               First time here?
-              <a
+              <Link to="/signup"
                 className="ml-2 inline-block text-sm underline-offset-4 hover:underline text-blue-800 "
-                href="http://localhost:5173/signup"
               >
                 Signup
-              </a>
+              </Link>
             </p>
           </CardDescription>
         </CardHeader>

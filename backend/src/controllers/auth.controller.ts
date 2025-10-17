@@ -146,7 +146,7 @@ export const login = async (req: RequestWithUser, res: Response, next: NextFunct
       res.cookie("refreshToken", rawRefreshToken, {
          httpOnly: true,
          secure: process.env.NODE_ENV !== "development",
-         sameSite: "lax",
+         sameSite: "none",
          maxAge: 1000 * 60 * 60 * 24 * 30
       })
 

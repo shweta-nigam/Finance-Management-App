@@ -1,6 +1,6 @@
-import axios from "axios"
 import { useState } from "react"
 import type { Category } from "@/types"
+import api from "@/axios/api"
 
 export function useCategoryApi() {
     const [response, setResponse] = useState<Category | Category[] | null>(null)
@@ -9,7 +9,7 @@ export function useCategoryApi() {
     const createCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category | null> => {
         try {
             setError(null)
-            const res = await axios.post(urlPath, data)
+            const res = await api.post(urlPath, data)
             const category = res.data.data.category
             setResponse(category)
             return category
@@ -22,7 +22,7 @@ export function useCategoryApi() {
     const updateCategory = async (urlPath: string, data: Omit<Category, "id">): Promise<Category | null> => {
         try {
             setError(null)
-            const res = await axios.patch(urlPath, data)
+            const res = await api.patch(urlPath, data)
             const category: Category = res.data.data.category
             setResponse(category)
             return category
@@ -35,7 +35,7 @@ export function useCategoryApi() {
     const getCategory = async (urlPath: string): Promise<Category | null> => {
         try {
             setError(null)
-            const res = await axios.get(urlPath)
+            const res = await api.get(urlPath)
             const category: Category = res.data.data.category
             setResponse(category)
             return category
@@ -48,7 +48,7 @@ export function useCategoryApi() {
     const getAllCategories = async (urlPath: string): Promise<Category[] | null> => {
         try {
             setError(null)
-            const res = await axios.get(urlPath)
+            const res = await api.get(urlPath)
             const categories: Category[] = res.data.data.categories
             setResponse(categories)
             // console.log("categories (useCategoryApi) : -----", categories)
@@ -57,11 +57,11 @@ export function useCategoryApi() {
             setError(err.response?.data?.message || "Something went wrong while fetching categories")
             throw err
         }
-    } 
+    }
     const deleteCategory = async (urlPath: string): Promise<Category | null> => {
         try {
             setError(null)
-            const res = await axios.delete(urlPath)
+            const res = await api.delete(urlPath)
             const category: Category = res.data.data.category
             setResponse(category)
             return category
@@ -73,7 +73,7 @@ export function useCategoryApi() {
     const deleteAllCategories = async (urlPath: string): Promise<Category[] | null> => {
         try {
             setError(null)
-            const res = await axios.delete(urlPath)
+            const res = await api.delete(urlPath)
             const categories: Category[] = res.data.data.categories
             setResponse(categories)
             return categories

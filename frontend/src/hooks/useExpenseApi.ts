@@ -1,6 +1,6 @@
-import axios from "axios"
 import { useState } from "react"
 import type { Expense } from "@/types";
+import api from "@/axios/api";
 
 export function useExpenseApi() {
     const [response, setResponse] = useState<Expense | Expense[] | null>(null)
@@ -11,7 +11,7 @@ export function useExpenseApi() {
         try {
             setError(null)
             setLoading(true)
-            const res = await axios.post(urlPath, data)
+            const res = await api.post(urlPath, data)
             const expense: Expense = res.data.data.expense
             setResponse(expense)
             // console.log("createExpense raw response:", res.data);
@@ -34,7 +34,7 @@ export function useExpenseApi() {
         try {
             setLoading(true)
             setError(null);
-            const res = await axios.patch(urlPath, data);
+            const res = await api.patch(urlPath, data);
             const expense: Expense = res.data.data.expense;
             setResponse(expense);
             return expense;
@@ -54,7 +54,7 @@ export function useExpenseApi() {
         try {
             setError(null);
             setLoading(true)
-            const res = await axios.get(urlPath);
+            const res = await api.get(urlPath);
             const expense: Expense = res.data.data.expense;
             setResponse(expense);
             return expense;
@@ -73,7 +73,7 @@ export function useExpenseApi() {
         try {
             setError(null);
             setLoading(true)
-            const res = await axios.get(urlPath);
+            const res = await api.get(urlPath);
             const expenses: Expense[] = res.data.data.expenses ?? [];
             setResponse(expenses);
             return expenses;
@@ -93,7 +93,7 @@ export function useExpenseApi() {
         try {
             setError(null);
             setLoading(true)
-            const res = await axios.delete(urlPath);
+            const res = await api.delete(urlPath);
             const expense: Expense = res.data.data.expense;
             setResponse(expense);
             return expense;
@@ -112,7 +112,7 @@ export function useExpenseApi() {
         try {
             setError(null);
             setLoading(true)
-            const res = await axios.delete(urlPath);
+            const res = await api.delete(urlPath);
             const expenses: Expense[] = res.data.data.expenses ?? [];
             setResponse(expenses);
             return expenses;

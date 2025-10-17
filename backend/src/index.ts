@@ -16,13 +16,13 @@ import categoryRoute from "./routes/category.route"
 dotenv.config()
 
 const app = express()
-const port = process.env.PORT  ?? 3000
+const port = process.env.PORT ?? 3000
 
 const corsOptions = {
     origin: process.env.BASE_URL,
-    credential:true,
-     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-     allowedHeaders:["Content-Type", "Authorization"]
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: ["Content-Type", "Authorization"]
 }
 app.use(cors(corsOptions))
 
@@ -32,19 +32,19 @@ db()
 //middlewares
 app.use(cookieParser())
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
-app.use("/api/v1/auth",authRoutes)
-app.use("/api/v1/budget",budgetRoutes)
-app.use("/api/v1/expense",expressRoute)
-app.use("/api/v1/subscriptionPlan",subscriptionPlanRoute)
-app.use("/api/v1/payment",paymentRoute)
-app.use("/api/v1/category",categoryRoute)
+app.use("/api/v1/auth", authRoutes)
+app.use("/api/v1/budget", budgetRoutes)
+app.use("/api/v1/expense", expressRoute)
+app.use("/api/v1/subscriptionPlan", subscriptionPlanRoute)
+app.use("/api/v1/payment", paymentRoute)
+app.use("/api/v1/category", categoryRoute)
 
 
 // Register the error middleware LAST
 app.use(errorHandler)
 
-app.listen(port,()=>{
-    console.log(`App is listening on port ${port}`);    
+app.listen(port, () => {
+    console.log(`App is listening on port ${port}`);
 })

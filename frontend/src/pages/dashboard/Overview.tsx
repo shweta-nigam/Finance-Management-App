@@ -9,10 +9,94 @@ import useExpense from "@/context/ExpenseContext";
 import useCategory from "@/context/CategoryContext";
 import { useExpenseApi } from "@/hooks/useExpenseApi";
 
+// export default function Overview() {
+//   const { budgets, loading: budgetLoading } = useBudget();
+//   const { expenses} = useExpense();
+//   const {loading: expenseLoading} = useExpenseApi()
+//   const { categories } = useCategory();
+
+//   const categoryMap = useMemo(() => {
+//     const map: Record<string, string> = {};
+//     categories.forEach((c) => {
+//       if (c.id && c.type) map[c.id] = c.type;
+//     });
+//     return map;
+//   }, [categories]);
+
+//   // ---- Compute Totals ----
+//   const totalIncome = useMemo(() => {
+//     return budgets
+//       .filter((b) => categoryMap[b.categoryId] === "Income")
+//       .reduce((sum, b) => sum + Number(b.amount || 0), 0);
+//   }, [budgets, categoryMap]);
+
+//   const totalExpenses = useMemo(() => {
+//     return (expenses || []).reduce((sum, e) => sum + Number(e.amount || 0), 0);
+//   }, [expenses]);
+
+//   const savings = totalIncome - totalExpenses;
+
+//   // ---- Chart Data ----
+//   const chartData = useMemo(() => {
+//     const grouped: Record<string, number> = {};
+
+//     expenses.forEach((e) => {
+//       if (!e.date) return;
+//       const date = new Date(e.date).toLocaleDateString("en-IN", {
+//         day: "2-digit",
+//         month: "short",
+//       });
+//       grouped[date] = (grouped[date] || 0) + Number(e.amount);
+//     });
+
+//     budgets.forEach((b) => {
+//       if (!b.date) return;
+//       const date = new Date(b.date).toLocaleDateString("en-IN", {
+//         day: "2-digit",
+//         month: "short",
+//       });
+//       grouped[date] = (grouped[date] || 0) + Number(b.amount);
+//     });
+
+//     return Object.entries(grouped).map(([date, total]) => ({ date, total }));
+//   }, [budgets, expenses]);
+
+//   // ---- Summary Cards ----
+//   const summaryCards = [
+//     {
+//       title: "Total Income",
+//       value: `₹${totalIncome.toLocaleString()}`,
+//       color: "text-green-600",
+//       bg: "bg-green-50",
+//     },
+//     {
+//       title: "Total Expenses",
+//       value: `₹${totalExpenses.toLocaleString()}`,
+//       color: "text-red-600",
+//       bg: "bg-red-50",
+//     },
+//     {
+//       title: "Savings",
+//       value: `₹${savings.toLocaleString()}`,
+//       color: "text-blue-600",
+//       bg: "bg-blue-50",
+//     },
+//     {
+//       title: "Transactions",
+//       value: `${expenses.length}`,
+//       color: "text-purple-600",
+//       bg: "bg-purple-50",
+//     },
+//   ];
+
+//   if (budgetLoading || expenseLoading) {
+//     return <p className="p-6">Loading Overview...</p>;
+//   }
+
 export default function Overview() {
   const { budgets, loading: budgetLoading } = useBudget();
-  const { expenses} = useExpense();
-  const {loading: expenseLoading} = useExpenseApi()
+  const { expenses } = useExpense();
+  const { loading: expenseLoading } = useExpenseApi();
   const { categories } = useCategory();
 
   const categoryMap = useMemo(() => {
@@ -25,21 +109,22 @@ export default function Overview() {
 
   // ---- Compute Totals ----
   const totalIncome = useMemo(() => {
-    return budgets
-      .filter((b) => categoryMap[b.categoryId] === "Income")
-      .reduce((sum, b) => sum + Number(b.amount || 0), 0);
-  }, [budgets, categoryMap]);
+    return expenses
+      ?.filter((e) => categoryMap[e.categoryId] === "Income")
+      .reduce((sum, e) => sum + Number(e.amount || 0), 0) || 0;
+  }, [expenses, categoryMap]);
 
   const totalExpenses = useMemo(() => {
-    return (expenses || []).reduce((sum, e) => sum + Number(e.amount || 0), 0);
-  }, [expenses]);
+    return expenses
+      ?.filter((e) => categoryMap[e.categoryId] === "Expense")
+      .reduce((sum, e) => sum + Number(e.amount || 0), 0) || 0;
+  }, [expenses, categoryMap]);
 
-  const savings = totalIncome - totalExpenses;
+  const totalBalance = totalIncome - totalExpenses;
 
   // ---- Chart Data ----
   const chartData = useMemo(() => {
     const grouped: Record<string, number> = {};
-
     expenses.forEach((e) => {
       if (!e.date) return;
       const date = new Date(e.date).toLocaleDateString("en-IN", {
@@ -48,18 +133,8 @@ export default function Overview() {
       });
       grouped[date] = (grouped[date] || 0) + Number(e.amount);
     });
-
-    budgets.forEach((b) => {
-      if (!b.date) return;
-      const date = new Date(b.date).toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-      });
-      grouped[date] = (grouped[date] || 0) + Number(b.amount);
-    });
-
     return Object.entries(grouped).map(([date, total]) => ({ date, total }));
-  }, [budgets, expenses]);
+  }, [expenses]);
 
   // ---- Summary Cards ----
   const summaryCards = [
@@ -76,8 +151,8 @@ export default function Overview() {
       bg: "bg-red-50",
     },
     {
-      title: "Savings",
-      value: `₹${savings.toLocaleString()}`,
+      title: "Total Balance",
+      value: `₹${totalBalance.toLocaleString()}`,
       color: "text-blue-600",
       bg: "bg-blue-50",
     },

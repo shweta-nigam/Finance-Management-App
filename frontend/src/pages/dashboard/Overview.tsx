@@ -122,6 +122,7 @@ export default function Overview() {
 
   const totalBalance = totalIncome - totalExpenses;
 
+  console.log({totalIncome,totalExpenses,totalBalance})
   // ---- Chart Data ----
   const chartData = useMemo(() => {
     const grouped: Record<string, number> = {};

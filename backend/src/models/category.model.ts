@@ -4,15 +4,12 @@ export interface ICategory extends Document {
     title: string,
     description?: string,
     note?: string,
-    // type: "Income" | "Expense" | "Transfer"; 
     icon?: string,
     color?: string,
     isDeleted?: boolean,
     isDefault?: boolean,                      //Mark if it's an app-provided default category
     date?: Date,
     user: Schema.Types.ObjectId,
-    budget: Schema.Types.ObjectId,
-    expense: Schema.Types.ObjectId,
 }
 
 const categorySchema: Schema<ICategory> = new Schema({
@@ -56,14 +53,6 @@ const categorySchema: Schema<ICategory> = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: "User"
-    },
-    budget: {
-        type: Schema.Types.ObjectId,
-        ref: "Budget"
-    },
-    expense: {
-        type: Schema.Types.ObjectId,
-        ref: "Expense"
     }
 }, {
     timestamps: true

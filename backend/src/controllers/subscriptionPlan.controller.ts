@@ -57,7 +57,7 @@ export const updateSubscriptionPlan = async (req: RequestWithUser, res: Response
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { subscriptionPlanId } = req.params ?? req.query
+    const subscriptionPlanId = req.params?.subscriptionPlanId ?? req.query?.subscriptionPlanId
 
     if (!subscriptionPlanId) {
         return next(new ApiError(400, "subscriptionPlan Id is required."))
@@ -110,7 +110,7 @@ export const getSubscriptionPlan = async (req: RequestWithUser, res: Response, n
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { subscriptionPlanId } = req.params ?? req.query
+    const subscriptionPlanId = req.params?.subscriptionPlanId ?? req.query?.subscriptionPlanId
 
     if (!subscriptionPlanId) {
         return next(new ApiError(400, "SubscriptionPlan Id is required."))
@@ -182,7 +182,7 @@ export const deleteSubscriptionPlan = async (req: RequestWithUser, res: Response
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { subscriptionPlanId } = req.params ?? req.query
+    const subscriptionPlanId = req.params?.subscriptionPlanId ?? req.query?.subscriptionPlanId
 
     if (!subscriptionPlanId) {
         return next(new ApiError(400, "SubscriptionPlan Id is required."))

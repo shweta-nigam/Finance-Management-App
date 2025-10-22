@@ -11,7 +11,6 @@ export interface IBudget extends Document {
     currency: string,
     isDeleted?: boolean,
     user: mongoose.Types.ObjectId,
-    expense?: mongoose.Types.ObjectId,
     category?: mongoose.Types.ObjectId,
 }
 
@@ -58,10 +57,6 @@ const budgetSchema: Schema<IBudget> = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
-    },
-    expense: {
-        type: Schema.Types.ObjectId,
-          ref:"Expense"
     },
     category: {
         type: Schema.Types.ObjectId,

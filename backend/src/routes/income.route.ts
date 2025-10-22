@@ -5,10 +5,10 @@ import { createIncome, deleteAllIncomes, deleteIncome, getAllIncomes, getIncomeB
 const incomeRoutes = express.Router()
 
 incomeRoutes.post("/", isLoggedIn, createIncome)
-incomeRoutes.patch("/:BudgetId", isLoggedIn, updateIncome)
+incomeRoutes.patch("/:incomeId", isLoggedIn, updateIncome)
 incomeRoutes.get("/", isLoggedIn, getAllIncomes)
-incomeRoutes.get("/:BudgetId", isLoggedIn, getIncomeById)
-incomeRoutes.delete("/:BudgetId", isLoggedIn, deleteIncome)
+incomeRoutes.get("/:incomeId", isLoggedIn, getIncomeById)
+incomeRoutes.delete("/:incomeId", isLoggedIn, deleteIncome)
 incomeRoutes.delete("/", isLoggedIn, deleteAllIncomes)
 
 export default incomeRoutes

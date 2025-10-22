@@ -8,6 +8,7 @@ import Goal from "@/pages/dashboard/Goal";
 import Settings from "@/pages/dashboard/Settings";
 import Expense from "@/pages/dashboard/Expense";
 import { DashboardProvider } from "@/context/DashboardProvider";
+import Income from "@/pages/dashboard/Income";
 
 export default function DashboardRoutes() {
   return (
@@ -29,6 +30,7 @@ export default function DashboardRoutes() {
         <Route path="report" element={<Report />} />
         <Route path="goal" element={<Goal />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="income" element={<Income />} />
       </Route>
     </>
   );

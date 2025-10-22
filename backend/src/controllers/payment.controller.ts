@@ -50,7 +50,7 @@ export const updatePayment = async (req: RequestWithUser, res: Response, next: N
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { id } = req.params ?? req.query
+    const id = req.params?.id ?? req.query?.id
 
 
     if (!id) {
@@ -100,7 +100,7 @@ export const getPayment = async (req: RequestWithUser, res: Response, next: Next
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { id } = req.params ?? req.query
+    const id = req.params?.id ?? req.query?.id
 
     if (!id) {
         return next(new ApiError(400, "Payment Id is required."))
@@ -169,7 +169,7 @@ export const deletePayment = async (req: RequestWithUser, res: Response, next: N
         return next(new ApiError(401, "Unauthorized"))
     }
 
-    const { id } = req.params ?? req.query
+    const id = req.params?.id ?? req.query?.id
 
     if (!id) {
         return next(new ApiError(400, "Payment Id is required."))

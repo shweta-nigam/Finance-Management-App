@@ -34,7 +34,7 @@ export default function CategoryDialog({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState<"Income" | "Expense">("Expense");
+  // const [type, setType] = useState<"Income" | "Expense">("Expense");
 
   const [loading, setLoading] = useState(false);
 
@@ -53,12 +53,11 @@ export default function CategoryDialog({
       const saved = await addCategory({
         title: name,
         description: description.trim(),
-        type,
       });
 
       toast.success("Category created");
+      setTitle("");
       setDescription("");
-      setType("Expense");
       setOpen(false);
 
       onCreated?.(saved);
@@ -91,14 +90,14 @@ export default function CategoryDialog({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Category description"
           />
-          <select
+          {/* <select
             className="border rounded p-2"
             value={type}
             onChange={(e) => setType(e.target.value as "Income" | "Expense")}
           >
             <option value="Income">Income</option>
             <option value="Expense">Expense</option>
-          </select>
+          </select> */}
           <Button onClick={handleCreate} disabled={loading}>
             {loading ? "Creating…" : "Create"}
           </Button>

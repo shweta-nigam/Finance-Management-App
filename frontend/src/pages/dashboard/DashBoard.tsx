@@ -8,6 +8,10 @@ import {
   Target,
   Settings,
   BarChart3,
+  CreditCard,
+  PieChart,
+  DollarSign,
+  Home,
 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import { Lock } from "lucide-react";
@@ -23,31 +27,31 @@ const menuItems = [
   {
     id: "overview",
     label: "Overview",
-    icon: <BarChart3 size={18} />,
+    icon: <Home size={18} />, 
     path: "/dashboard/overview",
   },
   {
     id: "budget",
     label: "Budget",
-    icon: <Wallet size={18} />,
+    icon: <Wallet size={18} />, 
     path: "/dashboard/budget",
   },
   {
     id: "expense",
-    label: "expense",
-    icon: <Wallet size={18} />,
+    label: "Expense",
+    icon: <CreditCard size={18} />, 
     path: "/dashboard/expense",
   },
   {
     id: "income",
     label: "Income",
-    icon: <BarChart size={18} />,
+    icon: <DollarSign size={18} />, 
     path: "/dashboard/income",
   },
   {
     id: "report",
     label: "Report",
-    icon: <BarChart size={18} />,
+    icon: <PieChart size={18} />, 
     path: "/dashboard/report",
   },
   {
@@ -59,7 +63,7 @@ const menuItems = [
   {
     id: "settings",
     label: "Settings",
-    icon: <Settings size={18} />,
+    icon: <Settings size={18} />, 
     path: "/dashboard/settings",
   },
 ];

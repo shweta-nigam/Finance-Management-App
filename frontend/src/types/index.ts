@@ -56,9 +56,11 @@ export type Budget = {
 };
 
 export type Income = {
-    id: string;
-    limit: number;
-    createdAt?: string;       
+  id: string;
+  limit: number;
+  createdAt?: string;
+  amount: number;
+  date: Date | string;
   updatedAt?: string;
   isRecurring?: boolean
 }

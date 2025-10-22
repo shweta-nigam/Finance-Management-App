@@ -5,7 +5,7 @@ export type CategoryResponse = {
     title: string,
     description: string,
     note?: string,
-    type: "Income" | "Expense" | "Transfer"; 
+    // type: "Income" | "Expense" | "Transfer"; 
     icon?: string,
     color?: string,
     date?: string;
@@ -39,7 +39,7 @@ export function toCategoryResponse(categoryOrCategories: ICategory | ICategory[]
     title: c.title,
     description: c.description ?? "",
     note: c.note ?? undefined,
-    type: c.type === "Income" ? "Income" : "Expense", // defensive default
+    // type: c.type === "Income" ? "Income" : "Expense", // defensive default
     icon: c.icon ?? undefined,
     color: c.color ?? undefined,
     date,

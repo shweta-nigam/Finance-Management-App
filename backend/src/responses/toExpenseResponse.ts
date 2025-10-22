@@ -3,7 +3,7 @@ import type { IExpense } from "../models/expense.model";
 export type ExpenseResponse = {
     id: string;
     title: string;
-    description: string
+    description?: string
     amount: number
     date?: string
     note?: string
@@ -11,8 +11,8 @@ export type ExpenseResponse = {
     receiptUrl?: string
     location?: string
     tags?: string[]
-    isDeleted: boolean
-    isRecurring: boolean
+    isDeleted?: boolean
+    isRecurring?: boolean
     paymentMethod: string
     frequency?: string
     categoryId?: string

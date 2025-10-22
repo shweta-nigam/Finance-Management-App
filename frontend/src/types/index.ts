@@ -58,6 +58,9 @@ export type Budget = {
 export type Income = {
   id: string;
   limit: number;
+  title:string
+  description?:string;
+  currency:string;
   createdAt?: string;
   amount: number;
   date: Date | string;

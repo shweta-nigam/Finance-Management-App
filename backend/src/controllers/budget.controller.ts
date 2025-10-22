@@ -37,12 +37,12 @@ export const createBudget = async (req: any, res: any, next: NextFunction) => {
 export const updateBudget = async (req: any, res: any, next: NextFunction) => {
 
     const user = req.user
-    const { BudgetId } = req.params ?? req.query
+    const budgetId  = req.params?.budgetId ?? req.query?.budgetId
 
     if (!user) {
         return next(new ApiError(404, "User not found."))
     }
-    if (!BudgetId) {
+    if (!budgetId) {
         return next(new ApiError(400, "Budget id is required"))
     }
 
@@ -50,7 +50,7 @@ export const updateBudget = async (req: any, res: any, next: NextFunction) => {
 
     try {
         const budget = await Budget.findOneAndUpdate(
-            { _id: BudgetId, user: user._id },
+            { _id: budgetId, user: user._id },
             { $set: validatedData },
             { new: true, runValidators: true }
         )
@@ -98,7 +98,7 @@ export const getAllBudgets = async (req: any, res: any, next: NextFunction) => {
 
 export const getBudgetById = async (req: any, res: any, next: NextFunction) => {
     const user = req.user
-    const { BudgetId } = req.params ?? req.query
+      const budgetId  = req.params?.budgetId ?? req.query?.budgetId
 
     if (!user) {
         return next(new ApiError(404, "User not found."))
@@ -106,7 +106,7 @@ export const getBudgetById = async (req: any, res: any, next: NextFunction) => {
 
     try {
         const budget = await Budget.findOne({
-            _id: BudgetId,
+            _id: budgetId,
             user: user._id,
             isDeleted: false
         }).select("id title amount currency date description isRecurring frequency")
@@ -125,7 +125,7 @@ export const getBudgetById = async (req: any, res: any, next: NextFunction) => {
 
 export const deleteBudget = async (req: any, res: any, next: NextFunction) => {
     const user = req.user
-    const { BudgetId } = req.params ?? req.query
+      const budgetId  = req.params?.budgetId ?? req.query?.budgetId
 
     if (!user) {
         return next(new ApiError(404, "User not found."))
@@ -133,7 +133,7 @@ export const deleteBudget = async (req: any, res: any, next: NextFunction) => {
 
     try {
         const budget = await Budget.findOneAndUpdate(
-            { _id: BudgetId, user: user._id, isDeleted: false },
+            { _id: budgetId, user: user._id, isDeleted: false },
             { $set: { isDeleted: true } },  // ---update this document and mark its isDeleted flag as true 
             { new: true } // --- return updated doc,because Mongoose returns the old/original document (the one before the update).
         ).lean<IBudget>();

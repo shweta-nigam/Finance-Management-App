@@ -2,16 +2,16 @@ import mongoose, { Schema, Model, Document, Query } from "mongoose";
 
 export interface IIncome extends Document {
   title: string;
-  description: string;
+  description?: string;
   amount: number;
-  date: Date;
+  date?: Date;
   note?: string;
   currency: string;
   source?: string;
   paymentMethod: "Cash" | "Card" | "UPI" | "Bank Transfer";
-  isRecurring: boolean;
+  isRecurring?: boolean;
   frequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
-  isDeleted: boolean;
+  isDeleted?: boolean;
   user: mongoose.Types.ObjectId;
   category?: mongoose.Types.ObjectId; 
 }

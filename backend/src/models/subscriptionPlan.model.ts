@@ -2,18 +2,18 @@ import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface ISubscriptionPlan extends Document {
     title: string,
-    description: string,
+    description?: string,
     content?: string,
     note?: string,
     price: string,
     duration: string,
     renewalType: "manual" | "auto";
     features: string[],
-    isDeleted: boolean,
+    isDeleted?: boolean,
     isActive: boolean,
-    cancelledAt: Date,
-    startedAt: Date,
-    expiredAt: Date,
+    cancelledAt?: Date,
+    startedAt?: Date,
+    expiredAt?: Date,
     payment?: Schema.Types.ObjectId,
     user: Schema.Types.ObjectId,
 }

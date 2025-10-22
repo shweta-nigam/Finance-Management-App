@@ -6,136 +6,64 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "rec
 import { motion } from "framer-motion";
 import useBudget from "@/context/BudgetContext";
 import useExpense from "@/context/ExpenseContext";
+import useIncome from "@/context/IncomeContext"; 
 import useCategory from "@/context/CategoryContext";
-import { useExpenseApi } from "@/hooks/useExpenseApi";
-
-// export default function Overview() {
-//   const { budgets, loading: budgetLoading } = useBudget();
-//   const { expenses} = useExpense();
-//   const {loading: expenseLoading} = useExpenseApi()
-//   const { categories } = useCategory();
-
-//   const categoryMap = useMemo(() => {
-//     const map: Record<string, string> = {};
-//     categories.forEach((c) => {
-//       if (c.id && c.type) map[c.id] = c.type;
-//     });
-//     return map;
-//   }, [categories]);
-
-//   // ---- Compute Totals ----
-//   const totalIncome = useMemo(() => {
-//     return budgets
-//       .filter((b) => categoryMap[b.categoryId] === "Income")
-//       .reduce((sum, b) => sum + Number(b.amount || 0), 0);
-//   }, [budgets, categoryMap]);
-
-//   const totalExpenses = useMemo(() => {
-//     return (expenses || []).reduce((sum, e) => sum + Number(e.amount || 0), 0);
-//   }, [expenses]);
-
-//   const savings = totalIncome - totalExpenses;
-
-//   // ---- Chart Data ----
-//   const chartData = useMemo(() => {
-//     const grouped: Record<string, number> = {};
-
-//     expenses.forEach((e) => {
-//       if (!e.date) return;
-//       const date = new Date(e.date).toLocaleDateString("en-IN", {
-//         day: "2-digit",
-//         month: "short",
-//       });
-//       grouped[date] = (grouped[date] || 0) + Number(e.amount);
-//     });
-
-//     budgets.forEach((b) => {
-//       if (!b.date) return;
-//       const date = new Date(b.date).toLocaleDateString("en-IN", {
-//         day: "2-digit",
-//         month: "short",
-//       });
-//       grouped[date] = (grouped[date] || 0) + Number(b.amount);
-//     });
-
-//     return Object.entries(grouped).map(([date, total]) => ({ date, total }));
-//   }, [budgets, expenses]);
-
-//   // ---- Summary Cards ----
-//   const summaryCards = [
-//     {
-//       title: "Total Income",
-//       value: `₹${totalIncome.toLocaleString()}`,
-//       color: "text-green-600",
-//       bg: "bg-green-50",
-//     },
-//     {
-//       title: "Total Expenses",
-//       value: `₹${totalExpenses.toLocaleString()}`,
-//       color: "text-red-600",
-//       bg: "bg-red-50",
-//     },
-//     {
-//       title: "Savings",
-//       value: `₹${savings.toLocaleString()}`,
-//       color: "text-blue-600",
-//       bg: "bg-blue-50",
-//     },
-//     {
-//       title: "Transactions",
-//       value: `${expenses.length}`,
-//       color: "text-purple-600",
-//       bg: "bg-purple-50",
-//     },
-//   ];
-
-//   if (budgetLoading || expenseLoading) {
-//     return <p className="p-6">Loading Overview...</p>;
-//   }
 
 export default function Overview() {
   const { budgets, loading: budgetLoading } = useBudget();
   const { expenses } = useExpense();
-  const { loading: expenseLoading } = useExpenseApi();
+  const { incomes } = useIncome();
   const { categories } = useCategory();
-
-  const categoryMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    categories.forEach((c) => {
-      if (c.id && c.type) map[c.id] = c.type;
-    });
-    return map;
-  }, [categories]);
 
   // ---- Compute Totals ----
   const totalIncome = useMemo(() => {
-    return expenses
-      ?.filter((e) => categoryMap[e.categoryId] === "Income")
-      .reduce((sum, e) => sum + Number(e.amount || 0), 0) || 0;
-  }, [expenses, categoryMap]);
+    return incomes.reduce((sum, i) => sum + Number(i.amount || 0), 0);
+  }, [incomes]);
 
   const totalExpenses = useMemo(() => {
-    return expenses
-      ?.filter((e) => categoryMap[e.categoryId] === "Expense")
-      .reduce((sum, e) => sum + Number(e.amount || 0), 0) || 0;
-  }, [expenses, categoryMap]);
+    return expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  }, [expenses]);
+
+  const totalBudget = useMemo(() => {
+    return budgets.reduce((sum, b) => sum + Number(b.amount || 0), 0);
+  }, [budgets]);
 
   const totalBalance = totalIncome - totalExpenses;
 
-  console.log({totalIncome,totalExpenses,totalBalance})
+  const utilization = totalBudget
+    ? ((totalExpenses / totalBudget) * 100).toFixed(1)
+    : "0";
+
   // ---- Chart Data ----
   const chartData = useMemo(() => {
-    const grouped: Record<string, number> = {};
+    const grouped: Record<string, { income: number; expense: number }> = {};
+
+    incomes.forEach((i) => {
+      if (!i.date) return;
+      const date = new Date(i.date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      });
+      if (!grouped[date]) grouped[date] = { income: 0, expense: 0 };
+      grouped[date].income += Number(i.amount);
+    });
+
     expenses.forEach((e) => {
       if (!e.date) return;
       const date = new Date(e.date).toLocaleDateString("en-IN", {
         day: "2-digit",
         month: "short",
       });
-      grouped[date] = (grouped[date] || 0) + Number(e.amount);
+      if (!grouped[date]) grouped[date] = { income: 0, expense: 0 };
+      grouped[date].expense += Number(e.amount);
     });
-    return Object.entries(grouped).map(([date, total]) => ({ date, total }));
-  }, [expenses]);
+
+    return Object.entries(grouped).map(([date, { income, expense }]) => ({
+      date,
+      income,
+      expense,
+    }));
+  }, [incomes, expenses]);
 
   // ---- Summary Cards ----
   const summaryCards = [
@@ -152,20 +80,20 @@ export default function Overview() {
       bg: "bg-red-50",
     },
     {
-      title: "Total Balance",
+      title: "Total Budget",
+      value: `₹${totalBudget.toLocaleString()}`,
+      color: "text-yellow-600",
+      bg: "bg-yellow-50",
+    },
+    {
+      title: "Balance",
       value: `₹${totalBalance.toLocaleString()}`,
       color: "text-blue-600",
       bg: "bg-blue-50",
     },
-    {
-      title: "Transactions",
-      value: `${expenses.length}`,
-      color: "text-purple-600",
-      bg: "bg-purple-50",
-    },
   ];
 
-  if (budgetLoading || expenseLoading) {
+  if (budgetLoading) {
     return <p className="p-6">Loading Overview...</p>;
   }
 
@@ -196,10 +124,27 @@ export default function Overview() {
         ))}
       </div>
 
+      {/* ---- Budget Utilization ---- */}
+      <Card className="shadow-md bg-D-blue">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-white">
+            Budget Utilization
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-white text-sm">
+            You’ve used <span className="font-semibold">{utilization}%</span> of your total
+            budget this month.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* ---- Combined Chart ---- */}
       <Card className="shadow-md bg-D-blue">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-white">Income & Expenses Trend</CardTitle>
+          <CardTitle className="text-lg font-semibold text-white">
+            Income & Expenses Trend
+          </CardTitle>
         </CardHeader>
         <CardContent className="h-80">
           <ResponsiveContainer width="100%" height="100%">
@@ -207,7 +152,20 @@ export default function Overview() {
               <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="total" stroke="#4f46e5" strokeWidth={2} />
+              <Line
+                type="monotone"
+                dataKey="income"
+                stroke="#16a34a"
+                strokeWidth={2}
+                name="Income"
+              />
+              <Line
+                type="monotone"
+                dataKey="expense"
+                stroke="#dc2626"
+                strokeWidth={2}
+                name="Expense"
+              />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -220,23 +178,23 @@ export default function Overview() {
         </CardHeader>
         <CardContent className="space-y-3">
           {expenses.length === 0 ? (
-            <p className="text-gray-500">No recent expenses.</p>
+            <p className="text-gray-400">No recent expenses.</p>
           ) : (
             expenses.slice(-5).reverse().map((expense) => {
               const category = categories.find((c) => c.id === expense.categoryId);
               return (
                 <div
                   key={expense.id}
-                  className="flex justify-between items-center border-b pb-2 text-sm"
+                  className="flex justify-between items-center border-b border-gray-700 pb-2 text-sm"
                 >
                   <div>
                     <p className="font-medium">{expense.title}</p>
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-gray-400 text-xs">
                       {category ? category.title : "Uncategorized"} •{" "}
                       {new Date(expense.date).toLocaleDateString()}
                     </p>
                   </div>
-                  <p className="font-semibold text-red-600">₹{expense.amount}</p>
+                  <p className="font-semibold text-red-500">₹{expense.amount}</p>
                 </div>
               );
             })
@@ -246,4 +204,5 @@ export default function Overview() {
     </div>
   );
 }
+
 

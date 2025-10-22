@@ -13,7 +13,6 @@ export interface IIncome extends Document {
   frequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
   isDeleted?: boolean;
   user: mongoose.Types.ObjectId;
-  category?: mongoose.Types.ObjectId; 
 }
 
 const incomeSchema: Schema<IIncome> = new Schema(
@@ -67,11 +66,7 @@ const incomeSchema: Schema<IIncome> = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    },
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-    },
+    }
   },
   { timestamps: true }
 );

@@ -2,7 +2,7 @@ import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface IPayment extends Document {
     amount: number,
-    date: Date,
+    date?: Date,
     currency: string,
     status: "Pending" | "Completed" | "Failed";
     paymentMethod: "Card" | "UPI" | "Bank Transfer";

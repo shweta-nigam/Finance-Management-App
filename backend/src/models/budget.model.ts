@@ -2,14 +2,14 @@ import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface IBudget extends Document {
     title: string,
-    description: string,
+    description?: string,
     amount: number,
     date: Date,
-    isRecurring: boolean,
+    isRecurring?: boolean,
     frequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
     note?: string,
     currency: string,
-    isDeleted: boolean,
+    isDeleted?: boolean,
     user: mongoose.Types.ObjectId,
     expense?: mongoose.Types.ObjectId,
     category?: mongoose.Types.ObjectId,

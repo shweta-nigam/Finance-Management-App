@@ -2,13 +2,13 @@ import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface ICategory extends Document {
     title: string,
-    description: string,
+    description?: string,
     note?: string,
-    type: "Income" | "Expense" | "Transfer"; 
+    // type: "Income" | "Expense" | "Transfer"; 
     icon?: string,
     color?: string,
-    isDeleted: boolean,
-    isDefault: boolean,                      //Mark if it's an app-provided default category
+    isDeleted?: boolean,
+    isDefault?: boolean,                      //Mark if it's an app-provided default category
     date?: Date,
     user: Schema.Types.ObjectId,
     budget: Schema.Types.ObjectId,
@@ -37,10 +37,10 @@ const categorySchema: Schema<ICategory> = new Schema({
         type: String,
         trim: true
     },
-    type: {
-        type: String,
-        enum: ["Income", "Expense"]
-    },
+    // type: {
+    //     type: String,
+    //     enum: ["Income", "Expense"]
+    // },
     isDefault: {
         type: Boolean,
         default: false

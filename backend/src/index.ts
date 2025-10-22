@@ -12,6 +12,7 @@ import expressRoute from "./routes/expense.route"
 import subscriptionPlanRoute from "./routes/subscriptionPlan.route"
 import paymentRoute from "./routes/payment.route"
 import categoryRoute from "./routes/category.route"
+import incomeRoutes from "./routes/income.route"
 
 dotenv.config()
 
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/budget", budgetRoutes)
 app.use("/api/v1/expense", expressRoute)
+app.use("/api/v1/income", incomeRoutes)
 app.use("/api/v1/subscriptionPlan", subscriptionPlanRoute)
 app.use("/api/v1/payment", paymentRoute)
 app.use("/api/v1/category", categoryRoute)

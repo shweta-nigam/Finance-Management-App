@@ -2,18 +2,18 @@ import mongoose, { Schema, Model, Document, Query } from "mongoose"
 
 export interface IExpense extends Document {
     title: string,
-    description: string,
+    description?: string,
     amount: number,
-    date: Date,
+    date?: Date,
     note?: string,
     currency: string,
     paymentMethod: "Cash" | "Card" | "UPI" | "Bank Transfer";
-    isRecurring: boolean,
+    isRecurring?: boolean,
     frequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
     receiptUrl?: string,
     location?: string,
     tags?: string[],
-    isDeleted: boolean,
+    isDeleted?: boolean,
     user: mongoose.Types.ObjectId,
     category?: mongoose.Types.ObjectId,
     budget?: mongoose.Types.ObjectId,

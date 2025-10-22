@@ -39,6 +39,12 @@ const menuItems = [
     path: "/dashboard/expense",
   },
   {
+    id: "income",
+    label: "Income",
+    icon: <BarChart size={18} />,
+    path: "/dashboard/income",
+  },
+  {
     id: "report",
     label: "Report",
     icon: <BarChart size={18} />,

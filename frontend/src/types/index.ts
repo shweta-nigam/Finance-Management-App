@@ -54,3 +54,11 @@ export type Budget = {
   updatedAt?: string;
   isRecurring?: boolean
 };
+
+export type Income = {
+    id: string;
+    limit: number;
+    createdAt?: string;       
+  updatedAt?: string;
+  isRecurring?: boolean
+}

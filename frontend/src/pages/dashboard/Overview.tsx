@@ -8,6 +8,7 @@ import useBudget from "@/context/BudgetContext";
 import useExpense from "@/context/ExpenseContext";
 import useIncome from "@/context/IncomeContext"; 
 import useCategory from "@/context/CategoryContext";
+import { calculateTotals, getChartData } from "@/utils/financeCalculations";
 
 export default function Overview() {
   const { budgets, loading: budgetLoading } = useBudget();
@@ -15,55 +16,13 @@ export default function Overview() {
   const { incomes } = useIncome();
   const { categories } = useCategory();
 
-  // ---- Compute Totals ----
-  const totalIncome = useMemo(() => {
-    return incomes.reduce((sum, i) => sum + Number(i.amount || 0), 0);
-  }, [incomes]);
 
-  const totalExpenses = useMemo(() => {
-    return expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-  }, [expenses]);
+    const {  totalIncome, totalExpenses, totalBudget, totalBalance, utilization } = useMemo(()=> {
+ return calculateTotals(incomes,expenses,budgets);
+    },[incomes, expenses,budgets])
 
-  const totalBudget = useMemo(() => {
-    return budgets.reduce((sum, b) => sum + Number(b.amount || 0), 0);
-  }, [budgets]);
+   const chartData = useMemo(() => getChartData(incomes, expenses), [incomes, expenses]);
 
-  const totalBalance = totalIncome - totalExpenses;
-
-  const utilization = totalBudget
-    ? ((totalExpenses / totalBudget) * 100).toFixed(1)
-    : "0";
-
-  // ---- Chart Data ----
-  const chartData = useMemo(() => {
-    const grouped: Record<string, { income: number; expense: number }> = {};
-
-    incomes.forEach((i) => {
-      if (!i.date) return;
-      const date = new Date(i.date).toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-      });
-      if (!grouped[date]) grouped[date] = { income: 0, expense: 0 };
-      grouped[date].income += Number(i.amount);
-    });
-
-    expenses.forEach((e) => {
-      if (!e.date) return;
-      const date = new Date(e.date).toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-      });
-      if (!grouped[date]) grouped[date] = { income: 0, expense: 0 };
-      grouped[date].expense += Number(e.amount);
-    });
-
-    return Object.entries(grouped).map(([date, { income, expense }]) => ({
-      date,
-      income,
-      expense,
-    }));
-  }, [incomes, expenses]);
 
   // ---- Summary Cards ----
   const summaryCards = [

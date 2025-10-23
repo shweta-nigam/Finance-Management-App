@@ -1,4 +1,3 @@
-"use client";
 import { Link } from "react-router-dom";
 import { Menu, Moon, Sun, X } from "lucide-react";
 import {

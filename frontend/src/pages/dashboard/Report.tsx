@@ -68,7 +68,7 @@ export default function Report() {
   ];
 
   return (
-    <div className="min-h-screen bg-D-Blue">
+    <div className="min-h-screen bg-D-blue p-6 text-white">
       <h1 className="text-3xl font-bold mb-6">Financial Report</h1>
 
       {/* --- Summary Cards --- */}

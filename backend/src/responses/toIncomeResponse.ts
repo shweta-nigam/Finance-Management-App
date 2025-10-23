@@ -42,6 +42,5 @@ export function toIncomeResponse(
     isRecurring: !!(income as any).isRecurring,
     frequency: (income as any).frequency ?? undefined,
     isDeleted: !!(income as any).isDeleted,
-    categoryId: income.category ? String(income.category) : undefined,
   };
 }

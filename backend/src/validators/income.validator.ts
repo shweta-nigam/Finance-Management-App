@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const incomeCreateSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().min(1, "Description is required").optional(),
   amount: z.number().positive({ message: "Amount must be positive" }),
   date: z.coerce.date(),
   currency: z.string().min(1, "Currency is required"),

@@ -67,4 +67,6 @@ export type Income = {
   date: Date | string;
   updatedAt?: string;
   isRecurring?: boolean
+  paymentMethod:string 
+
 }

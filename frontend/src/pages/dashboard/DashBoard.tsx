@@ -1,6 +1,4 @@
 import useAuth from "@/context/AuthContext";
-import useBudget from "@/context/BudgetContext";
-import useExpense from "@/context/ExpenseContext";
 import {
   User,
   Wallet,
@@ -16,6 +14,9 @@ import {
 import { Link, Outlet } from "react-router-dom";
 import { Lock } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
+import { getTotalBalance } from "@/utils/financeCalculations";
+import useExpense from "@/context/ExpenseContext";
+import useIncome from "@/context/IncomeContext";
 
 const menuItems = [
   {
@@ -27,31 +28,31 @@ const menuItems = [
   {
     id: "overview",
     label: "Overview",
-    icon: <Home size={18} />, 
+    icon: <Home size={18} />,
     path: "/dashboard/overview",
   },
   {
     id: "budget",
     label: "Budget",
-    icon: <Wallet size={18} />, 
+    icon: <Wallet size={18} />,
     path: "/dashboard/budget",
   },
   {
     id: "expense",
     label: "Expense",
-    icon: <CreditCard size={18} />, 
+    icon: <CreditCard size={18} />,
     path: "/dashboard/expense",
   },
   {
     id: "income",
     label: "Income",
-    icon: <DollarSign size={18} />, 
+    icon: <DollarSign size={18} />,
     path: "/dashboard/income",
   },
   {
     id: "report",
     label: "Report",
-    icon: <PieChart size={18} />, 
+    icon: <PieChart size={18} />,
     path: "/dashboard/report",
   },
   {
@@ -63,15 +64,17 @@ const menuItems = [
   {
     id: "settings",
     label: "Settings",
-    icon: <Settings size={18} />, 
+    icon: <Settings size={18} />,
     path: "/dashboard/settings",
   },
 ];
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { activeBudget } = useBudget();
+  const { incomes } = useIncome();
   const { expenses } = useExpense();
+
+  const totalBalance = getTotalBalance(incomes, expenses);
 
   if (!user) {
     return (
@@ -82,13 +85,6 @@ export default function Dashboard() {
     );
   }
 
-  const calBalance = () => {
-    const totalBudget = activeBudget?.amount || 0;
-    const totalExpense = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
-    const totalBalance = totalBudget - totalExpense;
-    return totalBalance;
-  };
-
   return (
     <>
       {/* hero section */}
@@ -98,7 +94,7 @@ export default function Dashboard() {
           <div className="mb-6 text-center flex flex-col items-center">
             <UserAvatar size="w-12 h-12 text-lg" />
             <h2 className="text-lg font-semibold">{user.name}</h2>
-            <p className="text-sm text-gray-300">{calBalance()}</p>
+            <p className="text-sm text-gray-300">{totalBalance}</p>
           </div>
           {/* navigation */}
           <nav className="flex-1">

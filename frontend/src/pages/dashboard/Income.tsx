@@ -62,7 +62,7 @@ export default function Income() {
           isRecurring,
           frequency,
           date: new Date().toISOString(),
-          paymentMethod, 
+          paymentMethod,
         });
         toast.success("Income updated successfully ✅");
       } else {
@@ -75,7 +75,7 @@ export default function Income() {
           createdAt: new Date().toISOString(),
           isRecurring,
           frequency,
-          paymentMethod, 
+          paymentMethod,
         });
         toast.success("Income added successfully 🎉");
       }
@@ -161,7 +161,7 @@ export default function Income() {
                 <SelectTrigger>
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-[999]">
                   <SelectItem value="Daily">Daily</SelectItem>
                   <SelectItem value="Weekly">Weekly</SelectItem>
                   <SelectItem value="Monthly">Monthly</SelectItem>
@@ -173,7 +173,7 @@ export default function Income() {
                 <SelectTrigger>
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-[999]">
                   <SelectItem value="Cash">Cash</SelectItem>
                   <SelectItem value="Card">Card</SelectItem>
                   <SelectItem value="UPI">UPI</SelectItem>

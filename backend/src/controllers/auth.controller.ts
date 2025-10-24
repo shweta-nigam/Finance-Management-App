@@ -164,10 +164,6 @@ export const logout = async (req: RequestWithUser, res: Response, next: NextFunc
    try {
       const user = req.user
 
-      if (!user) {
-         return next(new ApiError(404, "user not found"))
-      }
-
       const cookieOptions = {
          httpOnly: true,
          secure: true,
@@ -175,11 +171,18 @@ export const logout = async (req: RequestWithUser, res: Response, next: NextFunc
       }
 
       res.clearCookie("accessToken", cookieOptions)
-
       res.clearCookie("refreshToken", cookieOptions)
 
+      // If user exists → normal logout message
+      if (user) {
+         return res.status(200).json(
+            new ApiResponse(200, null, "User logout successfully!")
+         );
+      }
+
+      // If user not found → still return success (graceful logout)
       return res.status(200).json(
-         new ApiResponse(200, null, "User logout successfully!")
+         new ApiResponse(200, null, "User logout successfully (session was already invalid or expired).")
       );
 
 

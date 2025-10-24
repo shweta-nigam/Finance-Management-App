@@ -12,11 +12,12 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "@/context/AuthContext.tsx";
+import { GoogleLogin } from "@react-oauth/google";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loginUser, loading, error } = useAuth();
+  const { loginUser, loginWithGoogle, loading, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +39,8 @@ export function LoginPage() {
           <CardDescription>
             <p>
               First time here?
-              <Link to="/signup"
+              <Link
+                to="/signup"
                 className="ml-2 inline-block text-sm underline-offset-4 hover:underline text-blue-800 "
               >
                 Signup
@@ -91,9 +93,15 @@ export function LoginPage() {
               <Button type="submit" className="w-full">
                 {loading ? "Logging in..." : "Login"}
               </Button>
-              <Button variant="outline" className="w-full">
-                Login with Google
-              </Button>
+
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  if (!credentialResponse.credential) return;
+                  await loginWithGoogle(credentialResponse.credential);
+                  navigate("/");
+                }}
+                onError={() => console.error("Google Login Failed")}
+              />
             </CardFooter>
           </form>
         </CardContent>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { User } from "@/types"; 
+import type { User } from "@/types";
 import api from "@/axios/api";
 
 export function useAuthApi() {
@@ -25,18 +25,18 @@ export function useAuthApi() {
     }
   };
 
- const verifyUser = async (urlPath: string, data: any): Promise<User> => {
+  const verifyUser = async (urlPath: string, data: any): Promise<User> => {
     try {
       setError(null);
       setLoading(true);
-      const res = await api.post(urlPath, data); 
+      const res = await api.post(urlPath, data);
       const user: User = res.data.data.user;
       setResponse(user);
       return user;
     } catch (error: any) {
       setError(
         error.response?.data?.message ||
-          "Something went wrong while verifying user"
+        "Something went wrong while verifying user"
       );
       throw error;
     } finally {
@@ -74,7 +74,7 @@ export function useAuthApi() {
     } catch (error: any) {
       setError(
         error.response?.data?.message ||
-          "Something went wrong while fetching current user"
+        "Something went wrong while fetching current user"
       );
       throw error;
     } finally {
@@ -99,6 +99,24 @@ export function useAuthApi() {
     }
   };
 
+  const googleLogin = async (idToken: string): Promise<User> => {
+    try {
+      setError(null)
+      setLoading(false)
+
+      const res = api.post("/api/v1/auth/google", { idToken }, { withCredentials: true })
+
+      const user: User = (await res).data.data.user
+      setResponse(user)
+      return user
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Something went wrong with Google login")
+      throw error;
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return {
     response,
     error,
@@ -108,62 +126,6 @@ export function useAuthApi() {
     login,
     getCurrentUser,
     logout,
+    googleLogin
   };
 }
-
-
-// import axios from "axios";
-// import { useState } from "react";
-
-// export function useAuthApi(){
-
-// }
-
-// export function useLogin() {
-//   const [response, setResponse] = useState<any>(null);
-//   const [error, setError] = useState<string | null>(null);
-//   const [loading, setLoading] = useState(false);
-
-//   const login = async (urlPath: string, data: any) => {
-
-//     try {
-//       setError(null);
-//       setLoading(true);
-//       const response = await axios.post(urlPath, data);
-//       // console.log("response---", response);
-//       setResponse(response.data);
-//       setLoading(false);
-
-//       return response.data
-//     } catch (error: any) {
-//       setError(error.message || "Something went wrong");
-//       setLoading(false);
-//       throw error
-//     }
-//   }
-
-//   return [login, response, error, loading] as const
-// }
-
-// export function useSignUp() {
-//   const [signingUp, setSigningUp] = useState(false)
-//   const [error, setError] = useState<string | null>(null)
-//   const [response, setResponse] = useState<any>(null)
-
-//   const signup = async (urlPath: string, data: any) => {
-//     try {
-//       setError(null)
-//       setSigningUp(true)
-//       const res = await axios.post(urlPath, data)
-//       setResponse(res.data)
-//       setSigningUp(false)
-//       return response.data;
-//     } catch (error: any) {
-//       setError(error.message || "Something went wrong")
-//       return null;
-//     } finally {
-//       setSigningUp(false)
-//     }
-//   }
-//   return [signup, signingUp, error, response]
-// }

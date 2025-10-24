@@ -10,6 +10,10 @@ export const db = async () => {
             console.error("DB error:", error.message);
             
         }
-        process.exit(1)
+        console.log("Retrying connection in 5 seconds...");
+
+        // Retry after 5 seconds instead of exiting
+        setTimeout(db,5000)
+        // process.exit(1)
     }
 }

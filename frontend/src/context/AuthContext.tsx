@@ -11,13 +11,15 @@ type AuthContextType = {
   registerUser: (data: Record<string, any>) => Promise<void>;
   verifyUser: (token: string) => Promise<void>;
   logoutUser: () => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const { loading, error, login, register, verifyUser, logout } = useAuthApi();
+  const { loading, error, login, register, verifyUser, logout, googleLogin } =
+    useAuthApi();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -28,6 +30,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginUser = async (email: string, password: string) => {
     const user = await login("/api/v1/auth/login", { email, password });
+    if (user) {
+      setUser(user);
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  };
+
+  const loginWithGoogle = async (idToken: string) => {
+    const user = await googleLogin(idToken);
     if (user) {
       setUser(user);
       localStorage.setItem("user", JSON.stringify(user));
@@ -69,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         registerUser,
         verifyUser: verifyUserHandler,
         logoutUser,
+        loginWithGoogle
       }}
     >
       {children}

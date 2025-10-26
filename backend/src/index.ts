@@ -13,14 +13,19 @@ import subscriptionPlanRoute from "./routes/subscriptionPlan.route"
 import paymentRoute from "./routes/payment.route"
 import categoryRoute from "./routes/category.route"
 import incomeRoutes from "./routes/income.route"
-
 dotenv.config()
 
 const app = express()
 const port = process.env.PORT ?? 3000
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://finease-hub.vercel.app",
+  process.env.BASE_URL
+].filter(Boolean) as string[];
+
 const corsOptions = {
-    origin: process.env.BASE_URL,
+    origin: allowedOrigins,
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: ["Content-Type", "Authorization"]

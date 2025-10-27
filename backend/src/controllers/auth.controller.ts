@@ -214,6 +214,10 @@ export const googleAuth = async (req: RequestWithUser, res: Response, next: Next
          return next(new ApiError(400, "Invalid Google token"))
       }
 
+      console.log("Received Google ID Token:", idToken);
+console.log("Payload:", payload);
+
+
       const { name, email, picture, sub } = payload
 
       let user = await User.findOne({ email })
@@ -236,7 +240,7 @@ export const googleAuth = async (req: RequestWithUser, res: Response, next: Next
          username: email?.split("@")[0],
          isVerified: true,
          googleId: sub,
-         avatar: picture
+         avatar: picture,
       })
 
       if (!process.env.JWT_ACCESS_SECRET) {
@@ -261,7 +265,7 @@ export const googleAuth = async (req: RequestWithUser, res: Response, next: Next
       })
 
       return res.status(200).json(
-         new ApiResponse(200, { user: toAuthResponse(user) }, "Google login successful!")
+         new ApiResponse(200, { user: toAuthResponse(user), accessToken }, "Google login successful!")
       );
 
    } catch (error) {

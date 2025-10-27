@@ -13,6 +13,7 @@ import subscriptionPlanRoute from "./routes/subscriptionPlan.route"
 import paymentRoute from "./routes/payment.route"
 import categoryRoute from "./routes/category.route"
 import incomeRoutes from "./routes/income.route"
+
 dotenv.config()
 
 const app = express()
@@ -24,13 +25,23 @@ const allowedOrigins = [
   process.env.BASE_URL
 ].filter(Boolean) as string[];
 
+console.log("✅ BASE_URL:", process.env.BASE_URL);
+
+
 const corsOptions = {
     origin: allowedOrigins,
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
+     optionsSuccessStatus: 200
 }
 app.use(cors(corsOptions))
+
+app.use((req, res, next) => {
+  console.log("Request:", req.method, req.url);
+  next();
+});
+
 
 // db function
 db()

@@ -94,13 +94,36 @@ export function LoginPage() {
                 {loading ? "Logging in..." : "Login"}
               </Button>
 
-              <GoogleLogin
+              {/* <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                   if (!credentialResponse.credential) return;
                   await loginWithGoogle(credentialResponse.credential);
                   navigate("/");
                 }}
                 onError={() => console.error("Google Login Failed")}
+              /> */}
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    if (!credentialResponse?.credential) return;
+
+                    console.log("Google credential response:", credentialResponse);
+                    
+                    await loginWithGoogle(credentialResponse.credential);
+                    navigate("/");
+                  } catch (err) {
+                    console.error("Google Login failed:", err);
+                  }
+                }}
+                onError={() => console.error("Google Login Failed")}
+                useOneTap={false}
+                type="standard"
+                theme="outline"
+                shape="rectangular"
+                text="signin_with"
+                size="large"
+                width="300"
+                ux_mode="popup"
               />
             </CardFooter>
           </form>

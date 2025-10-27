@@ -102,7 +102,7 @@ export function useAuthApi() {
   const googleLogin = async (idToken: string): Promise<User> => {
     try {
       setError(null)
-      setLoading(false)
+      setLoading(true)
 
       const res = api.post("/api/v1/auth/google", { idToken }, { withCredentials: true })
 

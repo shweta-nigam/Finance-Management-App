@@ -113,6 +113,10 @@ export const login = async (req: RequestWithUser, res: Response, next: NextFunct
          throw new ApiError(400, "User not found")
       }
 
+      if (!user.password) {
+         throw new ApiError(400, "Password not set for this account");
+      }
+
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
          throw new ApiError(400, "Invalid credentials");
@@ -194,82 +198,82 @@ export const logout = async (req: RequestWithUser, res: Response, next: NextFunc
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-export const googleAuth = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const googleAuth = async (req: Request, res: Response, next: NextFunction) => {
    try {
-
-      const { idToken } = req.body      // frontend send google ID token
+      const { idToken } = req.body;
 
       if (!idToken) {
-         return next(new ApiError(400, "Google Id is required"))
+         return next(new ApiError(400, "Google ID Token is required"));
       }
 
+      // Verify the token using Google's library
       const ticket = await client.verifyIdToken({
          idToken,
-         audience: process.env.GOOGLE_CLIENT_ID
-      })
+         audience: process.env.GOOGLE_CLIENT_ID,
+      });
 
-      const payload = ticket.getPayload()
+      const payload = ticket.getPayload();
 
       if (!payload) {
-         return next(new ApiError(400, "Invalid Google token"))
+         return next(new ApiError(400, "Invalid Google token"));
       }
 
-      console.log("Received Google ID Token:", idToken);
-console.log("Payload:", payload);
+      const { name, email, picture, sub: googleId } = payload;
 
+      if (!email) {
+         return next(new ApiError(400, "Email not provided by Google"));
+      }
 
-      const { name, email, picture, sub } = payload
+      // Find or create the user
+      let user = await User.findOne({ email });
 
-      let user = await User.findOne({ email })
-
-      if (user) {
-         const accessToken = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET!, { expiresIn: "15m" });
-         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET!, { expiresIn: "30d" });
-         res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== "development",
+      if (!user) {
+         user = await User.create({
+            name,
+            email,
+            username: email.split("@")[0],
+            googleId,
+            avatar: picture,
+            isVerified: true,
+            password: undefined, // password not required for Google users
          });
-         return res.status(200).json(new ApiResponse(200, toAuthResponse(user, accessToken), "Login successful via Google"));
       }
 
+      //  Generate tokens
+      const accessToken = jwt.sign(
+         { id: user._id },
+         process.env.JWT_ACCESS_SECRET!,
+         { expiresIn: "15m" }
+      );
 
-      user = await User.create({
-         name,
-         email,
-         password: "",
-         username: email?.split("@")[0],
-         isVerified: true,
-         googleId: sub,
-         avatar: picture,
-      })
+      const refreshToken = jwt.sign(
+         { id: user._id },
+         process.env.JWT_REFRESH_SECRET!,
+         { expiresIn: "30d" }
+      );
 
-      if (!process.env.JWT_ACCESS_SECRET) {
-         return next(new ApiError(400, "JWT Access secret is not set"))
-      }
-
-      const accessToken = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, {
-         expiresIn: "15min"
-      })
-
-      if (!process.env.JWT_REFRESH_SECRET) {
-         return next(new ApiError(400, "JWT Access secret is not set"))
-      }
-
-      const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, {
-         expiresIn: "30d"
-      })
-
+      //  Set refresh token cookie (HTTP-only)
       res.cookie("refreshToken", refreshToken, {
          httpOnly: true,
-         secure: process.env.NODE_ENV !== "development"
-      })
+         secure: process.env.NODE_ENV !== "development",
+         sameSite: "lax",
+      });
 
+      // Return user data + access token
       return res.status(200).json(
-         new ApiResponse(200, { user: toAuthResponse(user), accessToken }, "Google login successful!")
+         new ApiResponse(
+            200,
+            {
+               user: toAuthResponse(user),
+               accessToken,
+            },
+            user.googleId ? "Login successful via Google" : "Google login successful!"
+         )
       );
 
    } catch (error) {
-      next(error)
+      console.error("Google login error:", error);
+      next(new ApiError(500, "Something went wrong during Google authentication"));
    }
-}
+};
 

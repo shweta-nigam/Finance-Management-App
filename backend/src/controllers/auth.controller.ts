@@ -139,11 +139,12 @@ export const login = async (req: RequestWithUser, res: Response, next: NextFunct
       const rawRefreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET!, { expiresIn: "30d" })
 
       const hashRefreshToken = crypto.createHash("sha256").update(rawRefreshToken).digest("hex")
+      user.refreshToken = hashRefreshToken;
+      user.refreshTokenExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 
-
-      // user.refreshToken = hashRefreshToken
+      // user.refreshToken = hashRefreshToken  
       // user.refreshTokenExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
-      // ----> no need to save refresh token in db as they are short lived.
+      // ----> no need to save refresh token in db as they are short lived.  ---- depends on the situation
 
       await user.save()
 

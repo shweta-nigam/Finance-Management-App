@@ -4,11 +4,11 @@ import bcrypt from "bcryptjs";
 export interface IUser extends Document {
     name: string,
     username?: string,
-    password: string,
+    password?: string,
     email: string,
     avatar?: string,
     isVerified?: boolean,
-    googleId: string,
+    googleId?: string,
     isPlanActive: boolean,
     role: "User" | "Admin",
     verificationToken?: string,
@@ -17,8 +17,8 @@ export interface IUser extends Document {
     accessTokenExpiry?: Date,
     refreshToken?: string,
     refreshTokenExpiry?: Date
-    createdAt:string,
-    updatedAt:string
+    createdAt: string,
+    updatedAt: string
 }
 
 const userSchema: Schema<IUser> = new Schema({
@@ -34,7 +34,11 @@ const userSchema: Schema<IUser> = new Schema({
     password: {
         type: String,
         minlength: 6,
-        trim: true
+        trim: true,
+        required: function () {
+            // Only require password if user didn't sign up via Google
+            return !this.googleId;
+        }
     },
     email: {
         type: String,
@@ -77,10 +81,10 @@ const userSchema: Schema<IUser> = new Schema({
 
 userSchema.index({ username: 1 }, { unique: true, sparse: true })
 
+//  Hash password before saving (only if password exists)
 userSchema.pre("save", async function (next) {
-
     // only hash when password is new or modified
-    if (!this.isModified("password")) return next()
+    if (!this.isModified("password") || !this.password) return next()
 
     try {
         const hashPassword = await bcrypt.hash(this.password, 10)

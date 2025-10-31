@@ -35,7 +35,6 @@ const pieData = [
 const COLORS = ["#00c6ff", "#ff5f6d", "#ffc658", "#4caf50"];
 
 export default function Charts() {
-  // different backgrounds for each chart card
   const backgrounds = [
     "bg-gradient-to-br from-gray-800 to-gray-900",
     "bg-gradient-to-br from-[#1e3c72] to-[#2a5298]",
@@ -44,28 +43,32 @@ export default function Charts() {
   ];
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-6 bg text-white">
+    <div className="min-h-[70vh] flex flex-col lg:flex-row items-center justify-center p-4 sm:p-6 bg text-white">
+      {/* LEFT CONTENT SECTION */}
       <motion.div
-        className="flex flex-col items-center pr-6 text-center"
+        className="flex flex-col items-center lg:items-start text-center lg:text-left mb-10 lg:mb-0 lg:pr-8"
         initial={{ opacity: 0, x: -50 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <h2 className="text-4xl font-bold mb-4">Visualize Your Money</h2>
-        <p className="text-gray-400 max-w-lg mb-8 text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          Visualize Your Money
+        </h2>
+        <p className="text-gray-400 max-w-md sm:max-w-lg mb-6">
           Get interactive insights with charts and reports to understand your
           spending patterns.
         </p>
         <Link
           to="/dashboard/overview"
-          className="mt-6 transition btn-D-blue btn-D-blue:hover"
+          className="mt-4 sm:mt-6 transition btn-D-blue btn-D-blue:hover"
         >
           See charts
         </Link>
       </motion.div>
 
-      <div className="flex-1 grid grid-cols-2 gap-4">
+      {/* CHARTS GRID */}
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
         {[
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#444" />
@@ -138,13 +141,13 @@ export default function Charts() {
         ].map((chart, index) => (
           <motion.div
             key={index}
-            className={`${backgrounds[index]} rounded-xl shadow p-2`}
+            className={`${backgrounds[index]} rounded-xl shadow p-3 sm:p-4`}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.2 }}
             viewport={{ once: true }}
           >
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={220}>
               {chart}
             </ResponsiveContainer>
           </motion.div>

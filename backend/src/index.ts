@@ -25,9 +25,6 @@ const allowedOrigins = [
   process.env.BASE_URL
 ].filter(Boolean) as string[];
 
-console.log("✅ BASE_URL:", process.env.BASE_URL);
-
-
 const corsOptions = {
     origin: allowedOrigins,
     credentials: true,

@@ -55,13 +55,13 @@ export function Navbar() {
       {/* Right Section */}
       <div className="flex items-center gap-4">
         {/* Theme toggle */}
-        <button
+        {/* <button
           className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
           aria-label="Toggle theme"
         >
           <Moon className="h-5 w-5 text-white dark:hidden" />
           <Sun className="h-5 w-5 hidden dark:block text-yellow-400" />
-        </button>
+        </button> */}
 
         {/* User section */}
         {user ? (
